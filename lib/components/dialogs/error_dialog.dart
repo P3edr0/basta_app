@@ -21,14 +21,14 @@ class ErrorDialog {
             content: Text(content, textAlign: TextAlign.center),
             actionsAlignment: MainAxisAlignment.center,
             actions: [
-              GiRoundedButton(
+              DashRoundedButton(
                 height: 50,
                 width: Responsive.getSize(140),
                 onTap: () => Navigator.of(context).pop(),
                 child: Text(
                   "Fechar",
                   textAlign: TextAlign.center,
-                  style: GiFontStyle.titleBold.copyWith(color: secondaryColor),
+                  style: BasFontStyle.titleBold.copyWith(color: secondaryColor),
                 ),
               ),
             ],

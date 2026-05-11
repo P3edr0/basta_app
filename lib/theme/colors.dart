@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 
-const primaryColor = Color.fromRGBO(
-  255,
-  80,
-  0,
-  1,
-); // Color.fromRGBO(107, 58, 214, 1);
+const primaryColor = Color(0xFFFF5000); // Color.fromRGBO(107, 58, 214, 1);
 const primaryFocusColor = Color.fromRGBO(
   255,
   149,
   100,
   1,
 ); // Color.fromRGBO(143, 96, 250, 1);
-const movidaColor = Color.fromRGBO(255, 80, 0, 1);
+const movidaColor = Color.fromARGB(255, 255, 80, 0);
 
 // const primaryFocusColor = Color.fromRGBO(240, 80, 0, .6);
 const alertColor = Color.fromRGBO(222, 52, 0, 1);

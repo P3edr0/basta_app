@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gina/components/dialogs/error_dialog.dart';
 import 'package:gina/components/loadings/loading_button.dart';
 import 'package:gina/components/textfields/textfield.dart';
 import 'package:gina/presenter/auth/create_account/store/create_account_controller.dart';
@@ -83,7 +84,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                             SizedBox(width: Responsive.getSize(10)),
                             Text(
                               "BASTA",
-                              style: GiFontStyle.h4BoldSec.copyWith(
+                              style: BasFontStyle.h4BoldSec.copyWith(
                                 color: primaryColor,
                               ),
                             ),
@@ -93,13 +94,13 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                         Text(
                           "Crie sua rede de proteção.",
-                          style: GiFontStyle.titleBoldSec.copyWith(
+                          style: BasFontStyle.titleBoldSec.copyWith(
                             color: darkGrey,
                           ),
                         ),
                         Text(
                           "Seus dados criptografados e seguros",
-                          style: GiFontStyle.title.copyWith(color: grey),
+                          style: BasFontStyle.title.copyWith(color: grey),
                         ),
                         SizedBox(height: Responsive.getSize(16)),
 
@@ -118,7 +119,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                             Text(
                               "Dados pessoais",
-                              style: GiFontStyle.titleBold.copyWith(
+                              style: BasFontStyle.titleBold.copyWith(
                                 color: darkGrey,
                               ),
                             ),
@@ -132,7 +133,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                             children: [
                               Text(
                                 "Sua foto",
-                                style: GiFontStyle.bodyLargeBold.copyWith(
+                                style: BasFontStyle.bodyLargeBold.copyWith(
                                   color: grey,
                                 ),
                               ),
@@ -150,8 +151,29 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                                     final image =
                                         await pickedFile!.readAsBytes();
+                                    final imageSize = image.length;
+                                    double sizeInMb = imageSize / (1024 * 1024);
+                                    if (sizeInMb > 0.3) {
+                                      ErrorDialog.show(
+                                        title: "Atenção",
+                                        content:
+                                            "Escolha uma imagem com tamanho menor para prosseguir",
+                                        context: context,
+                                      );
+                                      log("imagem muito grande $sizeInMb");
+                                      return;
+                                    } else {
+                                      log("imagem pequena $sizeInMb");
+                                    }
+
                                     controller.setProfileImage(image);
                                   } catch (e) {
+                                    ErrorDialog.show(
+                                      title: "Atenção",
+                                      content:
+                                          "Ocorreu um erro ao tentar selecionar imagem. Tente novamente mais tarde",
+                                      context: context,
+                                    );
                                     log("ERRO=> $e");
                                     setState(() {});
                                   }
@@ -199,7 +221,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                               Text(
                                                 "Toque para carregar\n uma imagem",
                                                 textAlign: TextAlign.center,
-                                                style: GiFontStyle.bodyBold
+                                                style: BasFontStyle.bodyBold
                                                     .copyWith(color: darkGrey),
                                               ),
                                               SizedBox(
@@ -207,8 +229,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                               ),
 
                                               Text(
-                                                "PNG, JPG até 5MB",
-                                                style: GiFontStyle.smallBold
+                                                "PNG, JPG até 400KB",
+                                                style: BasFontStyle.smallBold
                                                     .copyWith(color: grey),
                                               ),
                                             ],
@@ -320,7 +342,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                                       Text(
                                         "Endereço",
-                                        style: GiFontStyle.titleBold.copyWith(
+                                        style: BasFontStyle.titleBold.copyWith(
                                           color: darkGrey,
                                         ),
                                       ),
@@ -470,7 +492,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                             children: [
                                               Text(
                                                 "Estado",
-                                                style: GiFontStyle.bodyLargeBold
+                                                style: BasFontStyle
+                                                    .bodyLargeBold
                                                     .copyWith(color: grey),
                                               ),
                                               GiSecondaryDropdown(
@@ -532,7 +555,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                                       Text(
                                         "Informações de risco",
-                                        style: GiFontStyle.titleBold.copyWith(
+                                        style: BasFontStyle.titleBold.copyWith(
                                           color: darkGrey,
                                         ),
                                       ),
@@ -582,7 +605,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                         ),
                                         child: Text(
                                           "Foto do potencial agressor",
-                                          style: GiFontStyle.bodyLargeBold
+                                          style: BasFontStyle.bodyLargeBold
                                               .copyWith(color: grey),
                                         ),
                                       ),
@@ -599,6 +622,25 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                                             final image =
                                                 await pickedFile!.readAsBytes();
+
+                                            final imageSize = image.length;
+                                            double sizeInMb =
+                                                imageSize / (1024 * 1024);
+                                            if (sizeInMb > 0.3) {
+                                              ErrorDialog.show(
+                                                title: "Atenção",
+                                                content:
+                                                    "Escolha uma imagem com tamanho menor para prosseguir",
+                                                context: context,
+                                              );
+                                              log(
+                                                "imagem muito grande $sizeInMb",
+                                              );
+                                              return;
+                                            } else {
+                                              log("imagem pequena $sizeInMb");
+                                            }
+
                                             controller.setAttackerImage(image);
                                           } catch (e) {
                                             log("ERRO=> $e");
@@ -670,7 +712,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                                         "Toque para carregar\n uma imagem",
                                                         textAlign:
                                                             TextAlign.center,
-                                                        style: GiFontStyle
+                                                        style: BasFontStyle
                                                             .bodyBold
                                                             .copyWith(
                                                               color: darkGrey,
@@ -684,8 +726,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                                       ),
 
                                                       Text(
-                                                        "PNG, JPG até 5MB",
-                                                        style: GiFontStyle
+                                                        "PNG, JPG até 400KB",
+                                                        style: BasFontStyle
                                                             .smallBold
                                                             .copyWith(
                                                               color: grey,
@@ -718,7 +760,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                       Text(
                                         "Esses dados ajudarão as autoridades em caso de acionbamento do alerta",
                                         textAlign: TextAlign.center,
-                                        style: GiFontStyle.body.copyWith(
+                                        style: BasFontStyle.body.copyWith(
                                           color: grey,
                                         ),
                                       ),
@@ -730,7 +772,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                         ),
                         SizedBox(height: Responsive.getSize(24)),
 
-                        GiRoundedButton(
+                        DashRoundedButton(
                           onTap: () async {
                             if (_formKey.currentState?.validate() ?? false) {
                               log("Tudo certo com o formulário");
@@ -757,7 +799,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                   ? BasLoadingButton()
                                   : Text(
                                     "Cadastrar",
-                                    style: GiFontStyle.bodyLargeBoldSec
+                                    style: BasFontStyle.bodyLargeBoldSec
                                         .copyWith(color: secondaryColor),
                                   ),
                         ),
@@ -776,14 +818,14 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                 Text(
                                   "Já possui uma conta? ",
                                   textAlign: TextAlign.center,
-                                  style: GiFontStyle.bodyLargeBold.copyWith(
+                                  style: BasFontStyle.bodyLargeBold.copyWith(
                                     color: grey,
                                   ),
                                 ),
                                 Text(
                                   "Entrar",
                                   textAlign: TextAlign.center,
-                                  style: GiFontStyle.bodyLargeBold.copyWith(
+                                  style: BasFontStyle.bodyLargeBold.copyWith(
                                     color: primaryColor,
                                   ),
                                 ),

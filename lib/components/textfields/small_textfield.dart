@@ -80,11 +80,11 @@ class _JackSmallTextfieldState extends State<JackSmallTextfield> {
             textInputAction: widget.inputAction,
             decoration: InputDecoration(
               hintText: widget.hint,
-              hintStyle: GiFontStyle.bodyLargeBold.copyWith(
+              hintStyle: BasFontStyle.bodyLargeBold.copyWith(
                 color: primaryFocusColor,
               ),
               border: InputBorder.none,
-              labelStyle: GiFontStyle.bodyLargeBold,
+              labelStyle: BasFontStyle.bodyLargeBold,
               prefixIcon: widget.prefix,
               suffixIcon: widget.suffix,
               contentPadding: contentPadding,

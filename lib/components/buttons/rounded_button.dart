@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../responsiveness/responsive.dart';
 import '../../theme/colors.dart';
 
-class GiRoundedButton extends StatelessWidget {
-  const GiRoundedButton({
+class DashRoundedButton extends StatelessWidget {
+  const DashRoundedButton({
     super.key,
     required this.child,
     required this.onTap,
@@ -15,7 +15,7 @@ class GiRoundedButton extends StatelessWidget {
     this.border,
   }) : isSolid = false,
        color = null;
-  const GiRoundedButton.solid({
+  const DashRoundedButton.solid({
     super.key,
     required this.child,
     required this.onTap,

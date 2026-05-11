@@ -16,12 +16,12 @@ class SuccessDialog {
             title: Text(title, textAlign: TextAlign.center),
             content: Text(content, textAlign: TextAlign.center),
             actions: [
-              GiRoundedButton(
+              DashRoundedButton(
                 onTap: () => Navigator.of(context).pop(),
 
                 child: Text(
                   'Fechar',
-                  style: GiFontStyle.bodyBoldSec.copyWith(
+                  style: BasFontStyle.bodyBoldSec.copyWith(
                     color: secondaryColor,
                   ),
                 ),

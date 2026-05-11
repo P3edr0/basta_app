@@ -26,7 +26,23 @@ class GiHomeCard extends StatelessWidget {
           padding: EdgeInsets.all(Responsive.getSize(16)),
           decoration: BoxDecoration(
             color: secondaryColor,
+            border: Border.all(color: accentColor, width: 2),
             borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(2, -2),
+                blurRadius: 6,
+                spreadRadius: 2,
+                color: accentColor.withValues(alpha: 0.3),
+              ),
+              BoxShadow(
+                offset: Offset(-2, -2),
+                blurRadius: 6,
+                spreadRadius: 2,
+
+                color: accentColor.withValues(alpha: 0.3),
+              ),
+            ],
           ),
 
           child: Column(
@@ -42,9 +58,9 @@ class GiHomeCard extends StatelessWidget {
               ),
               Text(
                 title,
-                style: GiFontStyle.bodyLargeBoldSec.copyWith(color: darkGrey),
+                style: BasFontStyle.bodyLargeBoldSec.copyWith(color: darkGrey),
               ),
-              Text(content, style: GiFontStyle.bodySec.copyWith(color: grey)),
+              Text(content, style: BasFontStyle.bodySec.copyWith(color: grey)),
             ],
           ),
         ),

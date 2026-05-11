@@ -5,7 +5,7 @@ import 'responsive.dart';
 
 //////////////////////// PRIMARY FONT STYLE ////////////////////////
 
-abstract class GiFontStyle {
+abstract class BasFontStyle {
   static TextStyle h3 = GoogleFonts.roboto().copyWith(
     fontSize: Responsive.getFontValue(22),
     color: Colors.black,
@@ -110,6 +110,11 @@ abstract class GiFontStyle {
 
   //+++++++++++++++++++  BOLD FONTS +++++++++++++++++++++++++++++++++++++++
 
+  static TextStyle h2BoldSec = GoogleFonts.sourceSans3().copyWith(
+    fontSize: Responsive.getFontValue(68),
+    color: Colors.black,
+    fontWeight: FontWeight.bold,
+  );
   static TextStyle h3BoldSec = GoogleFonts.sourceSans3().copyWith(
     fontSize: Responsive.getFontValue(48),
     color: Colors.black,

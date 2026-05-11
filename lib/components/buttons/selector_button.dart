@@ -34,7 +34,7 @@ class BasSelectorButton extends StatelessWidget {
             ),
             child: Text(
               title,
-              style: GiFontStyle.bodyLargeBold.copyWith(color: secondaryColor),
+              style: BasFontStyle.bodyLargeBold.copyWith(color: secondaryColor),
             ),
           ),
         ),
@@ -58,7 +58,7 @@ class BasSelectorButton extends StatelessWidget {
           ),
           child: Text(
             title,
-            style: GiFontStyle.bodyLargeBold.copyWith(color: primaryColor),
+            style: BasFontStyle.bodyLargeBold.copyWith(color: primaryColor),
           ),
         ),
       ),

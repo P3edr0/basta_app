@@ -11,7 +11,7 @@ dependencies:
   dartz: ^0.10.1
   dio: ^5.9.2
   feather_icons: ^1.2.0
-  # firebase_core: ^4.6.0
+  flutter_launcher_icons: ^0.14.4
   firebase_auth: ^6.4.0
   firebase_core: ^4.7.0
   firebase_database: ^12.3.0
@@ -25,11 +25,31 @@ dependencies:
   lottie: ^3.3.1
   mask_text_input_formatter: ^2.9.0
   provider: ^6.1.5+1
+  google_maps_flutter: ^2.14.0
+  google_maps_flutter_android: ^2.18.3
+  geolocator: ^14.0.2
+  http: ^1.6.0
+  permission_handler: ^12.0.1
+  url_launcher: ^6.3.2
+  flutter_polyline_points: ^3.1.0
+  geocoding: ^4.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path_ios: "assets/images/app_icon.png"
+  image_path_android: "assets/images/app_icon.png"
+  adaptive_icon_foreground: "assets/images/app_icon.png" # Android
+  # Ou cor sólida:
+  adaptive_icon_background: "#FF5000"
+
+  # Configurações iOS
+  remove_alpha_ios: true # Remove transparência no iOS
 
 flutter:
   uses-material-design: true

@@ -62,10 +62,13 @@ class _SplashPageState extends State<SplashPage> {
                   GiAppAssets.logo,
                 ),
               ),
-              Text("BASTA", style: GiFontStyle.h3BoldSec),
+              Text(
+                "BASTA",
+                style: BasFontStyle.h2BoldSec.copyWith(color: primaryColor),
+              ),
               Text(
                 "Sua segurança em primeiro lugar",
-                style: GiFontStyle.title.copyWith(color: grey),
+                style: BasFontStyle.h4Bold.copyWith(color: grey),
               ),
             ],
           ),

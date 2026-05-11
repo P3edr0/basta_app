@@ -21,16 +21,16 @@ class QuitAppDialog {
             content: Text(content, textAlign: TextAlign.center),
             actionsAlignment: MainAxisAlignment.center,
             actions: [
-              GiRoundedButton(
+              DashRoundedButton(
                 width: Responsive.getSize(120),
                 onTap: () => Navigator.of(context).pop(false),
                 child: Text(
                   "Voltar",
                   textAlign: TextAlign.center,
-                  style: GiFontStyle.titleBold.copyWith(color: secondaryColor),
+                  style: BasFontStyle.titleBold.copyWith(color: secondaryColor),
                 ),
               ),
-              GiRoundedButton.solid(
+              DashRoundedButton.solid(
                 color: secondaryColor,
                 height: 48,
 
@@ -39,7 +39,7 @@ class QuitAppDialog {
                 child: Text(
                   "Sair",
                   textAlign: TextAlign.center,
-                  style: GiFontStyle.titleBold.copyWith(color: grey),
+                  style: BasFontStyle.titleBold.copyWith(color: grey),
                 ),
               ),
             ],

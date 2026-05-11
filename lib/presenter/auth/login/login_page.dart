@@ -93,13 +93,13 @@ class _LoginPageState extends State<LoginPage> {
 
                               Text(
                                 "Bem vinda de volta ao BASTA",
-                                style: GiFontStyle.titleBoldSec.copyWith(
+                                style: BasFontStyle.titleBoldSec.copyWith(
                                   color: darkGrey,
                                 ),
                               ),
                               Text(
                                 "Sua segurança em primeiro lugar",
-                                style: GiFontStyle.bodyLargeSec.copyWith(
+                                style: BasFontStyle.bodyLargeSec.copyWith(
                                   color: grey,
                                 ),
                               ),
@@ -133,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
 
                                       SizedBox(height: Responsive.getSize(24)),
 
-                                      GiRoundedButton(
+                                      DashRoundedButton(
                                         onTap: () async {
                                           if (_formKey.currentState
                                                   ?.validate() ??
@@ -176,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                                                 ? BasLoadingButton()
                                                 : Text(
                                                   "Entrar",
-                                                  style: GiFontStyle
+                                                  style: BasFontStyle
                                                       .bodyLargeBoldSec
                                                       .copyWith(
                                                         color: secondaryColor,
@@ -206,13 +206,13 @@ class _LoginPageState extends State<LoginPage> {
                                       Text(
                                         "Não possui uma conta? ",
                                         textAlign: TextAlign.center,
-                                        style: GiFontStyle.bodyLargeBold
+                                        style: BasFontStyle.bodyLargeBold
                                             .copyWith(color: grey),
                                       ),
                                       Text(
                                         "Criar",
                                         textAlign: TextAlign.center,
-                                        style: GiFontStyle.bodyLargeBold
+                                        style: BasFontStyle.bodyLargeBold
                                             .copyWith(color: primaryColor),
                                       ),
                                     ],

@@ -15,7 +15,7 @@ class BasEmptyAnimation extends StatelessWidget {
         Lottie.asset(GiAppAssets.emptyList),
         Text(
           content,
-          style: GiFontStyle.bodyLargeBold.copyWith(color: primaryColor),
+          style: BasFontStyle.bodyLargeBold.copyWith(color: primaryColor),
         ),
       ],
     );

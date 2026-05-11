@@ -1,15 +1,26 @@
+import java.util.Properties
+import java.io.File
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { 
+        localProperties.load(it) 
+    }
+}
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
     id("com.google.gms.google-services")
     // END: FlutterFire Configuration
-    id("kotlin-android")
+    id("org.jetbrains.kotlin.android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+
 android {
-    namespace = "com.example.gina"
+    namespace = "com.basta"
     compileSdk = 36//flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -24,14 +35,14 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.gina"
+        applicationId = "com.basta"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk =  24//flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-    }
+        manifestPlaceholders["googleMapsApiKey"] = localProperties.getProperty("google.maps.api.key") ?: ""    }
 
     buildTypes {
         release {

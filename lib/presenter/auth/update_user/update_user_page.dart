@@ -68,7 +68,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                           children: [
                             Text(
                               "Sua foto",
-                              style: GiFontStyle.bodyLargeBold.copyWith(
+                              style: BasFontStyle.bodyLargeBold.copyWith(
                                 color: grey,
                               ),
                             ),
@@ -134,7 +134,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                                             Text(
                                               "Toque para carregar\n uma imagem",
                                               textAlign: TextAlign.center,
-                                              style: GiFontStyle.bodyBold
+                                              style: BasFontStyle.bodyBold
                                                   .copyWith(color: darkGrey),
                                             ),
                                             SizedBox(
@@ -143,7 +143,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
 
                                             Text(
                                               "PNG, JPG até 5MB",
-                                              style: GiFontStyle.smallBold
+                                              style: BasFontStyle.smallBold
                                                   .copyWith(color: grey),
                                             ),
                                           ],
@@ -253,7 +253,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
 
                                     Text(
                                       "Endereço",
-                                      style: GiFontStyle.titleBold.copyWith(
+                                      style: BasFontStyle.titleBold.copyWith(
                                         color: darkGrey,
                                       ),
                                     ),
@@ -400,7 +400,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                                           children: [
                                             Text(
                                               "Estado",
-                                              style: GiFontStyle.bodyLargeBold
+                                              style: BasFontStyle.bodyLargeBold
                                                   .copyWith(color: grey),
                                             ),
                                             GiSecondaryDropdown(
@@ -459,7 +459,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
 
                                     Text(
                                       "Informações de risco",
-                                      style: GiFontStyle.titleBold.copyWith(
+                                      style: BasFontStyle.titleBold.copyWith(
                                         color: darkGrey,
                                       ),
                                     ),
@@ -505,7 +505,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                                       ),
                                       child: Text(
                                         "Foto do potencial agressor",
-                                        style: GiFontStyle.bodyLargeBold
+                                        style: BasFontStyle.bodyLargeBold
                                             .copyWith(color: grey),
                                       ),
                                     ),
@@ -584,7 +584,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                                                       "Toque para carregar\n uma imagem",
                                                       textAlign:
                                                           TextAlign.center,
-                                                      style: GiFontStyle
+                                                      style: BasFontStyle
                                                           .bodyBold
                                                           .copyWith(
                                                             color: darkGrey,
@@ -597,7 +597,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
 
                                                     Text(
                                                       "PNG, JPG até 5MB",
-                                                      style: GiFontStyle
+                                                      style: BasFontStyle
                                                           .smallBold
                                                           .copyWith(
                                                             color: grey,
@@ -630,7 +630,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                                     Text(
                                       "Esses dados ajudarão as autoridades em caso de acionbamento do alerta",
                                       textAlign: TextAlign.center,
-                                      style: GiFontStyle.body.copyWith(
+                                      style: BasFontStyle.body.copyWith(
                                         color: grey,
                                       ),
                                     ),
@@ -642,7 +642,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                       ),
                       SizedBox(height: Responsive.getSize(24)),
 
-                      GiRoundedButton(
+                      DashRoundedButton(
                         onTap: () async {
                           if (_formKey.currentState?.validate() ?? false) {
                             log("Tudo certo com o formulário");
@@ -669,13 +669,13 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                                 ? BasLoadingButton()
                                 : Text(
                                   "Atualizar",
-                                  style: GiFontStyle.bodyLargeBoldSec.copyWith(
+                                  style: BasFontStyle.bodyLargeBoldSec.copyWith(
                                     color: secondaryColor,
                                   ),
                                 ),
                       ),
                       SizedBox(height: Responsive.getSize(16)),
-                      GiRoundedButton.solid(
+                      DashRoundedButton.solid(
                         color: alertColor,
                         onTap: () async {
                           final logoutSuccess = await controller.logout();
@@ -690,7 +690,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                                 ? BasLoadingButton()
                                 : Text(
                                   "Sair",
-                                  style: GiFontStyle.bodyLargeBoldSec.copyWith(
+                                  style: BasFontStyle.bodyLargeBoldSec.copyWith(
                                     color: secondaryColor,
                                   ),
                                 ),

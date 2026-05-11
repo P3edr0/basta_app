@@ -79,11 +79,14 @@ class AngelCard extends StatelessWidget {
                 children: [
                   Text(
                     title!,
-                    style: GiFontStyle.bodyLargeBoldSec.copyWith(
+                    style: BasFontStyle.bodyLargeBoldSec.copyWith(
                       color: primaryColor,
                     ),
                   ),
-                  Text(content!, style: GiFontStyle.body.copyWith(color: grey)),
+                  Text(
+                    content!,
+                    style: BasFontStyle.body.copyWith(color: grey),
+                  ),
                 ],
               ),
               Spacer(),
@@ -126,7 +129,7 @@ class AngelCard extends StatelessWidget {
                 children: [
                   Text(
                     title!,
-                    style: GiFontStyle.bodyLargeBoldSec.copyWith(
+                    style: BasFontStyle.bodyLargeBoldSec.copyWith(
                       color: darkGrey,
                     ),
                   ),
@@ -148,7 +151,7 @@ class AngelCard extends StatelessWidget {
 
                       Text(
                         content!,
-                        style: GiFontStyle.bodyBold.copyWith(color: success),
+                        style: BasFontStyle.bodyBold.copyWith(color: success),
                       ),
                     ],
                   ),
@@ -194,9 +197,11 @@ class AngelCard extends StatelessWidget {
               children: [
                 Text(
                   title!,
-                  style: GiFontStyle.bodyLargeBoldSec.copyWith(color: darkGrey),
+                  style: BasFontStyle.bodyLargeBoldSec.copyWith(
+                    color: darkGrey,
+                  ),
                 ),
-                Text(content!, style: GiFontStyle.body.copyWith(color: grey)),
+                Text(content!, style: BasFontStyle.body.copyWith(color: grey)),
               ],
             ),
             Spacer(),
@@ -212,7 +217,7 @@ class AngelCard extends StatelessWidget {
               ),
               child: Text(
                 _getText(),
-                style: GiFontStyle.bodyBold.copyWith(color: secondaryColor),
+                style: BasFontStyle.bodyBold.copyWith(color: secondaryColor),
               ),
             ),
           ],
@@ -228,7 +233,7 @@ class AngelCard extends StatelessWidget {
       case GuardianStatus.none:
         return primaryColor;
       case GuardianStatus.invited:
-        return warning;
+        return blue;
       case GuardianStatus.accepted:
         return success;
 

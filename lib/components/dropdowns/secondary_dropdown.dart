@@ -73,10 +73,10 @@ class _GiSecondaryDropdownState extends State<GiSecondaryDropdown> {
                         item,
                         style:
                             widget.isUnderlineBorder
-                                ? GiFontStyle.bodyBoldSec.copyWith(
+                                ? BasFontStyle.bodyBoldSec.copyWith(
                                   color: widget.contentColor,
                                 )
-                                : GiFontStyle.bodyBold.copyWith(
+                                : BasFontStyle.bodyBold.copyWith(
                                   color: widget.contentColor,
                                 ),
                       ),

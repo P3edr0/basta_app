@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gina/components/dialogs/info_dialog.dart';
 import 'package:gina/presenter/auth/store/auth_controller.dart';
 import 'package:gina/presenter/auth/update_user/store/update_user_controller.dart';
 import 'package:gina/presenter/home/home/store/home_controller.dart';
@@ -34,7 +34,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {});
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final controller = context.read<HomeController>();
+      await controller.getCurrentAddress();
+    });
   }
 
   @override
@@ -75,11 +78,22 @@ class _HomePageState extends State<HomePage> {
                       color: secondaryColor,
                       child: Row(
                         children: [
-                          Icon(Icons.menu, size: Responsive.getSize(30)),
+                          InkWell(
+                            onTap:
+                                () => InfoDialog.closeAuto(
+                                  "Em breve...",
+                                  "Estamos desenvolvendo esta funcionalidade.",
+                                  context,
+                                ),
+                            child: Icon(
+                              Icons.menu,
+                              size: Responsive.getSize(30),
+                            ),
+                          ),
                           SizedBox(width: Responsive.getSize(5)),
                           Text(
                             "BASTA",
-                            style: GiFontStyle.titleBoldSec.copyWith(
+                            style: BasFontStyle.titleBoldSec.copyWith(
                               color: primaryColor,
                             ),
                           ),
@@ -109,40 +123,57 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: Responsive.getSize(80),
-                      child: ListView.builder(
-                        padding: EdgeInsets.only(
-                          left: Responsive.getSize(24),
-                          top: Responsive.getSize(16),
-                        ),
-                        itemCount: 10,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: EdgeInsets.only(
-                              right: Responsive.getSize(10),
-                            ),
-                            padding: EdgeInsets.all(Responsive.getSize(18)),
-                            decoration: BoxDecoration(
-                              color: secondaryColor,
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Responsive.getSize(24),
+                        vertical: Responsive.getSize(16),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:
+                            controller.tabs.map((item) {
+                              return InkWell(
+                                onTap:
+                                    () => InfoDialog.closeAuto(
+                                      "Em breve...",
+                                      "Estamos desenvolvendo esta funcionalidade.",
+                                      context,
+                                    ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(
+                                        Responsive.getSize(10),
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: secondaryColor,
 
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              FeatherIcons.map,
-                              size: Responsive.getSize(26),
-                              color: primaryColor,
-                            ),
-                          );
-                        },
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        item.icon,
+                                        size: Responsive.getSize(24),
+                                        color: primaryColor,
+                                      ),
+                                    ),
+                                    SizedBox(height: Responsive.getSize(4)),
+                                    Text(
+                                      item.name,
+                                      style: BasFontStyle.smallBold.copyWith(
+                                        color: secondaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
                       ),
                     ),
 
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: Responsive.getSize(24),
-                        vertical: Responsive.getSize(16),
+                        vertical: Responsive.getSize(4),
                       ),
 
                       child: Column(
@@ -151,13 +182,13 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(height: Responsive.getSize(16)),
                           Text(
                             "Olá, ${NameHandler.firstName(controller.user?.name ?? "Usuária")}",
-                            style: GiFontStyle.h4BoldSec.copyWith(
+                            style: BasFontStyle.h4BoldSec.copyWith(
                               color: secondaryColor,
                             ),
                           ),
                           Text(
                             "Você está em um lugar seguro",
-                            style: GiFontStyle.bodyLargeBold.copyWith(
+                            style: BasFontStyle.bodyLargeBold.copyWith(
                               color: lightGrey,
                             ),
                           ),
@@ -168,18 +199,18 @@ class _HomePageState extends State<HomePage> {
                             child: InkWell(
                               onTap: () async {},
                               child: CircleAvatar(
-                                backgroundColor: accentColor.withValues(
+                                backgroundColor: secondaryColor.withValues(
                                   alpha: 0.1,
                                 ),
                                 radius: Responsive.getSize(120),
 
                                 child: CircleAvatar(
                                   radius: Responsive.getSize(100),
-                                  backgroundColor: accentColor.withValues(
+                                  backgroundColor: secondaryColor.withValues(
                                     alpha: 0.3,
                                   ),
                                   child: CircleAvatar(
-                                    backgroundColor: accentColor,
+                                    backgroundColor: secondaryColor,
 
                                     radius: Responsive.getSize(80),
                                     child: Column(
@@ -191,8 +222,8 @@ class _HomePageState extends State<HomePage> {
 
                                         Text(
                                           "EMERGÊNCIA",
-                                          style: GiFontStyle.titleBoldSec
-                                              .copyWith(color: secondaryColor),
+                                          style: BasFontStyle.titleBoldSec
+                                              .copyWith(color: primaryColor),
                                         ),
                                       ],
                                     ),
@@ -207,10 +238,13 @@ class _HomePageState extends State<HomePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               GiHomeCard(
-                                title: "Delegacia mais próxima",
+                                title: "Delegacia",
                                 content:
-                                    "Veja a localização da delegacia da mulher mais próxima de você.",
+                                    "Encontre a delegacia mais próxima de você.",
                                 icon: GiAppAssets.shield,
+                                onTap: () {
+                                  navigator.goto(GiRoutes.policeStation);
+                                },
                               ),
 
                               SizedBox(width: Responsive.getSize(24)),
@@ -231,42 +265,62 @@ class _HomePageState extends State<HomePage> {
                           Container(
                             decoration: BoxDecoration(
                               color: secondaryColor,
+                              border: Border.all(color: accentColor, width: 2),
+
                               borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  offset: Offset(2, -2),
+                                  blurRadius: 6,
+                                  spreadRadius: 2,
+                                  color: accentColor.withValues(alpha: 0.3),
+                                ),
+                                BoxShadow(
+                                  offset: Offset(-2, -2),
+                                  blurRadius: 6,
+                                  spreadRadius: 2,
+
+                                  color: accentColor.withValues(alpha: 0.3),
+                                ),
+                              ],
                             ),
                             child: Row(
                               children: [
-                                Padding(
-                                  padding: EdgeInsets.all(
-                                    Responsive.getSize(16),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Sua localização atual',
-                                        style: GiFontStyle.bodyLargeBoldSec
-                                            .copyWith(color: darkGrey),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            BasIcons.pin,
-                                            color: grey,
-                                            size: Responsive.getSize(16),
-                                          ),
-                                          Text(
-                                            'Av.Paulista São Paulo - SP',
-                                            style: GiFontStyle.body.copyWith(
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(
+                                      Responsive.getSize(12),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Sua localização aproximada',
+                                          style: BasFontStyle.bodyLargeBoldSec
+                                              .copyWith(color: darkGrey),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              BasIcons.pin,
                                               color: grey,
+                                              size: Responsive.getSize(16),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                            Expanded(
+                                              child: Text(
+                                                controller.place,
+                                                style: BasFontStyle.body
+                                                    .copyWith(color: grey),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                Spacer(),
+                                SizedBox(width: Responsive.getSize(16)),
                                 ClipRRect(
                                   borderRadius: BorderRadius.only(
                                     bottomRight: Radius.circular(20),

@@ -6,31 +6,45 @@ import '../../theme/colors.dart';
 import '../buttons/back_button.dart';
 
 class GiAppBar extends StatelessWidget {
-  const GiAppBar({super.key, required this.title, this.onTap})
-    : secondary = false;
-  const GiAppBar.secondary({super.key, required this.title, this.onTap})
-    : secondary = true;
+  const GiAppBar({
+    super.key,
+    required this.title,
+    this.withPadding = false,
+    this.onTap,
+  }) : secondary = false;
+  const GiAppBar.secondary({
+    super.key,
+    required this.title,
+    this.withPadding = false,
+    this.onTap,
+  }) : secondary = true;
   final String title;
   final bool secondary;
+  final bool withPadding;
   final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
     if (secondary) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          GiBackButton.transparent(onTap: onTap),
-          Padding(
-            padding: const EdgeInsets.only(top: 10.0),
-            child: Text(
-              title,
-              style: GiFontStyle.titleBoldSec.copyWith(color: primaryColor),
+      return Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: Responsive.getSize(withPadding ? 24 : 0),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            GiBackButton.transparent(onTap: onTap),
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: Text(
+                title,
+                style: BasFontStyle.titleBoldSec.copyWith(color: primaryColor),
+              ),
             ),
-          ),
-          SizedBox(width: Responsive.getSize(40)),
-        ],
+            SizedBox(width: Responsive.getSize(40)),
+          ],
+        ),
       );
     }
     return Positioned(
@@ -46,7 +60,9 @@ class GiAppBar extends StatelessWidget {
             padding: const EdgeInsets.only(top: 10.0),
             child: Text(
               title,
-              style: GiFontStyle.bodyLargeBoldSec.copyWith(color: primaryColor),
+              style: BasFontStyle.bodyLargeBoldSec.copyWith(
+                color: primaryColor,
+              ),
             ),
           ),
           SizedBox(width: Responsive.getSize(40)),

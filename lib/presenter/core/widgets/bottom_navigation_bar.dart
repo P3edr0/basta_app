@@ -5,6 +5,7 @@ import 'package:gina/utils/routes/app_navigator.dart';
 import 'package:gina/utils/routes/app_routes.dart';
 import 'package:provider/provider.dart';
 
+import '../../../components/dialogs/info_dialog.dart';
 import '../../../responsiveness/gi_font_style.dart';
 import '../../../responsiveness/responsive.dart';
 import '../../../theme/colors.dart';
@@ -50,18 +51,27 @@ class BasBottomNavigationBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               BottomNavigationItem(
-                title: "Saúde",
+                title: "Psicólogo",
 
-                icon: BasIcons.health,
+                icon: BasIcons.psychology,
                 isSelected: routeObserver.currentPageindex == 0,
-                onTap: () => routeObserver.changeCurrentPage(0),
+                onTap:
+                    () => InfoDialog.closeAuto(
+                      "Em breve...",
+                      "Estamos desenvolvendo esta funcionalidade.",
+                      context,
+                    ),
               ),
               BottomNavigationItem(
                 title: "Delegacias",
 
                 icon: BasIcons.policy,
                 isSelected: routeObserver.currentPageindex == 1,
-                onTap: () => routeObserver.changeCurrentPage(1),
+                onTap: () {
+                  if (routeObserver.currentRoute != GiRoutes.policeStation) {
+                    _navigator.goto(GiRoutes.policeStation);
+                  }
+                },
               ),
               BottomNavigationItem(
                 title: "Início",
@@ -69,8 +79,6 @@ class BasBottomNavigationBar extends StatelessWidget {
                 icon: BasIcons.home,
                 isSelected: routeObserver.currentPageindex == 2,
                 onTap: () {
-                  // routeObserver.changeCurrentPage(2);
-
                   if (routeObserver.currentRoute != GiRoutes.home) {
                     _navigator.goto(GiRoutes.home);
                   }
@@ -151,7 +159,7 @@ class BottomNavigationItem extends StatelessWidget {
             Icon(icon, color: contentColor, size: Responsive.getSize(24)),
             Text(
               title,
-              style: GiFontStyle.smallBold.copyWith(color: contentColor),
+              style: BasFontStyle.smallBold.copyWith(color: contentColor),
             ),
           ],
         ),

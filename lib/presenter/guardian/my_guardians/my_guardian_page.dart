@@ -50,7 +50,7 @@ class MyGuardianPageState extends State<MyGuardianPage> {
           child: Consumer<MyGuardianController>(
             builder: (context, controller, child) {
               if (controller.isLoading) {
-                return BasPageLoading();
+                return DashPageLoading();
               }
               final isEmptyContent = controller.myGuardians.isEmpty;
               return Padding(
@@ -65,11 +65,11 @@ class MyGuardianPageState extends State<MyGuardianPage> {
                     SizedBox(height: Responsive.getSize(16)),
                     Text(
                       "Círculo de Proteção",
-                      style: GiFontStyle.h4BoldSec.copyWith(color: darkGrey),
+                      style: BasFontStyle.h4BoldSec.copyWith(color: darkGrey),
                     ),
                     Text(
                       "Estas são as pessoas que receberão um alerta em caso de emergência",
-                      style: GiFontStyle.bodyLargeBold.copyWith(color: grey),
+                      style: BasFontStyle.bodyLargeBold.copyWith(color: grey),
                     ),
                     SizedBox(height: Responsive.getSize(30)),
 
@@ -95,6 +95,8 @@ class MyGuardianPageState extends State<MyGuardianPage> {
                         onTap: () {
                           InviteDialog.show(
                             title: "Remover",
+                            refuseButton: "Cancelar",
+                            acceptButton: "Remover",
                             content:
                                 "Você deseja remover ${guardian.name} como seu anjo guardião?",
                             acceptCallback: () async {
@@ -122,7 +124,7 @@ class MyGuardianPageState extends State<MyGuardianPage> {
                             Icon(Icons.info_outline, color: primaryColor),
                             Text(
                               "Você pode ter até 5 anjos guardiões.",
-                              style: GiFontStyle.body.copyWith(
+                              style: BasFontStyle.body.copyWith(
                                 color: primaryColor,
                               ),
                             ),

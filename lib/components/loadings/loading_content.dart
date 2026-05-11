@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../responsiveness/responsive.dart';
 import '../../theme/colors.dart';
 
-class BasLoadingContent extends StatelessWidget {
-  const BasLoadingContent({super.key, this.value});
+class DashLoadingContent extends StatelessWidget {
+  const DashLoadingContent({super.key, this.value});
   final double? value;
   @override
   Widget build(BuildContext context) {

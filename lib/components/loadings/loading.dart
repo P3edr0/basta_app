@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../responsiveness/responsive.dart';
 import '../../theme/colors.dart';
 
-class BasPageLoading extends StatelessWidget {
-  const BasPageLoading({super.key});
+class DashPageLoading extends StatelessWidget {
+  const DashPageLoading({super.key});
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;

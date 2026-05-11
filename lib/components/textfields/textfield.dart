@@ -113,7 +113,7 @@ class _GiTextfieldState extends State<GiTextfield> {
             padding: EdgeInsets.only(left: Responsive.getSize(8.0)),
             child: Text(
               widget.label!,
-              style: GiFontStyle.bodyLargeBold.copyWith(color: grey),
+              style: BasFontStyle.bodyLargeBold.copyWith(color: grey),
             ),
           ),
           SizedBox(height: Responsive.getSize(2)),
@@ -129,7 +129,7 @@ class _GiTextfieldState extends State<GiTextfield> {
           ),
           width: double.infinity,
           child: TextFormField(
-            style: GiFontStyle.bodyLargeBoldSec.copyWith(
+            style: BasFontStyle.bodyLargeBoldSec.copyWith(
               color: widget.textColor ?? primaryColor,
             ),
             focusNode: widget.focusNode,
@@ -139,11 +139,11 @@ class _GiTextfieldState extends State<GiTextfield> {
             maxLines: widget.maxLines,
             decoration: InputDecoration(
               hintText: widget.hint,
-              hintStyle: GiFontStyle.bodyLargeSec.copyWith(
+              hintStyle: BasFontStyle.bodyLargeSec.copyWith(
                 color: Color(0xff000000).withOpacity(.25),
               ),
               border: InputBorder.none,
-              labelStyle: GiFontStyle.bodyBoldSec.copyWith(
+              labelStyle: BasFontStyle.bodyBoldSec.copyWith(
                 fontSize: null,
                 color: widget.textColor?.withOpacity(.25) ?? primaryColor,
               ),
@@ -160,7 +160,7 @@ class _GiTextfieldState extends State<GiTextfield> {
                         ),
                         child: Text(
                           widget.label!,
-                          style: GiFontStyle.titleBold.copyWith(
+                          style: BasFontStyle.titleBold.copyWith(
                             color: widget.textColor?.withOpacity(.5),
                           ),
                         ),

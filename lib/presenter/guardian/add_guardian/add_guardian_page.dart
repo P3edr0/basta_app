@@ -51,7 +51,7 @@ class AddGuardianPageState extends State<AddGuardianPage> {
           child: Consumer<AddGuardianController>(
             builder: (context, controller, child) {
               if (controller.isLoading) {
-                return BasPageLoading();
+                return DashPageLoading();
               }
 
               final filteredGuardians = controller.filteredGuardians;
@@ -69,11 +69,11 @@ class AddGuardianPageState extends State<AddGuardianPage> {
                     SizedBox(height: Responsive.getSize(16)),
                     Text(
                       "Adicionar anjo",
-                      style: GiFontStyle.h4BoldSec.copyWith(color: darkGrey),
+                      style: BasFontStyle.h4BoldSec.copyWith(color: darkGrey),
                     ),
                     Text(
                       "Encontre pessoas de confiança para fazerem parte da sua rede de proteção",
-                      style: GiFontStyle.bodyLargeBold.copyWith(color: grey),
+                      style: BasFontStyle.bodyLargeBold.copyWith(color: grey),
                     ),
                     SizedBox(height: Responsive.getSize(20)),
                     Row(
@@ -119,13 +119,13 @@ class AddGuardianPageState extends State<AddGuardianPage> {
                         children: [
                           Text(
                             "Resultados da busca",
-                            style: GiFontStyle.bodyLargeBoldSec.copyWith(
+                            style: BasFontStyle.bodyLargeBoldSec.copyWith(
                               color: darkGrey,
                             ),
                           ),
                           Text(
                             "${filteredGuardians.length} RESULTADOS",
-                            style: GiFontStyle.bodyBold.copyWith(
+                            style: BasFontStyle.bodyBold.copyWith(
                               color: primaryColor,
                             ),
                           ),
@@ -170,6 +170,8 @@ class AddGuardianPageState extends State<AddGuardianPage> {
                             if (guardian.status!.isInvited) {
                               InviteDialog.show(
                                 title: "Pedido",
+                                acceptButton: "Aceitar",
+                                refuseButton: "Recusar",
                                 content:
                                     "${guardian.name} pediu para você se tornar anjo guardião dela",
                                 acceptCallback: () async {

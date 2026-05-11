@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gina/responsiveness/responsive.dart';
 
 import '../../responsiveness/gi_font_style.dart';
 import '../../theme/colors.dart';
@@ -7,20 +8,34 @@ import '../buttons/rounded_button.dart';
 class InfoDialog {
   const InfoDialog();
 
-  static Future show(String title, String content, BuildContext context) async {
+  static Future show(
+    String title,
+    String content,
+    BuildContext context, [
+    String? image,
+  ]) async {
     return await showDialog(
       context: context,
       builder:
           (context) => AlertDialog(
             title: Text(title, textAlign: TextAlign.center),
-            content: Text(content, textAlign: TextAlign.center),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (image != null)
+                  Image.network(image, height: Responsive.getSize(120)),
+
+                Text(content, textAlign: TextAlign.center),
+              ],
+            ),
+
             actions: [
-              GiRoundedButton(
+              DashRoundedButton(
                 onTap: () => Navigator.of(context).pop(),
 
                 child: Text(
                   'Fechar',
-                  style: GiFontStyle.bodyBoldSec.copyWith(
+                  style: BasFontStyle.bodyBoldSec.copyWith(
                     color: secondaryColor,
                   ),
                 ),

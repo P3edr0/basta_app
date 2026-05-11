@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Gina",
+            "name": "Basta",
             "request": "launch",
             "type": "dart",
             "toolArgs": [
@@ -14,7 +14,7 @@
             ]
         },
         {
-            "name": "Gina (profile mode)",
+            "name": "Basta (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile",
@@ -24,7 +24,7 @@
             ]
         },
         {
-            "name": "Gina (release mode)",
+            "name": "Basta (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release",

@@ -1,6 +1,5 @@
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BasIcons {
   static IconData check = FeatherIcons.check;
@@ -15,7 +14,9 @@ class BasIcons {
   static IconData pin = FeatherIcons.mapPin;
   static IconData home = FeatherIcons.home;
   static IconData profile = FeatherIcons.user;
-  static IconData angel = Icons.health_and_safety_outlined;
-  static IconData health = FontAwesomeIcons.stethoscope;
+  static IconData angel = Icons.diversity_1_outlined;
+  static IconData psychology = Icons.psychology_outlined;
   static IconData policy = Icons.policy_outlined;
+  static IconData sponsors = Icons.handshake_outlined;
+  static IconData share = Icons.share;
 }

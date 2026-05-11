@@ -11,6 +11,8 @@ class InviteDialog {
   static Future show({
     required String title,
     required String content,
+    required String refuseButton,
+    required String acceptButton,
     required Function() acceptCallback,
     required Function() refuseCallback,
 
@@ -22,10 +24,10 @@ class InviteDialog {
           (context) => AlertDialog(
             title: Text(title, textAlign: TextAlign.center),
             content: Text(content, textAlign: TextAlign.center),
-
+            actionsAlignment: MainAxisAlignment.spaceBetween,
             actions: [
-              GiRoundedButton.solid(
-                width: Responsive.getSize(110),
+              DashRoundedButton.solid(
+                width: Responsive.getSize(120),
 
                 color: darkGrey,
                 onTap: () {
@@ -33,14 +35,14 @@ class InviteDialog {
                   Navigator.of(context).pop();
                 },
                 child: Text(
-                  'Recusar',
-                  style: GiFontStyle.bodyBoldSec.copyWith(
+                  refuseButton,
+                  style: BasFontStyle.bodyBoldSec.copyWith(
                     color: secondaryColor,
                   ),
                 ),
               ),
-              GiRoundedButton.solid(
-                width: Responsive.getSize(110),
+              DashRoundedButton.solid(
+                width: Responsive.getSize(120),
                 color: primaryColor,
                 onTap: () {
                   acceptCallback();
@@ -48,8 +50,8 @@ class InviteDialog {
                 },
 
                 child: Text(
-                  'Aceitar',
-                  style: GiFontStyle.bodyBoldSec.copyWith(
+                  acceptButton,
+                  style: BasFontStyle.bodyBoldSec.copyWith(
                     color: secondaryColor,
                   ),
                 ),

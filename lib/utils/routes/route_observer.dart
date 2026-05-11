@@ -31,6 +31,9 @@ class RouteStackObserver extends NavigatorObserver with ChangeNotifier {
     if (route.settings.name == GiRoutes.home) {
       changeCurrentPage(2);
     }
+    if (route.settings.name == GiRoutes.policeStation) {
+      changeCurrentPage(1);
+    }
     if (route.settings.name == GiRoutes.addGuardian ||
         route.settings.name == GiRoutes.guardian) {
       changeCurrentPage(3);
@@ -45,6 +48,9 @@ class RouteStackObserver extends NavigatorObserver with ChangeNotifier {
     _routeStack.remove(route);
     log('Popped: ${route.settings.name}');
 
+    if (previousRoute?.settings.name == GiRoutes.policeStation) {
+      changeCurrentPage(1);
+    }
     if (previousRoute?.settings.name == GiRoutes.home) {
       changeCurrentPage(2);
     }

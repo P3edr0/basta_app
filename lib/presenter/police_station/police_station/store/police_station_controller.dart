@@ -17,8 +17,8 @@ class PolicyStationController extends ChangeNotifier {
   LatLng? currentPosition;
   Set<Marker> markers = {};
   List<PoliceStationEntity> stations = [];
-  final String googleApiKey = "AIzaSyCHU69xw5O9j3-V7XKzyA6gIMVrYwZcqwU";
   bool isLoading = true;
+  int? selectedStation;
   List<LatLng> polylineCoordinates = [];
   PolylinePoints polylinePoints = PolylinePoints(apiKey: Environment.mapKey);
 
@@ -31,7 +31,11 @@ class PolicyStationController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 1. Pega a localização do usuário
+  setSelectedStation(int? newStation) {
+    selectedStation = newStation;
+    notifyListeners();
+  }
+
   Future<bool> getUserLocation(BuildContext context) async {
     setIsLoading(true);
     final status = await Permission.location.request();
@@ -61,7 +65,7 @@ class PolicyStationController extends ChangeNotifier {
         '&radius=5000' // 5km
         '&language=pt-BR'
         '&type=police'
-        '&key=$googleApiKey';
+        '&key=${Environment.mapKey}';
 
     final response = await http.get(Uri.parse(url));
 
@@ -94,7 +98,7 @@ class PolicyStationController extends ChangeNotifier {
                 'https://maps.googleapis.com/maps/api/place/photo'
                 '?maxwidth=400'
                 '&photo_reference=$photoReference'
-                '&key=$googleApiKey';
+                '&key=${Environment.mapKey}';
             return Marker(
               visible: place['business_status'] == 'OPERATIONAL',
               markerId: MarkerId(place['place_id']),

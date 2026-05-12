@@ -14,9 +14,11 @@ class PoliceCard extends StatelessWidget {
     super.key,
     required this.policeStation,
     required this.onTap,
+    required this.isSelected,
   });
   final PoliceStationEntity policeStation;
   final Function() onTap;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class PoliceCard extends StatelessWidget {
       ),
       padding: EdgeInsets.all(Responsive.getSize(16)),
       decoration: BoxDecoration(
-        color: lightGrey,
+        color: isSelected ? primaryColor : lightGrey,
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
@@ -53,12 +55,15 @@ class PoliceCard extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: primaryColor.withValues(alpha: 0.2),
+                color:
+                    isSelected
+                        ? secondaryColor.withValues(alpha: 0.2)
+                        : primaryColor.withValues(alpha: 0.2),
               ),
               padding: EdgeInsets.all(Responsive.getSize(4)),
-              child: const Icon(
+              child: Icon(
                 Icons.shield_moon_outlined,
-                color: primaryColor,
+                color: isSelected ? secondaryColor : primaryColor,
               ),
             ),
             SizedBox(width: Responsive.getSize(10)),
@@ -83,7 +88,7 @@ class PoliceCard extends StatelessWidget {
                         padding: EdgeInsets.only(top: Responsive.getSize(2)),
                         child: Icon(
                           BasIcons.pin,
-                          color: grey,
+                          color: isSelected ? secondaryColor : grey,
                           size: Responsive.getSize(16),
                         ),
                       ),
@@ -91,7 +96,9 @@ class PoliceCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           policeStation.address,
-                          style: BasFontStyle.body.copyWith(color: grey),
+                          style: BasFontStyle.body.copyWith(
+                            color: isSelected ? secondaryColor : grey,
+                          ),
                         ),
                       ),
                     ],
@@ -118,7 +125,10 @@ class PoliceCard extends StatelessWidget {
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
-                    color: primaryColor.withValues(alpha: 0.2),
+                    color:
+                        isSelected
+                            ? secondaryColor.withValues(alpha: 0.2)
+                            : primaryColor.withValues(alpha: 0.2),
                   ),
                   padding: EdgeInsets.symmetric(
                     horizontal: Responsive.getSize(8),
@@ -128,7 +138,7 @@ class PoliceCard extends StatelessWidget {
                     '${policeStation.distance.toStringAsFixed(1)}\nkm',
                     textAlign: TextAlign.center,
                     style: BasFontStyle.verySmallBold.copyWith(
-                      color: primaryColor,
+                      color: isSelected ? secondaryColor : primaryColor,
                     ),
                   ),
                 ),
@@ -144,10 +154,16 @@ class PoliceCard extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: primaryColor.withValues(alpha: 0.2),
+                        color:
+                            isSelected
+                                ? secondaryColor.withValues(alpha: 0.2)
+                                : primaryColor.withValues(alpha: 0.2),
                       ),
                       padding: EdgeInsets.all(Responsive.getSize(4)),
-                      child: const Icon(Icons.call, color: primaryColor),
+                      child: Icon(
+                        Icons.call,
+                        color: isSelected ? secondaryColor : primaryColor,
+                      ),
                     ),
                   ),
               ],

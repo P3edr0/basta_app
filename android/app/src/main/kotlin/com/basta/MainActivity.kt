@@ -1,4 +1,4 @@
-package com.basta
+package com.seguranca.basta
 
 import io.flutter.embedding.android.FlutterActivity
 

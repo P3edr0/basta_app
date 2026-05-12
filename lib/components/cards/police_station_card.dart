@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gina/components/dialogs/error_dialog.dart';
 import 'package:gina/domain/entities/police_station_entity.dart';
 import 'package:provider/provider.dart';
 
@@ -149,7 +150,12 @@ class PoliceCard extends StatelessWidget {
                           context.read<IUrlLauncherService>();
 
                       final phone = policeStation.phone!;
-                      await urlLauncherService.makePhoneCall(phone);
+                    final successCall =   await urlLauncherService.makePhoneCall(phone);
+                    if(!successCall){
+ErrorDialog.show(content: "Não foi possível iniciar a chamada para o número $phone.", 
+title:"Atenção",
+context: context);
+                    }
                     },
                     child: Container(
                       decoration: BoxDecoration(

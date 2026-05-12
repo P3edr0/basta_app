@@ -20,11 +20,21 @@ class HomeController extends ChangeNotifier {
 
   Future<bool> getCurrentAddress() async {
     try {
-      final status = await Permission.location.request();
+      //final status = await Permission.location.request();
+LocationPermission permission = await Geolocator.checkPermission();
+    
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return false;
+    }
 
-      if (!status.isGranted && !status.isProvisional) {
-        return false;
-      }
+    if (permission == LocationPermission.deniedForever) {
+      // Aqui o iOS não abre mais o pop-up. Você deve avisar a usuária 
+      // para abrir as configurações.
+      return false;
+    }
+
+     
       Position position = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.high,

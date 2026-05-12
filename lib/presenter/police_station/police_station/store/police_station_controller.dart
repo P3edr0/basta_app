@@ -10,7 +10,6 @@ import 'package:gina/utils/assets/app_assets.dart';
 import 'package:gina/utils/framework/environment.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:permission_handler/permission_handler.dart';
 
 class PolicyStationController extends ChangeNotifier {
   UserEntity? user;
@@ -38,11 +37,21 @@ class PolicyStationController extends ChangeNotifier {
 
   Future<bool> getUserLocation(BuildContext context) async {
     setIsLoading(true);
-    final status = await Permission.location.request();
+     //final status = await Permission.location.request();
+LocationPermission permission = await Geolocator.checkPermission();
+    
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return false;
+    }
 
-    if (!status.isGranted && !status.isProvisional) {
+    if (permission == LocationPermission.deniedForever) {
+      // Aqui o iOS não abre mais o pop-up. Você deve avisar a usuária 
+      // para abrir as configurações.
       return false;
     }
+
+   
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );

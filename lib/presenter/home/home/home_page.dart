@@ -197,7 +197,12 @@ class _HomePageState extends State<HomePage> {
                           Align(
                             alignment: Alignment.center,
                             child: InkWell(
-                              onTap: () async {},
+                              onTap:
+                                  () => InfoDialog.closeAuto(
+                                    "Em breve...",
+                                    "Estamos desenvolvendo esta funcionalidade.",
+                                    context,
+                                  ),
                               child: CircleAvatar(
                                 backgroundColor: secondaryColor.withValues(
                                   alpha: 0.1,

@@ -23,9 +23,7 @@ class PoliceStationPage extends StatefulWidget {
 class _PoliceStationPageState extends State<PoliceStationPage> {
   final navigator = AppNavigator();
   late GoogleMapController mapController;
-  // final _center = LatLng(-22.430010751482573, -45.453403486505614);
-  // @override
-  // LatLng? _currentPosition;
+  final dragController = DraggableScrollableController();
 
   @override
   void initState() {
@@ -114,6 +112,7 @@ class _PoliceStationPageState extends State<PoliceStationPage> {
                           initialChildSize: 0.6, // Altura inicial (30% da tela)
                           minChildSize: 0.3, // Altura mínima (10% da tela)
                           maxChildSize: 0.9, // Altura máxima (90% da tela)
+                          controller: dragController,
                           builder: (
                             BuildContext context,
                             ScrollController scrollController,
@@ -197,6 +196,10 @@ class _PoliceStationPageState extends State<PoliceStationPage> {
 
                                         PoliceCard(
                                           policeStation: policeStation,
+                                          isSelected:
+                                              controller.selectedStation ==
+                                              index,
+
                                           onTap: () {
                                             final end = LatLng(
                                               policeStation
@@ -207,6 +210,13 @@ class _PoliceStationPageState extends State<PoliceStationPage> {
                                                   .longitude,
                                             );
                                             controller.getPolyline(end: end);
+                                            dragController.jumpTo(0.3);
+                                            controller.setSelectedStation(
+                                              index,
+                                            );
+                                            mapController.moveCamera(
+                                              CameraUpdate.newLatLng(end),
+                                            );
                                           },
                                         ),
                                       ],
@@ -215,12 +225,20 @@ class _PoliceStationPageState extends State<PoliceStationPage> {
 
                                   return PoliceCard(
                                     policeStation: policeStation,
+                                    isSelected:
+                                        controller.selectedStation == index,
                                     onTap: () {
                                       final end = LatLng(
                                         policeStation.coordinates.latitude,
                                         policeStation.coordinates.longitude,
                                       );
                                       controller.getPolyline(end: end);
+                                      dragController.jumpTo(0.3);
+                                      controller.setSelectedStation(index);
+
+                                      mapController.moveCamera(
+                                        CameraUpdate.newLatLng(end),
+                                      );
                                     },
                                   );
                                 },

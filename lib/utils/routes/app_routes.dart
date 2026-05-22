@@ -3,6 +3,7 @@ class GiRoutes {
   static const createAccount = '/create_account';
   static const updateUser = '/update_user';
   static const guardian = '/guardian';
+  static const call = '/call';
   static const addGuardian = '/add_guardian';
   static const policeStation = '/police_station';
   static const home = '/home';

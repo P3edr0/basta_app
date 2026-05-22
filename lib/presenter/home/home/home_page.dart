@@ -28,7 +28,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final navigator = AppNavigator();
+  final _navigator = AppNavigator();
 
   @override
   void initState() {
@@ -36,6 +36,7 @@ class _HomePageState extends State<HomePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final controller = context.read<HomeController>();
+
       await controller.getCurrentAddress();
     });
   }
@@ -106,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                                   context.read<UpdateUserController>();
                               final user = authController.user;
                               updateUserController.setUser(user);
-                              navigator.goto(GiRoutes.updateUser);
+                              _navigator.goto(GiRoutes.updateUser);
                             },
 
                             child: CircleAvatar(
@@ -197,12 +198,8 @@ class _HomePageState extends State<HomePage> {
                           Align(
                             alignment: Alignment.center,
                             child: InkWell(
-                              onTap:
-                                  () => InfoDialog.closeAuto(
-                                    "Em breve...",
-                                    "Estamos desenvolvendo esta funcionalidade.",
-                                    context,
-                                  ),
+                              onTap: () => _navigator.goto(GiRoutes.call),
+
                               child: CircleAvatar(
                                 backgroundColor: secondaryColor.withValues(
                                   alpha: 0.1,
@@ -248,7 +245,7 @@ class _HomePageState extends State<HomePage> {
                                     "Encontre a delegacia mais próxima de você.",
                                 icon: GiAppAssets.shield,
                                 onTap: () {
-                                  navigator.goto(GiRoutes.policeStation);
+                                  _navigator.goto(GiRoutes.policeStation);
                                 },
                               ),
 
@@ -260,7 +257,7 @@ class _HomePageState extends State<HomePage> {
                                     "Adicione pessoas de segurança que serão alertadas.",
                                 icon: GiAppAssets.angel,
                                 onTap: () {
-                                  navigator.goto(GiRoutes.guardian);
+                                  _navigator.goto(GiRoutes.guardian);
                                 },
                               ),
                             ],

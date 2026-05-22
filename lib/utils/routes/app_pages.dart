@@ -7,6 +7,7 @@ import 'package:gina/presenter/guardian/my_guardians/my_guardian_page.dart';
 import 'package:gina/presenter/home/home/home_page.dart';
 import 'package:gina/presenter/police_station/police_station/police_station_page.dart';
 
+import '../../presenter/home/call/call_page.dart';
 import '../../presenter/splash/splash_page.dart';
 import 'app_routes.dart';
 
@@ -51,6 +52,11 @@ class AppPages {
       case == GiRoutes.policeStation:
         return MaterialPageRoute(
           builder: (_) => PoliceStationPage(),
+          settings: settings,
+        );
+      case == GiRoutes.call:
+        return MaterialPageRoute(
+          builder: (_) => CallPage(),
           settings: settings,
         );
       default:

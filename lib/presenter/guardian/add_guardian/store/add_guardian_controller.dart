@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gina/data/guardian/create_guardian_order_datasource.dart';
+import 'package:gina/data/user/update_user_datasource.dart';
 import 'package:gina/domain/entities/guardian_entity.dart';
 import 'package:gina/domain/entities/guardian_order_entity.dart';
 import 'package:gina/domain/entities/user_entity.dart';
@@ -134,9 +135,27 @@ class AddGuardianController extends ChangeNotifier {
     required GuardianStatus newStatus,
   }) async {
     final updateGuardianOrder = UpdateGuardianOrderDatasource();
+    final updateUser = UpdateUserDatasource();
 
     final order = orders.firstWhere((order) => order.id == orderId);
     final newOrder = order.copyWith(answer: newStatus.isAccept);
+
+    if (newStatus.isAccept) {
+      final newMyGuardians = [...?user!.myGuardians, order.applicantId];
+      user = user!.copyWith(myGuardians: newMyGuardians);
+      final userResponse = await updateUser(user!);
+      userResponse.fold(
+        (newException) {
+          exception = newException.message;
+          notifyListeners();
+          return;
+        },
+        (success) {
+          exception = null;
+          notifyListeners();
+        },
+      );
+    }
     final guardiansResponse = await updateGuardianOrder(newOrder);
 
     return guardiansResponse.fold(

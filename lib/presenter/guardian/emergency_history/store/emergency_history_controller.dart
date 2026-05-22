@@ -1,3 +1,4 @@
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gina/domain/entities/guardian_entity.dart';
@@ -5,8 +6,8 @@ import 'package:gina/domain/entities/guardian_entity.dart';
 import '../../../../data/guardian/delete_guardian_order_datasource.dart';
 import '../../../../utils/enums/angel_filter_type.dart';
 
-class MyGuardianController extends ChangeNotifier {
-  bool isLoading = true;
+class EmergencyHistoryController extends ChangeNotifier {
+  bool isLoading = false;
   String? exception;
   List<GuardianEntity> allGuardians = [];
   List<GuardianEntity> myGuardians = [];

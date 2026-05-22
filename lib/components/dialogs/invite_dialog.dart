@@ -26,7 +26,7 @@ class InviteDialog {
             content: Text(content, textAlign: TextAlign.center),
             actionsAlignment: MainAxisAlignment.spaceBetween,
             actions: [
-              DashRoundedButton.solid(
+              BasRoundedButton.solid(
                 width: Responsive.getSize(120),
 
                 color: darkGrey,
@@ -41,7 +41,7 @@ class InviteDialog {
                   ),
                 ),
               ),
-              DashRoundedButton.solid(
+              BasRoundedButton.solid(
                 width: Responsive.getSize(120),
                 color: primaryColor,
                 onTap: () {

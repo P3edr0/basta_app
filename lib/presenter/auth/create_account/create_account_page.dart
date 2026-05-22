@@ -151,21 +151,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                                     final image =
                                         await pickedFile!.readAsBytes();
-                                    final imageSize = image.length;
-                                    double sizeInMb = imageSize / (1024 * 1024);
-                                    if (sizeInMb > 0.3) {
-                                      ErrorDialog.show(
-                                        title: "Atenção",
-                                        content:
-                                            "Escolha uma imagem com tamanho menor para prosseguir",
-                                        context: context,
-                                      );
-                                      log("imagem muito grande $sizeInMb");
-                                      return;
-                                    } else {
-                                      log("imagem pequena $sizeInMb");
-                                    }
-
+                                 
                                     controller.setProfileImage(image);
                                   } catch (e) {
                                     ErrorDialog.show(
@@ -623,23 +609,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                             final image =
                                                 await pickedFile!.readAsBytes();
 
-                                            final imageSize = image.length;
-                                            double sizeInMb =
-                                                imageSize / (1024 * 1024);
-                                            if (sizeInMb > 0.3) {
-                                              ErrorDialog.show(
-                                                title: "Atenção",
-                                                content:
-                                                    "Escolha uma imagem com tamanho menor para prosseguir",
-                                                context: context,
-                                              );
-                                              log(
-                                                "imagem muito grande $sizeInMb",
-                                              );
-                                              return;
-                                            } else {
-                                              log("imagem pequena $sizeInMb");
-                                            }
 
                                             controller.setAttackerImage(image);
                                           } catch (e) {
@@ -772,12 +741,18 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                         ),
                         SizedBox(height: Responsive.getSize(24)),
 
-                        DashRoundedButton(
+                        BasRoundedButton(
                           onTap: () async {
                             if (_formKey.currentState?.validate() ?? false) {
                               log("Tudo certo com o formulário");
                               final response = await controller.createUser();
                               if (!response) {
+                                ErrorDialog.show(
+                                  title: "Atenção",
+                                  content: controller.exception ??
+                                      "Ocorreu um erro ao tentar criar sua conta. Tente novamente mais tarde",
+                                  context: context,
+                                );
                                 log("Falhou");
                                 return;
                               }

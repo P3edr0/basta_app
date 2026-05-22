@@ -8,6 +8,8 @@ import 'package:gina/presenter/police_station/police_station/store/police_statio
 import 'package:provider/provider.dart';
 
 import '../presenter/auth/update_user/store/update_user_controller.dart';
+import '../presenter/guardian/emergency_details/store/emergency_details_controller.dart';
+import '../presenter/guardian/emergency_history/store/emergency_history_controller.dart';
 import '../presenter/guardian/store/guardian_controller.dart';
 import '../presenter/home/home/store/home_controller.dart';
 import '../services/cep_service/cep_service.dart';
@@ -52,11 +54,18 @@ class Providers {
     ChangeNotifierProvider<AddGuardianController>(
       create: (ctx) => AddGuardianController(),
     ),
+    ChangeNotifierProvider<EmergencyHistoryController>(
+      create: (ctx) => EmergencyHistoryController(),
+    ),
+    ChangeNotifierProvider<EmergencyDetailsController>(
+      create: (ctx) => EmergencyDetailsController(),
+    ),
     ChangeNotifierProvider<GuardianController>(
       create:
           (ctx) => GuardianController(
             addGuardianController: ctx.read<AddGuardianController>(),
-            myGuardianController: ctx.read<MyGuardianController>(),
+      myGuardianController: ctx.read<MyGuardianController>(),
+            emergencyHistoryController: ctx.read<EmergencyHistoryController>(),
           ),
     ),
   ];

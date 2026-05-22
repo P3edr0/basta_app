@@ -63,6 +63,7 @@ class MyGuardianPageState extends State<MyGuardianPage> {
                     GiAppBar.secondary(title: "Meus Anjos Guardiões"),
 
                     SizedBox(height: Responsive.getSize(16)),
+
                     Text(
                       "Círculo de Proteção",
                       style: BasFontStyle.h4BoldSec.copyWith(color: darkGrey),
@@ -73,12 +74,21 @@ class MyGuardianPageState extends State<MyGuardianPage> {
                     ),
                     SizedBox(height: Responsive.getSize(30)),
 
-                    AngelCard(
+                    GuardianCard(
                       icon: Icons.add,
                       title: "+ Adicionar novo anjo",
                       content: "Convide uma pessoa de confiança",
                       onTap: () {
                         navigator.goto(GiRoutes.addGuardian);
+                      },
+                    ),
+                    SizedBox(height: Responsive.getSize(16)),
+                    GuardianCard(
+                      icon: Icons.emergency_share_outlined,
+                      title: "Ver emergências",
+                      content: "Veja o histórico de emergências",
+                      onTap: () {
+                        navigator.goto(GiRoutes.emergencyHistory);
                       },
                     ),
                     SizedBox(height: Responsive.getSize(30)),
@@ -88,7 +98,7 @@ class MyGuardianPageState extends State<MyGuardianPage> {
                       ),
 
                     ...controller.myGuardians.map(
-                      (guardian) => AngelCard.secondary(
+                      (guardian) => GuardianCard.secondary(
                         title: guardian.name,
                         content: "Pronta para ajudar",
                         image: guardian.image,

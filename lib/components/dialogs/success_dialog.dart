@@ -16,7 +16,7 @@ class SuccessDialog {
             title: Text(title, textAlign: TextAlign.center),
             content: Text(content, textAlign: TextAlign.center),
             actions: [
-              DashRoundedButton(
+              BasRoundedButton(
                 onTap: () => Navigator.of(context).pop(),
 
                 child: Text(

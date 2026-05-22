@@ -30,7 +30,7 @@ class InfoDialog {
             ),
 
             actions: [
-              DashRoundedButton(
+              BasRoundedButton(
                 onTap: () => Navigator.of(context).pop(),
 
                 child: Text(

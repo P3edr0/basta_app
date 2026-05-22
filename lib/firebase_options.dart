@@ -54,6 +54,9 @@ class DefaultFirebaseOptions {
     authDomain: 'basta-82cce.firebaseapp.com',
     storageBucket: 'basta-82cce.firebasestorage.app',
     measurementId: 'G-94VXZEXMC9',
+    databaseURL: 'https://basta-82cce-default-rtdb.firebaseio.com',
+    
+
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -62,6 +65,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '926124252420',
     projectId: 'basta-82cce',
     storageBucket: 'basta-82cce.firebasestorage.app',
+    databaseURL: 'https://basta-82cce-default-rtdb.firebaseio.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -71,5 +75,6 @@ class DefaultFirebaseOptions {
     projectId: 'basta-82cce',
     storageBucket: 'basta-82cce.firebasestorage.app',
     iosBundleId: 'com.example.gina',
+    databaseURL: 'https://basta-82cce-default-rtdb.firebaseio.com',
   );
 }

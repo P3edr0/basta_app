@@ -105,7 +105,7 @@ class PoliceCard extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: Responsive.getSize(12)),
-                  DashRoundedButton(
+                  BasRoundedButton(
                     height: Responsive.getSize(48),
                     onTap: onTap,
                     child: Text(

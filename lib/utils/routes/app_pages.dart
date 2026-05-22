@@ -6,7 +6,9 @@ import 'package:gina/presenter/guardian/add_guardian/add_guardian_page.dart';
 import 'package:gina/presenter/guardian/my_guardians/my_guardian_page.dart';
 import 'package:gina/presenter/home/home/home_page.dart';
 import 'package:gina/presenter/police_station/police_station/police_station_page.dart';
+import 'package:gina/presenter/guardian/emergency_history/emergency_history_page.dart';
 
+import '../../presenter/guardian/emergency_details/emergency_details_page.dart';
 import '../../presenter/splash/splash_page.dart';
 import 'app_routes.dart';
 
@@ -51,6 +53,16 @@ class AppPages {
       case == GiRoutes.policeStation:
         return MaterialPageRoute(
           builder: (_) => PoliceStationPage(),
+          settings: settings,
+        );
+      case == GiRoutes.emergencyHistory:
+        return MaterialPageRoute(
+          builder: (_) => EmergencyHistoryPage(),
+          settings: settings,
+        );
+      case == GiRoutes.emergencyDetails:
+        return MaterialPageRoute(
+          builder: (_) => EmergencyDetailsPage(),
           settings: settings,
         );
       default:

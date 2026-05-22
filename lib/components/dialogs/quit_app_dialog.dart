@@ -21,7 +21,7 @@ class QuitAppDialog {
             content: Text(content, textAlign: TextAlign.center),
             actionsAlignment: MainAxisAlignment.center,
             actions: [
-              DashRoundedButton(
+              BasRoundedButton(
                 width: Responsive.getSize(120),
                 onTap: () => Navigator.of(context).pop(false),
                 child: Text(
@@ -30,7 +30,7 @@ class QuitAppDialog {
                   style: BasFontStyle.titleBold.copyWith(color: secondaryColor),
                 ),
               ),
-              DashRoundedButton.solid(
+              BasRoundedButton.solid(
                 color: secondaryColor,
                 height: 48,
 

@@ -94,61 +94,19 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                               child:
                                   controller.profileImage != null
                                       ? CircleAvatar(
-                                        radius: Responsive.getSize(86),
+                                        radius: Responsive.getSize(90),
                                         backgroundImage: MemoryImage(
                                           controller.profileImage!,
                                         ),
                                       )
-                                      : Container(
-                                        padding: EdgeInsets.all(
-                                          Responsive.getSize(24),
+                                      : controller.networkProfileImage != null
+                                      ? CircleAvatar(
+                                        radius: Responsive.getSize(90),
+                                        backgroundImage: NetworkImage(
+                                          controller.networkProfileImage!,
                                         ),
-
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-
-                                          color: mediumGrey,
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              width: double.infinity,
-                                              padding: EdgeInsets.all(
-                                                Responsive.getSize(10),
-                                              ),
-
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: secondaryColor,
-                                              ),
-                                              child: Icon(
-                                                BasIcons.camera,
-                                                color: darkGrey,
-                                                size: Responsive.getSize(30),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: Responsive.getSize(8),
-                                            ),
-
-                                            Text(
-                                              "Toque para carregar\n uma imagem",
-                                              textAlign: TextAlign.center,
-                                              style: BasFontStyle.bodyBold
-                                                  .copyWith(color: darkGrey),
-                                            ),
-                                            SizedBox(
-                                              height: Responsive.getSize(8),
-                                            ),
-
-                                            Text(
-                                              "PNG, JPG até 5MB",
-                                              style: BasFontStyle.smallBold
-                                                  .copyWith(color: grey),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                      )
+                                      : BasUserImagePickCard(),
                             ),
                           ],
                         ),
@@ -543,69 +501,31 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                                                   width: double.infinity,
                                                 ),
                                               )
-                                              : Container(
-                                                padding: EdgeInsets.all(
-                                                  Responsive.getSize(16),
+                                              : controller
+                                                      .networkAttackerImage !=
+                                                  null
+                                              ? ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+
+                                                child: Image.network(
+                                                  errorBuilder:
+                                                      (
+                                                        context,
+                                                        error,
+                                                        stackTrace,
+                                                      ) =>
+                                                          BasUserAttackerImagePickCard(),
+                                                  controller
+                                                      .networkAttackerImage!,
+                                                  fit: BoxFit.fitWidth,
+                                                  height: Responsive.getSize(
+                                                    200,
+                                                  ),
+                                                  width: double.infinity,
                                                 ),
-
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(30),
-
-                                                  color: secondaryColor,
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    Container(
-                                                      width: double.infinity,
-                                                      padding: EdgeInsets.all(
-                                                        Responsive.getSize(10),
-                                                      ),
-
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: mediumGrey,
-                                                      ),
-                                                      child: Icon(
-                                                        BasIcons.camera,
-                                                        color: darkGrey,
-                                                        size:
-                                                            Responsive.getSize(
-                                                              30,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height:
-                                                          Responsive.getSize(8),
-                                                    ),
-
-                                                    Text(
-                                                      "Toque para carregar\n uma imagem",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: BasFontStyle
-                                                          .bodyBold
-                                                          .copyWith(
-                                                            color: darkGrey,
-                                                          ),
-                                                    ),
-                                                    SizedBox(
-                                                      height:
-                                                          Responsive.getSize(8),
-                                                    ),
-
-                                                    Text(
-                                                      "PNG, JPG até 5MB",
-                                                      style: BasFontStyle
-                                                          .smallBold
-                                                          .copyWith(
-                                                            color: grey,
-                                                          ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
+                                              )
+                                              : BasUserAttackerImagePickCard(),
                                     ),
 
                                     SizedBox(height: Responsive.getSize(8)),
@@ -613,7 +533,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                                       label: "Nome do potencial agressor",
                                       controller:
                                           controller.attackerNameController,
-                                      hint: "Pedro Caetano",
+                                      hint: "Pedro Neves",
                                       backgroundColor: secondaryColor,
                                     ),
 
@@ -642,7 +562,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                       ),
                       SizedBox(height: Responsive.getSize(24)),
 
-                      DashRoundedButton(
+                      BasRoundedButton(
                         onTap: () async {
                           if (_formKey.currentState?.validate() ?? false) {
                             log("Tudo certo com o formulário");
@@ -675,7 +595,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                                 ),
                       ),
                       SizedBox(height: Responsive.getSize(16)),
-                      DashRoundedButton.solid(
+                      BasRoundedButton.solid(
                         color: alertColor,
                         onTap: () async {
                           final logoutSuccess = await controller.logout();
@@ -703,6 +623,98 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class BasUserImagePickCard extends StatelessWidget {
+  const BasUserImagePickCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(Responsive.getSize(24)),
+
+      decoration: BoxDecoration(shape: BoxShape.circle, color: mediumGrey),
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(Responsive.getSize(10)),
+
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: secondaryColor,
+            ),
+            child: Icon(
+              BasIcons.camera,
+              color: darkGrey,
+              size: Responsive.getSize(30),
+            ),
+          ),
+          SizedBox(height: Responsive.getSize(8)),
+
+          Text(
+            "Toque para carregar\n uma imagem",
+            textAlign: TextAlign.center,
+            style: BasFontStyle.bodyBold.copyWith(color: darkGrey),
+          ),
+          SizedBox(height: Responsive.getSize(8)),
+
+          Text(
+            "PNG, JPG até 5MB",
+            style: BasFontStyle.smallBold.copyWith(color: grey),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class BasUserAttackerImagePickCard extends StatelessWidget {
+  const BasUserAttackerImagePickCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(Responsive.getSize(16)),
+
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+
+        color: secondaryColor,
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(Responsive.getSize(10)),
+
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: mediumGrey,
+            ),
+            child: Icon(
+              BasIcons.camera,
+              color: darkGrey,
+              size: Responsive.getSize(30),
+            ),
+          ),
+          SizedBox(height: Responsive.getSize(8)),
+
+          Text(
+            "Toque para carregar\n uma imagem",
+            textAlign: TextAlign.center,
+            style: BasFontStyle.bodyBold.copyWith(color: darkGrey),
+          ),
+          SizedBox(height: Responsive.getSize(8)),
+
+          Text(
+            "PNG, JPG até 5MB",
+            style: BasFontStyle.smallBold.copyWith(color: grey),
+          ),
+        ],
       ),
     );
   }

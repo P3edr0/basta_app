@@ -4,13 +4,14 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gina/domain/entities/tab_menu.dart';
 import 'package:gina/domain/entities/user_entity.dart';
-import 'package:permission_handler/permission_handler.dart';
 
+import '../../../../data/emergency/emergency_datasource.dart';
 import '../../../../theme/icons.dart';
 
 class HomeController extends ChangeNotifier {
   UserEntity? user;
   String place = "Carregando...";
+  Position? currentPosition;
   final tabs = [
     TabMenuEntity(name: "Psicólogos", icon: BasIcons.psychology),
     TabMenuEntity(name: "Anjos", icon: BasIcons.angel),
@@ -21,29 +22,28 @@ class HomeController extends ChangeNotifier {
   Future<bool> getCurrentAddress() async {
     try {
       //final status = await Permission.location.request();
-LocationPermission permission = await Geolocator.checkPermission();
-    
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return false;
-    }
+      LocationPermission permission = await Geolocator.checkPermission();
 
-    if (permission == LocationPermission.deniedForever) {
-      // Aqui o iOS não abre mais o pop-up. Você deve avisar a usuária 
-      // para abrir as configurações.
-      return false;
-    }
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) return false;
+      }
 
-     
-      Position position = await Geolocator.getCurrentPosition(
+      if (permission == LocationPermission.deniedForever) {
+        // Aqui o iOS não abre mais o pop-up. Você deve avisar a usuária
+        // para abrir as configurações.
+        return false;
+      }
+
+      currentPosition = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.high,
         ),
       );
 
       List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
+        currentPosition!.latitude,
+        currentPosition!.longitude,
       );
 
       if (placemarks.isNotEmpty) {
@@ -57,5 +57,17 @@ LocationPermission permission = await Geolocator.checkPermission();
     } catch (e) {
       return false;
     }
+  }
+
+  Future<void> startEmergency() async {
+    final emergencyDatasource = EmergencyDatasource();
+    final guardians = user!.myGuardians ?? [];
+    await emergencyDatasource(userId: user!.id!, guardians: guardians);
+  }
+
+  Future<void> stopEmergency() async {
+    final emergencyDatasource = EmergencyDatasource();
+    final guardians = user!.myGuardians ?? [];
+    emergencyDatasource.stopEmergency(user!.id!, guardians);
   }
 }

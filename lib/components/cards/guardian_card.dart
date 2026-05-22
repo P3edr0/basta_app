@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:gina/utils/enums/guardian_status.dart';
 
@@ -7,8 +5,8 @@ import '../../responsiveness/gi_font_style.dart';
 import '../../responsiveness/responsive.dart';
 import '../../theme/colors.dart';
 
-class AngelCard extends StatelessWidget {
-  const AngelCard({
+class GuardianCard extends StatelessWidget {
+  const GuardianCard({
     super.key,
     required this.content,
     required this.title,
@@ -17,7 +15,7 @@ class AngelCard extends StatelessWidget {
   }) : type = 1,
        status = null,
        image = null;
-  const AngelCard.secondary({
+  const GuardianCard.secondary({
     super.key,
     required this.content,
     required this.title,
@@ -28,7 +26,7 @@ class AngelCard extends StatelessWidget {
        status = null,
 
        type = 2;
-  const AngelCard.tertiary({
+  const GuardianCard.tertiary({
     super.key,
     required this.content,
     required this.title,
@@ -118,8 +116,7 @@ class AngelCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 backgroundColor: primaryColor,
-                backgroundImage:
-                    hasImage ? MemoryImage(base64Decode(image!)) : null,
+                backgroundImage: hasImage ? NetworkImage(image!) : null,
 
                 radius: 28,
               ),
@@ -186,8 +183,7 @@ class AngelCard extends StatelessWidget {
           children: [
             CircleAvatar(
               backgroundColor: primaryColor,
-              backgroundImage:
-                  hasImage ? MemoryImage(base64Decode(image!)) : null,
+              backgroundImage: hasImage ? NetworkImage(image!) : null,
               radius: 28,
             ),
 

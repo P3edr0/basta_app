@@ -1,18 +1,21 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
+import 'package:flutter/services.dart';
 
 class AttackerEntity {
   final String? image;
   final String? protectionId;
   final String? name;
+  final Uint8List? imageFile;
 
-  AttackerEntity({this.image, this.protectionId, this.name});
+  AttackerEntity({this.image, this.protectionId, this.name, this.imageFile});
 
-  AttackerEntity copyWith({String? image, String? protectionId, String? name}) {
+  AttackerEntity copyWith({String? image, String? protectionId, String? name, Uint8List? imageFile}) {
     return AttackerEntity(
       image: image ?? this.image,
       protectionId: protectionId ?? this.protectionId,
       name: name ?? this.name,
+      imageFile: imageFile ?? this.imageFile,
     );
   }
 
@@ -21,6 +24,7 @@ class AttackerEntity {
       'image': image,
       'protectionId': protectionId,
       'name': name,
+      'imageFile': imageFile,
     };
   }
 
@@ -30,6 +34,7 @@ class AttackerEntity {
       protectionId:
           map['protectionId'] != null ? map['protectionId'] as String : null,
       name: map['name'] != null ? map['name'] as String : null,
+      imageFile: map['imageFile'] != null ? map['imageFile'] as Uint8List : null,
     );
   }
 

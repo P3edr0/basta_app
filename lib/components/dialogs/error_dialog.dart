@@ -21,7 +21,7 @@ class ErrorDialog {
             content: Text(content, textAlign: TextAlign.center),
             actionsAlignment: MainAxisAlignment.center,
             actions: [
-              DashRoundedButton(
+              BasRoundedButton(
                 height: 50,
                 width: Responsive.getSize(140),
                 onTap: () => Navigator.of(context).pop(),

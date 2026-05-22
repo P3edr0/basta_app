@@ -144,7 +144,7 @@ class AddGuardianPageState extends State<AddGuardianPage> {
                         padding: EdgeInsets.only(
                           bottom: Responsive.getSize(24),
                         ),
-                        child: AngelCard.tertiary(
+                        child: GuardianCard.tertiary(
                           title: guardian.name,
                           content: guardian.addressResume,
                           image: guardian.image,

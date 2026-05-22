@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
@@ -36,8 +35,10 @@ class UpdateUserController extends ChangeNotifier {
   String selectedState = 'SP';
   bool showAddress = true;
   bool showRiskInfo = true;
-  Uint8List? profileImage;
+  String? networkProfileImage;
   Uint8List? attackerImage;
+  Uint8List? profileImage;
+  String? networkAttackerImage;
   final states = [
     "AC",
     "AL",
@@ -92,10 +93,10 @@ class UpdateUserController extends ChangeNotifier {
     protectionIdController.text = user!.attacker?.protectionId ?? "";
     selectedState = user!.address.state;
     if (user!.image != null) {
-      profileImage = base64Decode(user!.image!);
+      networkProfileImage = user!.image!;
     }
     if (user!.attacker?.image != null) {
-      attackerImage = base64Decode(user!.attacker!.image!);
+      networkAttackerImage = user!.attacker!.image!;
     }
     notifyListeners();
   }
@@ -170,7 +171,8 @@ class UpdateUserController extends ChangeNotifier {
     final datasource = UpdateUserDatasource();
 
     final name = nameController.text;
-    final userImage = base64Encode(profileImage!);
+    final userImage = networkProfileImage;
+    final newProfileImage = profileImage!;
     final cpf = documentController.text;
     final phone = phoneController.text;
     final email = emailController.text;
@@ -190,17 +192,20 @@ class UpdateUserController extends ChangeNotifier {
 
     final attackerName = attackerNameController.text;
     final protectionId = protectionIdController.text;
-    final attackerUserImage = base64Encode(attackerImage!);
+    final attackerUserImage = networkAttackerImage;
+    final newAttackerUserImage = attackerImage;
 
     final attacker = AttackerEntity(
       name: attackerName,
       image: attackerUserImage,
       protectionId: protectionId,
+      imageFile: newAttackerUserImage,
     );
 
     final newUser = UserEntity(
       id: user!.id,
       image: userImage,
+      imageFile: newProfileImage,
       name: name,
       cpf: cpf,
       phone: phone,
@@ -209,12 +214,12 @@ class UpdateUserController extends ChangeNotifier {
       attacker: attacker,
     );
 
-    final response = await datasource.createUser(newUser);
+    final response = await datasource.call(newUser);
 
     return response.fold(
       (newException) {
         exception = newException.message;
-
+        log("Erro ao atualizar usuário: ${newException.message}");
         setIsLoading(false);
 
         return false;

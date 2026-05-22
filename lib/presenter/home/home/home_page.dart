@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gina/components/dialogs/info_dialog.dart';
@@ -13,6 +11,7 @@ import 'package:gina/utils/routes/app_routes.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../responsiveness/responsive.dart';
+import '../../../components/buttons/rounded_button.dart';
 import '../../../components/cards/home_card.dart';
 import '../../../components/dialogs/quit_app_dialog.dart';
 import '../../../theme/colors.dart';
@@ -114,9 +113,7 @@ class _HomePageState extends State<HomePage> {
                               backgroundColor: primaryFocusColor,
                               backgroundImage:
                                   hasImage
-                                      ? MemoryImage(
-                                        base64Decode(controller.user!.image!),
-                                      )
+                                      ? NetworkImage(controller.user!.image!)
                                       : null,
                             ),
                           ),
@@ -198,11 +195,7 @@ class _HomePageState extends State<HomePage> {
                             alignment: Alignment.center,
                             child: InkWell(
                               onTap:
-                                  () => InfoDialog.closeAuto(
-                                    "Em breve...",
-                                    "Estamos desenvolvendo esta funcionalidade.",
-                                    context,
-                                  ),
+                                  () async => await controller.startEmergency(),
                               child: CircleAvatar(
                                 backgroundColor: secondaryColor.withValues(
                                   alpha: 0.1,
@@ -236,6 +229,11 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                             ),
+                          ),
+                          SizedBox(height: Responsive.getSize(20)),
+                          BasRoundedButton(
+                            child: Text("Psicóloga de Plantão"),
+                            onTap: () => controller.stopEmergency(),
                           ),
                           SizedBox(height: Responsive.getSize(40)),
 

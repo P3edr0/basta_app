@@ -133,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
 
                                       SizedBox(height: Responsive.getSize(24)),
 
-                                      DashRoundedButton(
+                                      BasRoundedButton(
                                         onTap: () async {
                                           if (_formKey.currentState
                                                   ?.validate() ??

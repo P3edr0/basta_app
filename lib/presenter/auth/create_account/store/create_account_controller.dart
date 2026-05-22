@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -129,7 +130,7 @@ class CreateAccountController extends ChangeNotifier {
     final datasource = CreateUserDatasource();
 
     final name = nameController.text;
-    final userImage = base64Encode(profileImage!);
+    final userImage = profileImage!;
     final cpf = documentController.text;
     final phone = phoneController.text;
     final email = emailController.text;
@@ -151,16 +152,16 @@ class CreateAccountController extends ChangeNotifier {
 
     final attackerName = attackerNameController.text;
     final protectionId = protectionIdController.text;
-    final attackerUserImage = base64Encode(attackerImage!);
+    final attackerUserImage = attackerImage!;
 
     final attacker = AttackerEntity(
       name: attackerName,
-      image: attackerUserImage,
+      imageFile: attackerUserImage,
       protectionId: protectionId,
     );
 
     final newUser = UserEntity(
-      image: userImage,
+      imageFile: userImage,
       name: name,
       cpf: cpf,
       phone: phone,

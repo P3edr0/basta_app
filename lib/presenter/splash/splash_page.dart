@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gina/presenter/auth/store/auth_controller.dart';
+import 'package:gina/presenter/guardian/store/guardian_controller.dart';
 import 'package:gina/presenter/home/home/store/home_controller.dart';
 import 'package:gina/responsiveness/gi_font_style.dart';
 import 'package:provider/provider.dart';
@@ -28,10 +29,12 @@ class _SplashPageState extends State<SplashPage> {
       final size = MediaQuery.of(context).size;
       Responsive.defineSize(size, pixelRatio: size.aspectRatio);
       final authController = context.read<AuthController>();
+      final guardianController = context.read<GuardianController>();
       final homeController = context.read<HomeController>();
       final hasUser = await authController.getUser();
       if (hasUser) {
         homeController.user = authController.user;
+        await guardianController.refreshNewGuardian(authController.user!);
       }
       redirect(hasUser);
     });

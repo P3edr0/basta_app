@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
 
-class EmergencyDatasource {
+class CreateEmergencyDatasource {
   final FirebaseDatabase _db =
       FirebaseDatabase.instance; // Já configurado corretamente por você!
   static StreamSubscription<Position>? _trackingSubscription;

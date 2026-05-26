@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:gina/domain/entities/address_entity.dart';
@@ -16,8 +15,8 @@ class UserEntity {
   Uint8List? imageFile;
   AddressEntity address;
   AttackerEntity? attacker;
-    final List<String>?myGuardians;
-  final List<String>?protect;
+  final List<String>? myGuardians;
+  final List<String>? protect;
   UserEntity({
     this.id,
     this.image,
@@ -28,8 +27,8 @@ class UserEntity {
     required this.address,
     this.attacker,
     this.notificationToken,
-      this.myGuardians,
-    this.protect ,
+    this.myGuardians,
+    this.protect,
     this.imageFile,
   });
 
@@ -45,12 +44,11 @@ class UserEntity {
       'attacker': attacker?.toMap(),
       'myGuardians': myGuardians,
       'protect': protect,
-      'imageFile': imageFile, 
+      'imageFile': imageFile,
     };
   }
 
-
-UserEntity copyWith({
+  UserEntity copyWith({
     String? id,
     String? image,
     String? name,
@@ -83,16 +81,14 @@ UserEntity copyWith({
   factory UserEntity.fromMap(Map<String, dynamic> map) {
     List<String>? myGuardians;
     List<String>? protect;
-    if(map['myGuardians'] != null) {
-        myGuardians= List<String>.from(map['myGuardians'] as List<dynamic>);
-      }
-    if(map['protected'] != null) {
-        protect= List<String>.from(map['protected'] as List<dynamic>);
-      }
+    if (map['myGuardians'] != null) {
+      myGuardians = List<String>.from(map['myGuardians'] as List<dynamic>);
+    }
+    if (map['protected'] != null) {
+      protect = List<String>.from(map['protected'] as List<dynamic>);
+    }
 
     return UserEntity(
-      
-      
       id: map['id'],
       image: map['image'] as String,
       name: map['name'] as String,
@@ -102,8 +98,8 @@ UserEntity copyWith({
       notificationToken: map['notificationToken'],
       address: AddressEntity.fromMap(map['address'] as Map<String, dynamic>),
       attacker: AttackerEntity.fromMap(map['attacker'] as Map<String, dynamic>),
-       myGuardians:  myGuardians,
-    protect: protect,
+      myGuardians: myGuardians,
+      protect: protect,
     );
   }
 

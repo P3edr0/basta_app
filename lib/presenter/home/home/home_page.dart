@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:gina/components/dialogs/info_dialog.dart';
 import 'package:gina/presenter/auth/store/auth_controller.dart';
 import 'package:gina/presenter/auth/update_user/store/update_user_controller.dart';
+import 'package:gina/presenter/guardian/emergency_details/store/emergency_details_controller.dart';
+import 'package:gina/presenter/guardian/store/guardian_controller.dart';
 import 'package:gina/presenter/home/home/store/home_controller.dart';
 import 'package:gina/responsiveness/gi_font_style.dart';
 import 'package:gina/theme/icons.dart';
@@ -13,9 +15,13 @@ import 'package:provider/provider.dart';
 import '../../../../responsiveness/responsive.dart';
 import '../../../components/buttons/rounded_button.dart';
 import '../../../components/cards/home_card.dart';
+import '../../../components/dialogs/emergency_dialog.dart';
 import '../../../components/dialogs/quit_app_dialog.dart';
+import '../../../data/emergency/guardian_tracking_datasource.dart';
+import '../../../main.dart';
 import '../../../theme/colors.dart';
 import '../../../utils/assets/app_assets.dart';
+import '../../../utils/enums/emergency_status.dart';
 import '../../../utils/routes/app_navigator.dart';
 import '../../core/widgets/bottom_navigation_bar.dart';
 
@@ -34,6 +40,42 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final guardianTracking = GuardianTrackingDataSource();
+      final authController = context.read<AuthController>();
+
+      guardianTracking.call(
+        userId: authController.user!.id!,
+        protectedVictimsIds: authController.user?.myGuardians ?? [],
+
+        onEmergencyDetected: (victimId, emergencyId) {
+          final navigatorContext = navigatorKey.currentContext;
+          if (navigatorContext == null) return;
+          final guardiansController =
+              navigatorContext.read<GuardianController>();
+          final emergencyDetailsController =
+              navigatorContext.read<EmergencyDetailsController>();
+
+          if (guardiansController.emergencyActivated) return;
+          guardiansController.setEmergencyActivated(true);
+          final guardian = guardiansController.allGuardians.firstWhere(
+            (guard) => guard.id == victimId,
+          );
+          emergencyDetailsController.setEmergencyData(emergencyId, guardian);
+
+          EmergencyDialog.show(
+            "Atenção",
+            "${guardian.name} acionou o botão de emergência!\nAcompanhe a localização dela em tempo real.",
+            context,
+            () {
+              emergencyDetailsController.setIsEmergency(
+                true,
+                EmergencyStatus.active,
+              );
+              navigator.goto(GiRoutes.emergencyDetails);
+            },
+          );
+        },
+      );
       final controller = context.read<HomeController>();
       await controller.getCurrentAddress();
     });

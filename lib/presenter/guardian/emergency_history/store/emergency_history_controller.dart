@@ -1,8 +1,9 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gina/domain/entities/emergency_history_entity.dart';
 import 'package:gina/domain/entities/guardian_entity.dart';
 
+import '../../../../data/emergency/fetch_emergency_history_datasource.dart';
 import '../../../../data/guardian/delete_guardian_order_datasource.dart';
 import '../../../../utils/enums/angel_filter_type.dart';
 
@@ -11,7 +12,9 @@ class EmergencyHistoryController extends ChangeNotifier {
   String? exception;
   List<GuardianEntity> allGuardians = [];
   List<GuardianEntity> myGuardians = [];
-   AngelFilterType angelFilterType = AngelFilterType.myGuardians; 
+  List<EmergencyHistoryEntity> historical = [];
+
+  AngelFilterType angelFilterType = AngelFilterType.myGuardians;
   setException(String newException) {
     exception = newException;
     notifyListeners();
@@ -33,7 +36,7 @@ class EmergencyHistoryController extends ChangeNotifier {
     notifyListeners();
   }
 
-setAngelFilterType(AngelFilterType newType) {
+  setAngelFilterType(AngelFilterType newType) {
     angelFilterType = newType;
     notifyListeners();
   }
@@ -59,6 +62,39 @@ setAngelFilterType(AngelFilterType newType) {
           myGuardians = [...tempList];
           notifyListeners();
         }
+      },
+    );
+  }
+
+  Future<void> fetchEmergencyHistory({
+    required String userId,
+    required List<String> guardians,
+  }) async {
+    final fetchEmergencyHistory = FetchEmergencyHistoryDatasource();
+
+    final response = await fetchEmergencyHistory(
+      userId: userId,
+      guardians: guardians,
+    );
+
+    return response.fold(
+      (newException) {
+        exception = newException.message;
+        notifyListeners();
+      },
+      (newEmergencies) {
+        historical = newEmergencies;
+
+        historical =
+            newEmergencies.map((emergency) {
+              final matchedGuardian = allGuardians.firstWhere(
+                (guardian) => guardian.id == emergency.victimId,
+                orElse: () => GuardianEntity(id: null, name: "Desconecido"),
+              );
+              return emergency.copyWith(guardian: matchedGuardian);
+            }).toList();
+        historical.sort((a, b) => b.date.compareTo(a.date));
+        notifyListeners();
       },
     );
   }

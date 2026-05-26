@@ -37,21 +37,20 @@ class PolicyStationController extends ChangeNotifier {
 
   Future<bool> getUserLocation(BuildContext context) async {
     setIsLoading(true);
-     //final status = await Permission.location.request();
-LocationPermission permission = await Geolocator.checkPermission();
-    
+    //final status = await Permission.location.request();
+    LocationPermission permission = await Geolocator.checkPermission();
+
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) return false;
     }
 
     if (permission == LocationPermission.deniedForever) {
-      // Aqui o iOS não abre mais o pop-up. Você deve avisar a usuária 
+      // Aqui o iOS não abre mais o pop-up. Você deve avisar a usuária
       // para abrir as configurações.
       return false;
     }
 
-   
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );

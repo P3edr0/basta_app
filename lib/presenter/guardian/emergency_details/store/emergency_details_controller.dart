@@ -1,25 +1,36 @@
-import 'dart:convert';
+import 'dart:async';
+import 'dart:developer';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:gina/components/dialogs/info_dialog.dart';
-import 'package:gina/domain/entities/police_station_entity.dart';
+import 'package:gina/data/emergency/guardian_tracking_datasource.dart';
+import 'package:gina/domain/entities/emergency_history_entity.dart';
+import 'package:gina/domain/entities/guardian_entity.dart';
 import 'package:gina/domain/entities/user_entity.dart';
-import 'package:gina/utils/assets/app_assets.dart';
+import 'package:gina/theme/colors.dart';
+import 'package:gina/utils/enums/emergency_status.dart';
 import 'package:gina/utils/framework/environment.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class EmergencyDetailsController extends ChangeNotifier {
   UserEntity? user;
-  LatLng? currentPosition;
-  Set<Marker> markers = {};
-  List<PoliceStationEntity> stations = [];
+  String? emergencyId;
+  GuardianEntity? currentVictim;
+  EmergencyHistoryEntity? currentEmergency;
+  LatLng? currentUserPosition;
+  List<LatLng> victimPositions = [];
+  Marker? marker;
   bool isLoading = true;
   int? selectedStation;
   List<LatLng> polylineCoordinates = [];
+  bool isEmergency = false;
+  EmergencyStatus emergencyStatus = EmergencyStatus.closed;
   PolylinePoints polylinePoints = PolylinePoints(apiKey: Environment.mapKey);
+  Set<Polyline> polylines = {};
 
   setIsLoading([bool? newLoading]) {
     if (newLoading == null) {
@@ -30,124 +41,223 @@ class EmergencyDetailsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  setSelectedStation(int? newStation) {
-    selectedStation = newStation;
+  startPage(EmergencyHistoryEntity newEmergency) {
+    currentEmergency = newEmergency;
+    setIsEmergency(false, EmergencyStatus.closed);
+    victimPositions = currentEmergency!.positions;
+    currentVictim = currentEmergency?.guardian;
+  }
+
+  void setEmergencyData(String newEmergencyId, GuardianEntity guardian) {
+    setcurrentGuardian(guardian);
+    currentEmergency = null;
+    victimPositions = [];
+    emergencyId = newEmergencyId;
     notifyListeners();
   }
 
-  Future<bool> getUserLocation(BuildContext context) async {
-    setIsLoading(true);
-     //final status = await Permission.location.request();
-LocationPermission permission = await Geolocator.checkPermission();
-    
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return false;
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      // Aqui o iOS não abre mais o pop-up. Você deve avisar a usuária 
-      // para abrir as configurações.
-      return false;
-    }
-
-   
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-
-    currentPosition = LatLng(position.latitude, position.longitude);
+  setcurrentGuardian(GuardianEntity? newGuardian) {
+    currentVictim = newGuardian;
     notifyListeners();
-    await _fetchPoliceStations(position.latitude, position.longitude, context);
+  }
+
+  setIsEmergency(bool newEmergency, EmergencyStatus newStatus) {
+    isEmergency = newEmergency;
+    emergencyStatus = newStatus;
+
+    notifyListeners();
+  }
+
+  Future<bool> startListenVictimPositions(Function() onClosedEmergency) async {
+    await getUserLocation();
+
+    await _fetchVictimPositions(onClosedEmergency);
     setIsLoading(false);
     return true;
   }
 
-  Future<void> _fetchPoliceStations(
-    double lat,
-    double lng,
-    BuildContext context,
-  ) async {
-    final url =
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json'
-        '?location=$lat,$lng'
-        '&radius=5000' // 5km
-        '&language=pt-BR'
-        '&type=police'
-        '&key=${Environment.mapKey}';
+  Future<bool> startConfigHistoricalVictimPositions() async {
+    await getUserLocation();
 
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final List results = data['results'];
-      stations =
-          results.map((item) {
-            double distanceInMeters = Geolocator.distanceBetween(
-              lat,
-              lng,
-              item['geometry']['location']['lat'] as double,
-              item['geometry']['location']['lng'] as double,
-            );
-
-            double distanceInKm = distanceInMeters / 1000;
-            final handledItem = <String, dynamic>{
-              ...item,
-              'distance': distanceInKm,
-            };
-            return PoliceStationEntity.fromMap(handledItem);
-          }).toList();
-
-      stations.sort((a, b) => a.distance.compareTo(b.distance));
-      final pin = await _loadCustomMarker();
-      markers =
-          results.map((place) {
-            final photoReference = place['photos']?[0]['photo_reference'];
-            final String photoUrl =
-                'https://maps.googleapis.com/maps/api/place/photo'
-                '?maxwidth=400'
-                '&photo_reference=$photoReference'
-                '&key=${Environment.mapKey}';
-            return Marker(
-              visible: place['business_status'] == 'OPERATIONAL',
-              markerId: MarkerId(place['place_id']),
-              position: LatLng(
-                place['geometry']['location']['lat'],
-                place['geometry']['location']['lng'],
-              ),
-
-              consumeTapEvents: false,
-              icon: pin,
-              onTap: () {
-                InfoDialog.show(
-                  place['name'],
-                  place['vicinity'],
-                  context,
-                  photoUrl,
-                );
-              },
-            );
-          }).toSet();
-    }
+    await _configHistoricalVictimPositions();
+    setIsLoading(false);
+    return true;
   }
 
-  late BitmapDescriptor customIcon;
+  Future<Position?> getUserLocation() async {
+    setIsLoading(true);
+    LocationPermission permission = await Geolocator.checkPermission();
 
-  Future<AssetMapBitmap> _loadCustomMarker() async {
-    return await BitmapDescriptor.asset(
-      const ImageConfiguration(size: Size(42, 42)),
-      GiAppAssets.pin,
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return null;
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Aqui o iOS não abre mais o pop-up. Você deve avisar a usuária
+      // para abrir as configurações.
+      return null;
+    }
+
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    currentUserPosition = LatLng(position.latitude, position.longitude);
+    notifyListeners();
+    return position;
+  }
+
+  Future<void> _fetchVictimPositions(Function() onClosedEmergency) async {
+    // Carrega o ícone personalizado da internet uma única vez
+    final pin = await _loadCustomMarker(currentVictim!.image!);
+
+    GuardianTrackingDataSource().listenToVictimGps(
+      victimId: currentVictim!.id!,
+      emergencyId: emergencyId!,
+
+      onLocationUpdated: (latitude, longitude) {
+        log("Localização atualizada: lat=$latitude, lng=$longitude");
+
+        // 2. Adiciona o novo ponto geográfico real à lista histórica
+        victimPositions.add(LatLng(latitude, longitude));
+
+        // 3. Atualiza o marcador sempre para a última posição da lista
+        marker = Marker(
+          visible: true,
+          markerId: MarkerId(currentVictim!.id!),
+          position: victimPositions.last,
+          consumeTapEvents: false,
+          icon: pin,
+        );
+
+        // 4. Monta a Polyline ligando TODOS os pontos acumulados até agora
+        if (victimPositions.length > 1) {
+          polylines = {
+            Polyline(
+              polylineId: const PolylineId("trajeto_real_vitima"),
+              points: victimPositions, // Passa a lista completa
+              color: primaryColor, // Cor de alerta
+              width: 6, // Espessura da linha
+              jointType: JointType.round, // Curvas suaves nas esquinas/muros
+              startCap: Cap.roundCap,
+              endCap: Cap.roundCap,
+            ),
+          };
+        }
+
+        // 5. Avisa a tela para se reconstruir com o novo ponto e a nova linha
+        notifyListeners();
+      },
+      onEmergencyClosed: onClosedEmergency,
     );
   }
 
+  Future<void> _configHistoricalVictimPositions() async {
+    // Carrega o ícone personalizado da internet uma única vez
+    final pin = await _loadCustomMarker(currentVictim!.image!);
+
+    // 3. Atualiza o marcador sempre para a última posição da lista
+    marker = Marker(
+      visible: true,
+      markerId: MarkerId(currentVictim!.id!),
+      position: victimPositions.last,
+      consumeTapEvents: false,
+      icon: pin,
+    );
+
+    // 4. Monta a Polyline ligando TODOS os pontos acumulados até agora
+    if (victimPositions.length > 1) {
+      polylines = {
+        Polyline(
+          polylineId: const PolylineId("trajeto_real_vitima"),
+          points: victimPositions, // Passa a lista completa
+          color: primaryColor, // Cor de alerta
+          width: 6, // Espessura da linha
+          jointType: JointType.round, // Curvas suaves nas esquinas/muros
+          startCap: Cap.roundCap,
+          endCap: Cap.roundCap,
+        ),
+      };
+    }
+
+    // 5. Avisa a tela para se reconstruir com o novo ponto e a nova linha
+    notifyListeners();
+  }
+
+  Future<BitmapDescriptor> _loadCustomMarker(String imageUrl) async {
+    try {
+      // 1. Baixa os bytes da imagem da URL
+      final http.Response response = await http.get(Uri.parse(imageUrl));
+      if (response.statusCode != 200) throw Exception("Erro ao baixar imagem");
+
+      final Uint8List imageBytes = response.bodyBytes;
+
+      // 2. Instancia o decodificador de imagem do dart:ui
+      final Completer<ui.Image> completer = Completer();
+      ui.decodeImageFromList(
+        imageBytes,
+        (ui.Image img) => completer.complete(img),
+      );
+      final ui.Image image = await completer.future;
+
+      // 3. Define o tamanho que o marcador terá no mapa (ex: 120x120 pixels)
+      const int targetWidth = 30;
+      const int targetHeight = 30;
+
+      // 4. Cria um canvas para desenhar a imagem redimensionada
+      final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+      final Canvas canvas = Canvas(pictureRecorder);
+      final Paint paint = Paint()..isAntiAlias = true;
+
+      // --- OPCIONAL: Cortar a imagem em círculo (Estilo Redes Sociais) ---
+      final double radius = targetWidth / 2;
+      final Path clipPath =
+          Path()..addOval(
+            Rect.fromLTRB(
+              0,
+              0,
+              targetWidth.toDouble(),
+              targetHeight.toDouble(),
+            ),
+          );
+      canvas.clipPath(clipPath);
+      // ------------------------------------------------------------------
+
+      // Desenha a imagem dentro do tamanho estipulado
+      canvas.drawImageRect(
+        image,
+        Rect.fromLTRB(0, 0, image.width.toDouble(), image.height.toDouble()),
+        Rect.fromLTRB(0, 0, targetWidth.toDouble(), targetHeight.toDouble()),
+        paint,
+      );
+
+      // 5. Converte o canvas de volta para bytes
+      final ui.Picture picture = pictureRecorder.endRecording();
+      final ui.Image resizedImage = await picture.toImage(
+        targetWidth,
+        targetHeight,
+      );
+      final ByteData? byteData = await resizedImage.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
+      final Uint8List resizedBytes = byteData!.buffer.asUint8List();
+
+      // 6. Retorna o BitmapDescriptor pronto para o Google Maps
+      return BitmapDescriptor.bytes(resizedBytes);
+    } catch (e) {
+      // Fallback: Se a internet falhar ou a URL quebrar, retorna um marcador padrão do Google
+      return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
+    }
+  }
+
   void getPolyline({required LatLng end}) async {
+    final origin = victimPositions.first;
+    final destiny = victimPositions.last;
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       request: PolylineRequest(
-        origin: PointLatLng(
-          currentPosition!.latitude,
-          currentPosition!.longitude,
-        ),
-        destination: PointLatLng(end.latitude, end.longitude),
+        origin: PointLatLng(origin.latitude, origin.longitude),
+        destination: PointLatLng(destiny.latitude, destiny.longitude),
         mode: TravelMode.driving,
       ),
     );

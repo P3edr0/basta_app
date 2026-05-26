@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gina/presenter/core/widgets/bottom_navigation_bar.dart';
-import 'package:gina/presenter/guardian/store/guardian_controller.dart';
 import 'package:gina/responsiveness/gi_font_style.dart';
 import 'package:provider/provider.dart';
 
@@ -10,9 +9,11 @@ import '../../../components/cards/emergency_history_card.dart';
 import '../../../components/loadings/loading.dart';
 import '../../../components/shines/empty_list_animation.dart';
 import '../../../theme/colors.dart';
+import '../../../utils/formatters/date_formatter.dart';
 import '../../../utils/routes/app_navigator.dart';
 import '../../../utils/routes/app_routes.dart';
 import '../../auth/store/auth_controller.dart';
+import '../emergency_details/store/emergency_details_controller.dart';
 import 'store/emergency_history_controller.dart';
 
 class EmergencyHistoryPage extends StatefulWidget {
@@ -31,10 +32,12 @@ class EmergencyHistoryPageState extends State<EmergencyHistoryPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final authController = context.read<AuthController>();
-      final controller = context.read<GuardianController>();
+      final controller = context.read<EmergencyHistoryController>();
       final user = authController.user!;
-      controller.setUserId(user);
-      await controller.startPage();
+      await controller.fetchEmergencyHistory(
+        userId: user.id!,
+        guardians: user.myGuardians!,
+      );
     });
   }
 
@@ -62,7 +65,7 @@ class EmergencyHistoryPageState extends State<EmergencyHistoryPage> {
                     GiAppBar.secondary(title: "Histórico de Emergências"),
 
                     SizedBox(height: Responsive.getSize(16)),
-                    
+
                     Text(
                       "Círculo de Proteção",
                       style: BasFontStyle.h4BoldSec.copyWith(color: darkGrey),
@@ -73,23 +76,26 @@ class EmergencyHistoryPageState extends State<EmergencyHistoryPage> {
                     ),
                     SizedBox(height: Responsive.getSize(30)),
 
-                   
                     if (isEmptyContent)
                       BasEmptyAnimation(
                         content: "Sua lista de anjos guardiões está vazia",
                       ),
 
-                    ...controller.myGuardians.map(
-                      (guardian) => EmergencyHistoryCard(
-                        title: guardian.name,
-                        content: "22 Setembro 2024 - 14:30h",
-                        image: guardian.image,
+                    ...controller.historical.map(
+                      (emergency) => EmergencyHistoryCard(
+                        title: emergency.guardian!.name,
+                        content: BasDateFormat.notificationFormat(
+                          emergency.date,
+                        ),
+                        image: emergency.guardian!.image,
                         onTap: () {
+                          final emergencyDetails =
+                              context.read<EmergencyDetailsController>();
+                          emergencyDetails.startPage(emergency);
                           navigator.goto(GiRoutes.emergencyDetails);
                         },
                       ),
                     ),
-                    
                   ],
                 ),
               );

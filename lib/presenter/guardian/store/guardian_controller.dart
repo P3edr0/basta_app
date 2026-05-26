@@ -22,9 +22,16 @@ class GuardianController extends ChangeNotifier {
   AddGuardianController addGuardianController;
   MyGuardianController myGuardianController;
   List<GuardianEntity> allGuardians = [];
+  List<GuardianEntity> guardiansWithoutUser = [];
   List<GuardianOrderEntity> allOrders = [];
   String? exception;
   UserEntity? user;
+  bool emergencyActivated = false;
+
+  void setEmergencyActivated(bool value) {
+    emergencyActivated = value;
+    notifyListeners();
+  }
 
   bool get hasError => exception != null;
   Future<void> startPage() async {
@@ -32,12 +39,12 @@ class GuardianController extends ChangeNotifier {
     final calls = [fetchAllGuardians(), fetchAllOrders()];
     await Future.wait(calls);
     if (!hasError) {
-      addGuardianController.setGuardians(allGuardians);
+      addGuardianController.setGuardians(guardiansWithoutUser);
       addGuardianController.setOrders(allOrders);
       addGuardianController.setUser(user!);
       emergencyHistoryController.setGuardians(allGuardians);
 
-      myGuardianController.setGuardians(allGuardians);
+      myGuardianController.setGuardians(guardiansWithoutUser);
       myGuardianController.setIsLoading(false);
     } else {
       myGuardianController.setException(exception!);
@@ -55,7 +62,8 @@ class GuardianController extends ChangeNotifier {
         exception = newException.message;
       },
       (newGuardians) {
-        allGuardians =
+        allGuardians = newGuardians;
+        guardiansWithoutUser =
             newGuardians
                 .where((guardian) => guardian.id != handledUser.id)
                 .toList();

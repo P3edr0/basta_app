@@ -5,7 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:gina/domain/entities/tab_menu.dart';
 import 'package:gina/domain/entities/user_entity.dart';
 
-import '../../../../data/emergency/emergency_datasource.dart';
+import '../../../../data/emergency/create_emergency_datasource.dart';
 import '../../../../theme/icons.dart';
 
 class HomeController extends ChangeNotifier {
@@ -60,13 +60,13 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<void> startEmergency() async {
-    final emergencyDatasource = EmergencyDatasource();
+    final emergencyDatasource = CreateEmergencyDatasource();
     final guardians = user!.myGuardians ?? [];
     await emergencyDatasource(userId: user!.id!, guardians: guardians);
   }
 
   Future<void> stopEmergency() async {
-    final emergencyDatasource = EmergencyDatasource();
+    final emergencyDatasource = CreateEmergencyDatasource();
     final guardians = user!.myGuardians ?? [];
     emergencyDatasource.stopEmergency(user!.id!, guardians);
   }

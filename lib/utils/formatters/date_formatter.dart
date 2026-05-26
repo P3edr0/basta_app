@@ -4,7 +4,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../handler/value_handler.dart';
 
-class TneDateFormat {
+class BasDateFormat {
   static final maskFormatter = MaskTextInputFormatter(
     mask: '##/##/####',
     filter: {"#": RegExp(r'[0-9]')},
@@ -63,26 +63,27 @@ class TneDateFormat {
   static String notificationFormat(DateTime date) {
     final day = GiValueHandler.smallNumberToShow(date.day);
     final month = date.month;
+    final year = date.year;
     final hour = GiValueHandler.smallNumberToShow(date.hour);
     final minutes = GiValueHandler.smallNumberToShow(date.minute);
 
     final monthName = switch (month) {
-      1 => 'Jan',
-      2 => 'Fev',
-      3 => 'Mar',
-      4 => 'Abr',
-      5 => 'Mai',
-      6 => 'Jun',
-      7 => 'Jul',
-      8 => 'Ago',
-      9 => 'Set',
-      10 => 'Out',
-      11 => 'Nov',
-      12 => 'Dez',
+      1 => 'Janeiro',
+      2 => 'Fevereiro',
+      3 => 'Março',
+      4 => 'Abril',
+      5 => 'Maio',
+      6 => 'Junho',
+      7 => 'Julho',
+      8 => 'Agosto',
+      9 => 'Setembro',
+      10 => 'Outubro',
+      11 => 'Novembro',
+      12 => 'Dezembro',
       _ => 'Mês inválido',
     };
 
-    return '$day $monthName | $hour:$minutes';
+    return '$day $monthName $year | $hour:$minutes';
   }
 
   static String calendarFormat(DateTime date) {

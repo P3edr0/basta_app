@@ -19,4 +19,5 @@ class BasIcons {
   static IconData policy = Icons.policy_outlined;
   static IconData sponsors = Icons.handshake_outlined;
   static IconData share = Icons.share;
+  static IconData alert = Icons.warning_amber_outlined;
 }

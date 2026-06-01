@@ -76,9 +76,9 @@ class CreateEmergencyDatasource {
         return;
       }
 
-      final diference = DateTime.now().difference(lastUploadTime).inSeconds;
+      final difference = DateTime.now().difference(lastUploadTime).inSeconds;
 
-      if (diference >= 9) {
+      if (difference >= 9) {
         try {
           Position? lastPosition = await Geolocator.getLastKnownPosition();
 

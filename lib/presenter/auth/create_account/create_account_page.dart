@@ -151,7 +151,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
                                     final image =
                                         await pickedFile!.readAsBytes();
-                                 
+
                                     controller.setProfileImage(image);
                                   } catch (e) {
                                     ErrorDialog.show(
@@ -215,7 +215,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                               ),
 
                                               Text(
-                                                "PNG, JPG até 400KB",
+                                                "PNG, JPG até 5MB",
                                                 style: BasFontStyle.smallBold
                                                     .copyWith(color: grey),
                                               ),
@@ -609,7 +609,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                             final image =
                                                 await pickedFile!.readAsBytes();
 
-
                                             controller.setAttackerImage(image);
                                           } catch (e) {
                                             log("ERRO=> $e");
@@ -695,7 +694,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                                                       ),
 
                                                       Text(
-                                                        "PNG, JPG até 400KB",
+                                                        "PNG, JPG até 5MB",
                                                         style: BasFontStyle
                                                             .smallBold
                                                             .copyWith(
@@ -749,7 +748,8 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                               if (!response) {
                                 ErrorDialog.show(
                                   title: "Atenção",
-                                  content: controller.exception ??
+                                  content:
+                                      controller.exception ??
                                       "Ocorreu um erro ao tentar criar sua conta. Tente novamente mais tarde",
                                   context: context,
                                 );

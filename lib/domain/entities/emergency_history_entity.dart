@@ -25,11 +25,14 @@ class EmergencyHistoryEntity {
         locations.values.map((loc) {
           return LatLng(loc['latitude'] as double, loc['longitude'] as double);
         }).toList();
+    final int dateInSeconds =
+        map['date'] ?? DateTime.now().millisecondsSinceEpoch;
+    final status = map['status'] ?? 'closed';
     return EmergencyHistoryEntity(
       victimId: map['victimId'] as String,
       positions: handledLocations,
-      status: map['status'] as String,
-      date: DateTime.fromMillisecondsSinceEpoch(map['date'] as int),
+      status: status,
+      date: DateTime.fromMillisecondsSinceEpoch(dateInSeconds),
     );
   }
 

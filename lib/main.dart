@@ -16,8 +16,23 @@ Future<void> main() async {
   // 1. INICIALIZAÇÕES DENTRO DA ZONA
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 2. CONFIGURAÇÕES DO FIREBASE
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  try {
+    // 1. Verificamos se já existe alguma instância do Firebase rodando na memória
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options:
+            DefaultFirebaseOptions
+                .currentPlatform, // Se você usar o flutterfire configure
+      );
+      print("🔥 Firebase inicializado com sucesso!");
+    } else {
+      // Se já existia, nós apenas reaproveitamos a que está na memória
+      Firebase.app();
+      print("🔄 Instância existente do Firebase reaproveitada.");
+    }
+  } catch (e) {
+    print("Erro ao inicializar o Firebase: $e");
+  }
 
   // 5. OBSERVER DE ROTA
   final routeObserver = RouteStackObserver.instance();

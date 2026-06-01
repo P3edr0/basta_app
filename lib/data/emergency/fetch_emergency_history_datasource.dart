@@ -21,21 +21,22 @@ class FetchEmergencyHistoryDatasource {
       for (var id in allIds) {
         DatabaseReference emergencyRef = _db.ref("emergencies/$id");
         final emergencyData = await emergencyRef.get();
-
-        Map<dynamic, dynamic> emergencyHistoryData =
-            emergencyData.value as Map<dynamic, dynamic>;
-        final newEmergency =
-            emergencyHistoryData.entries
-                .map(
-                  (emergency) => EmergencyHistoryEntity.fromMap(
-                    Map<String, dynamic>.from({
-                      ...emergency.value,
-                      "victimId": id,
-                    }),
-                  ),
-                )
-                .toList();
-        emergencies.addAll(newEmergency);
+        if (emergencyData.value != null) {
+          Map<dynamic, dynamic> emergencyHistoryData =
+              emergencyData.value as Map<dynamic, dynamic>;
+          final newEmergency =
+              emergencyHistoryData.entries
+                  .map(
+                    (emergency) => EmergencyHistoryEntity.fromMap(
+                      Map<String, dynamic>.from({
+                        ...emergency.value,
+                        "victimId": id,
+                      }),
+                    ),
+                  )
+                  .toList();
+          emergencies.addAll(newEmergency);
+        }
       }
       return Right(emergencies);
     } catch (e, stack) {

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gina/components/dialogs/info_dialog.dart';
@@ -105,9 +107,10 @@ class _HomePageState extends State<HomePage> {
 
         child: SafeArea(
           child: SingleChildScrollView(
-            child: Consumer<HomeController>(
-              builder: (context, controller, child) {
+            child: Consumer2<HomeController, GuardianController>(
+              builder: (context, controller, guardianController, child) {
                 final bool hasImage = controller.user?.image != null;
+                final isOnEmergency = guardianController.emergencyActivated;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -236,34 +239,59 @@ class _HomePageState extends State<HomePage> {
                           Align(
                             alignment: Alignment.center,
                             child: InkWell(
-                              onTap:
-                                  () async => await controller.startEmergency(),
+                              onTap: () async {
+                                if (isOnEmergency) {
+                                  InfoDialog.closeAuto(
+                                    "Atenção",
+                                    "Você já está com uma emergência ativa",
+                                    context,
+                                  );
+                                  log("Emergência já ativa");
+                                  return;
+                                }
+                                guardianController.setEmergencyActivated(true);
+                                await controller.startEmergency();
+                              },
                               child: CircleAvatar(
-                                backgroundColor: secondaryColor.withValues(
-                                  alpha: 0.1,
-                                ),
+                                backgroundColor:
+                                    isOnEmergency
+                                        ? blue.withValues(alpha: 0.2)
+                                        : secondaryColor.withValues(alpha: 0.1),
                                 radius: Responsive.getSize(120),
 
                                 child: CircleAvatar(
                                   radius: Responsive.getSize(100),
-                                  backgroundColor: secondaryColor.withValues(
-                                    alpha: 0.3,
-                                  ),
+                                  backgroundColor:
+                                      isOnEmergency
+                                          ? blue.withValues(alpha: 0.3)
+                                          : secondaryColor.withValues(
+                                            alpha: 0.3,
+                                          ),
                                   child: CircleAvatar(
-                                    backgroundColor: secondaryColor,
+                                    backgroundColor:
+                                        isOnEmergency ? blue : secondaryColor,
 
                                     radius: Responsive.getSize(80),
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Image.asset(GiAppAssets.emergency),
+                                        Image.asset(
+                                          isOnEmergency
+                                              ? GiAppAssets.emergencyWhite
+                                              : GiAppAssets.emergency,
+                                        ),
                                         SizedBox(height: Responsive.getSize(8)),
 
                                         Text(
                                           "EMERGÊNCIA",
                                           style: BasFontStyle.titleBoldSec
-                                              .copyWith(color: primaryColor),
+                                              .copyWith(
+                                                color:
+                                                    isOnEmergency
+                                                        ? secondaryColor
+                                                        : primaryColor,
+                                              ),
                                         ),
                                       ],
                                     ),
@@ -274,8 +302,11 @@ class _HomePageState extends State<HomePage> {
                           ),
                           SizedBox(height: Responsive.getSize(20)),
                           BasRoundedButton(
-                            child: Text("Psicóloga de Plantão"),
-                            onTap: () => controller.stopEmergency(),
+                            child: Text("Cancelar Emergência"),
+                            onTap: () {
+                              controller.stopEmergency();
+                              guardianController.setEmergencyActivated(false);
+                            },
                           ),
                           SizedBox(height: Responsive.getSize(40)),
 

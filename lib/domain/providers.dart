@@ -4,6 +4,7 @@ import 'package:gina/presenter/auth/store/auth_controller.dart';
 import 'package:gina/presenter/core/store/core_controller.dart';
 import 'package:gina/presenter/guardian/add_guardian/store/add_guardian_controller.dart';
 import 'package:gina/presenter/guardian/my_guardians/store/my_guardian_controller.dart';
+import 'package:gina/presenter/home/call/store/call_controller.dart';
 import 'package:gina/presenter/police_station/police_station/store/police_station_controller.dart';
 import 'package:provider/provider.dart';
 
@@ -51,6 +52,8 @@ class Providers {
     ChangeNotifierProvider<MyGuardianController>(
       create: (ctx) => MyGuardianController(),
     ),
+    ////////////////// CALL //////////////////
+    ChangeNotifierProvider<CallController>(create: (ctx) => CallController()),
     ChangeNotifierProvider<AddGuardianController>(
       create: (ctx) => AddGuardianController(),
     ),
@@ -64,7 +67,7 @@ class Providers {
       create:
           (ctx) => GuardianController(
             addGuardianController: ctx.read<AddGuardianController>(),
-      myGuardianController: ctx.read<MyGuardianController>(),
+            myGuardianController: ctx.read<MyGuardianController>(),
             emergencyHistoryController: ctx.read<EmergencyHistoryController>(),
           ),
     ),

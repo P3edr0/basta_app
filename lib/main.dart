@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart' as webrtc;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import 'domain/providers.dart';
@@ -33,6 +36,8 @@ Future<void> main() async {
   } catch (e) {
     print("Erro ao inicializar o Firebase: $e");
   }
+  await checkPermissions();
+  await initializeAndroidAudioSettings();
 
   // 5. OBSERVER DE ROTA
   final routeObserver = RouteStackObserver.instance();
@@ -51,5 +56,28 @@ Future<void> main() async {
         debugShowCheckedModeBanner: false,
       ),
     ),
+  );
+}
+
+Future<void> checkPermissions() async {
+  var status = await Permission.bluetooth.request();
+  if (status.isPermanentlyDenied) {
+    log('Bluetooth Permission disabled');
+  }
+  status = await Permission.bluetoothConnect.request();
+  if (status.isPermanentlyDenied) {
+    log('Bluetooth Connect Permission disabled');
+  }
+}
+
+Future<void> initializeAndroidAudioSettings() async {
+  await webrtc.WebRTC.initialize(
+    options: {
+      'androidAudioConfiguration':
+          webrtc.AndroidAudioConfiguration.media.toMap(),
+    },
+  );
+  webrtc.Helper.setAndroidAudioConfiguration(
+    webrtc.AndroidAudioConfiguration.media,
   );
 }

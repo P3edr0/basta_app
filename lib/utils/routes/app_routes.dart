@@ -9,4 +9,5 @@ class GiRoutes {
   static const policeStation = '/police_station';
   static const home = '/home';
   static const login = '/login';
+  static const call = '/call';
 }

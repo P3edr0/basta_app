@@ -2,11 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gina/components/dialogs/error_dialog.dart';
 import 'package:gina/components/dialogs/info_dialog.dart';
 import 'package:gina/presenter/auth/store/auth_controller.dart';
 import 'package:gina/presenter/auth/update_user/store/update_user_controller.dart';
 import 'package:gina/presenter/guardian/emergency_details/store/emergency_details_controller.dart';
 import 'package:gina/presenter/guardian/store/guardian_controller.dart';
+import 'package:gina/presenter/home/call/store/call_controller.dart';
 import 'package:gina/presenter/home/home/store/home_controller.dart';
 import 'package:gina/responsiveness/gi_font_style.dart';
 import 'package:gina/theme/icons.dart';
@@ -240,6 +242,7 @@ class _HomePageState extends State<HomePage> {
                             alignment: Alignment.center,
                             child: InkWell(
                               onTap: () async {
+                                ///////////////////////////////////////////////////////
                                 if (isOnEmergency) {
                                   InfoDialog.closeAuto(
                                     "Atenção",
@@ -249,6 +252,20 @@ class _HomePageState extends State<HomePage> {
                                   log("Emergência já ativa");
                                   return;
                                 }
+                                final callData = await controller.createCall();
+                                if (callData == null) {
+                                  ErrorDialog.show(
+                                    title: "Falha",
+                                    content:
+                                        "Houve um erro ao tentar iniciar a chamada, por favor tente mais tarde!",
+                                    context: context,
+                                  );
+                                  return;
+                                }
+                                final callController =
+                                    context.read<CallController>();
+                                callController.setCall(callData);
+                                navigator.goto(GiRoutes.call);
                                 guardianController.setEmergencyActivated(true);
                                 await controller.startEmergency();
                               },

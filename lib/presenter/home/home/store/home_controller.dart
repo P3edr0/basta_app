@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:gina/data/call/create_call_datasource.dart';
+import 'package:gina/domain/entities/call_data_entity.dart';
 import 'package:gina/domain/entities/tab_menu.dart';
 import 'package:gina/domain/entities/user_entity.dart';
 
@@ -10,6 +12,7 @@ import '../../../../theme/icons.dart';
 
 class HomeController extends ChangeNotifier {
   UserEntity? user;
+  CallDataEntity? call;
   String place = "Carregando...";
   Position? currentPosition;
   final tabs = [
@@ -57,6 +60,21 @@ class HomeController extends ChangeNotifier {
     } catch (e) {
       return false;
     }
+  }
+
+  Future<CallDataEntity?> createCall() async {
+    final createCallDatasource = CreateCallDatasource();
+    final response = await createCallDatasource(user!.id!);
+
+    return response.fold(
+      (l) {
+        return null;
+      },
+      (newCall) {
+        call = newCall;
+        return newCall;
+      },
+    );
   }
 
   Future<void> startEmergency() async {

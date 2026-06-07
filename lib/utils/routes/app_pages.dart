@@ -3,10 +3,11 @@ import 'package:gina/presenter/auth/create_account/create_account_page.dart';
 import 'package:gina/presenter/auth/login/login_page.dart';
 import 'package:gina/presenter/auth/update_user/update_user_page.dart';
 import 'package:gina/presenter/guardian/add_guardian/add_guardian_page.dart';
+import 'package:gina/presenter/guardian/emergency_history/emergency_history_page.dart';
 import 'package:gina/presenter/guardian/my_guardians/my_guardian_page.dart';
+import 'package:gina/presenter/home/call/call_page.dart';
 import 'package:gina/presenter/home/home/home_page.dart';
 import 'package:gina/presenter/police_station/police_station/police_station_page.dart';
-import 'package:gina/presenter/guardian/emergency_history/emergency_history_page.dart';
 
 import '../../presenter/guardian/emergency_details/emergency_details_page.dart';
 import '../../presenter/splash/splash_page.dart';
@@ -63,6 +64,11 @@ class AppPages {
       case == GiRoutes.emergencyDetails:
         return MaterialPageRoute(
           builder: (_) => EmergencyDetailsPage(),
+          settings: settings,
+        );
+      case == GiRoutes.call:
+        return MaterialPageRoute(
+          builder: (_) => CallPage(),
           settings: settings,
         );
       default:

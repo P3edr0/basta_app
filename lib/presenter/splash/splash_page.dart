@@ -34,7 +34,10 @@ class _SplashPageState extends State<SplashPage> {
       final hasUser = await authController.getUser();
       if (hasUser) {
         homeController.user = authController.user;
-        await guardianController.refreshNewGuardian(authController.user!);
+        final newUser = await guardianController.refreshNewGuardian(
+          authController.user!,
+        );
+        authController.setUser(newUser);
       }
       redirect(hasUser);
     });
@@ -62,7 +65,7 @@ class _SplashPageState extends State<SplashPage> {
                 padding: EdgeInsets.all(Responsive.getSize(30)),
                 child: Image.asset(
                   colorBlendMode: BlendMode.hardLight,
-                  GiAppAssets.logo,
+                  BasAppAssets.logo,
                 ),
               ),
               Text(

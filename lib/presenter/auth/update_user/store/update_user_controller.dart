@@ -3,12 +3,14 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gina/data/local/save_credential.dart';
+import 'package:gina/data/user/schedule_delete_user_datasource.dart';
 import 'package:gina/domain/entities/address_entity.dart';
 import 'package:gina/domain/entities/attacker_entity.dart';
 import 'package:gina/domain/entities/cep_entity.dart';
 import 'package:gina/domain/entities/user_entity.dart';
 
 import '../../../../data/local/delete_credential.dart';
+import '../../../../data/user/delete_user_datasource.dart';
 import '../../../../data/user/update_user_datasource.dart';
 import '../../../../services/cep_service/cep_service.dart';
 
@@ -32,6 +34,7 @@ class UpdateUserController extends ChangeNotifier {
   bool isLogoutLoading = false;
   CepEntity? cepContent;
   String? exception;
+  int? timeToCanDelete;
   String selectedState = 'SP';
   bool showAddress = true;
   bool showRiskInfo = true;
@@ -71,6 +74,7 @@ class UpdateUserController extends ChangeNotifier {
 
   /////////////////////////////////// GETS
   bool get hasError => exception != null;
+  bool get canDelete => timeToCanDelete != null && timeToCanDelete!.isNegative;
 
   setUser(UserEntity? newUser) {
     user = newUser;
@@ -92,12 +96,20 @@ class UpdateUserController extends ChangeNotifier {
     attackerNameController.text = user!.attacker?.name ?? "";
     protectionIdController.text = user!.attacker?.protectionId ?? "";
     selectedState = user!.address.state;
+
     if (user!.image != null) {
       networkProfileImage = user!.image!;
     }
     if (user!.attacker?.image != null) {
       networkAttackerImage = user!.attacker!.image!;
     }
+    final timeToDelete = user?.scheduleToDelete;
+    if (timeToDelete != null) {
+      final handledHour = DateTime.fromMillisecondsSinceEpoch(timeToDelete);
+      final hourToDelete = handledHour.difference(DateTime.now()).inHours;
+      timeToCanDelete = hourToDelete;
+    }
+
     notifyListeners();
   }
 
@@ -261,6 +273,54 @@ class UpdateUserController extends ChangeNotifier {
       },
       (r) {
         exception = null;
+        setIsLoading(false);
+
+        return true;
+      },
+    );
+  }
+
+  Future<bool> deleteAccount() async {
+    final userId = user!.id!;
+    final deleteCredential = DeleteUserDatasource();
+    final deleteResponse = await deleteCredential(userId);
+
+    return deleteResponse.fold(
+      (newException) {
+        exception = newException.message;
+
+        return false;
+      },
+      (r) async {
+        await logout();
+        exception = null;
+        setIsLoading(false);
+
+        return true;
+      },
+    );
+  }
+
+  Future<bool> scheduleToDeleteAccount() async {
+    final userId = user!.id!;
+    final scheduleDatasource = ScheduleDeleteUserDatasource();
+    final scheduleDate = DateTime.now().add(Duration(hours: 24));
+    final scheduleResponse = await scheduleDatasource(
+      userId: userId,
+      schedule: scheduleDate,
+    );
+
+    return scheduleResponse.fold(
+      (newException) {
+        exception = newException.message;
+        timeToCanDelete = null;
+        return false;
+      },
+      (r) async {
+        await logout();
+        exception = null;
+        timeToCanDelete = 24;
+
         setIsLoading(false);
 
         return true;

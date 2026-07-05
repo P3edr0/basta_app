@@ -6,10 +6,8 @@ class LoginController extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
 
   bool isLoading = false;
-  String? exception;
 
   /////////////////////////////////// GETS
-  bool get hasError => exception != null;
 
   setIsLoading([bool? newLoading]) {
     if (newLoading == null) {

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gina/domain/entities/emergency_history_entity.dart';
 import 'package:gina/domain/entities/guardian_entity.dart';
+import 'package:gina/domain/entities/user_entity.dart';
 
 import '../../../../data/emergency/fetch_emergency_history_datasource.dart';
 import '../../../../data/guardian/delete_guardian_order_datasource.dart';
@@ -10,6 +11,7 @@ import '../../../../utils/enums/angel_filter_type.dart';
 class EmergencyHistoryController extends ChangeNotifier {
   bool isLoading = false;
   String? exception;
+  UserEntity? user;
   List<GuardianEntity> allGuardians = [];
   List<GuardianEntity> myGuardians = [];
   List<EmergencyHistoryEntity> historical = [];
@@ -66,10 +68,15 @@ class EmergencyHistoryController extends ChangeNotifier {
     );
   }
 
+  void setUser(UserEntity newUser) {
+    user = newUser;
+  }
+
   Future<void> fetchEmergencyHistory({
     required String userId,
     required List<String> guardians,
   }) async {
+    historical.clear();
     final fetchEmergencyHistory = FetchEmergencyHistoryDatasource();
 
     final response = await fetchEmergencyHistory(

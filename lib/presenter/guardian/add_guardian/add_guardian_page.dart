@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gina/components/buttons/selector_button.dart';
 import 'package:gina/components/dialogs/info_dialog.dart';
-import 'package:gina/components/dialogs/invite_dialog.dart';
+import 'package:gina/components/dialogs/options_dialog.dart';
 import 'package:gina/components/dialogs/success_dialog.dart';
 import 'package:gina/components/loadings/loading.dart';
 import 'package:gina/components/textfields/textfield.dart';
@@ -168,7 +168,7 @@ class AddGuardianPageState extends State<AddGuardianPage> {
                               return;
                             }
                             if (guardian.status!.isInvited) {
-                              InviteDialog.show(
+                              OptionsDialog.show(
                                 title: "Pedido",
                                 acceptButton: "Aceitar",
                                 refuseButton: "Recusar",

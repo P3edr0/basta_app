@@ -1,10 +1,11 @@
-class GiAppAssets {
+class BasAppAssets {
   ////////   IMAGES   ////////
   static const String logo = "assets/images/logo.png";
   static const String emergency = "assets/icons/emergency.png";
   static const String emergencyWhite = "assets/icons/emergency_white.png";
   static const String map = "assets/images/map.png";
   static const String pin = "assets/images/pin.png";
+  static const String attendant = "assets/images/attendant.png";
 
   ////////   ICONS   ////////
   static const String shield = "assets/icons/shield.png";

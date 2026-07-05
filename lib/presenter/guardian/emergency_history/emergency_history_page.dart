@@ -34,6 +34,7 @@ class EmergencyHistoryPageState extends State<EmergencyHistoryPage> {
       final authController = context.read<AuthController>();
       final controller = context.read<EmergencyHistoryController>();
       final user = authController.user!;
+      controller.setUser(user);
       await controller.fetchEmergencyHistory(
         userId: user.id!,
         guardians: user.myGuardians!,
@@ -54,7 +55,7 @@ class EmergencyHistoryPageState extends State<EmergencyHistoryPage> {
               if (controller.isLoading) {
                 return DashPageLoading();
               }
-              final isEmptyContent = controller.myGuardians.isEmpty;
+              final isEmptyContent = controller.historical.isEmpty;
               return Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: Responsive.getSize(24),
@@ -67,23 +68,26 @@ class EmergencyHistoryPageState extends State<EmergencyHistoryPage> {
                     SizedBox(height: Responsive.getSize(16)),
 
                     Text(
-                      "Círculo de Proteção",
+                      "Emergências do meu círculo",
                       style: BasFontStyle.h4BoldSec.copyWith(color: darkGrey),
                     ),
                     Text(
-                      "Estas são as pessoas que receberão um alerta em caso de emergência",
+                      "Estas são todas as emergências suas e dos seus anjos",
                       style: BasFontStyle.bodyLargeBold.copyWith(color: grey),
                     ),
                     SizedBox(height: Responsive.getSize(30)),
 
                     if (isEmptyContent)
                       BasEmptyAnimation(
-                        content: "Sua lista de anjos guardiões está vazia",
+                        content: "Sua lista de emergências está vazia",
                       ),
 
-                    ...controller.historical.map(
-                      (emergency) => EmergencyHistoryCard(
-                        title: emergency.guardian!.name,
+                    ...controller.historical.map((emergency) {
+                      final isUser =
+                          emergency.guardian?.id == controller.user?.id;
+
+                      return EmergencyHistoryCard(
+                        title: isUser ? 'Você' : emergency.guardian!.name,
                         content: BasDateFormat.notificationFormat(
                           emergency.date,
                         ),
@@ -94,8 +98,8 @@ class EmergencyHistoryPageState extends State<EmergencyHistoryPage> {
                           emergencyDetails.startPage(emergency);
                           navigator.goto(GiRoutes.emergencyDetails);
                         },
-                      ),
-                    ),
+                      );
+                    }),
                   ],
                 ),
               );

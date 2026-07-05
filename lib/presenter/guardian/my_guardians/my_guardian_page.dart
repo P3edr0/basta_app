@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import '../../../../responsiveness/responsive.dart';
 import '../../../components/app_bar/app_bar.dart';
 import '../../../components/cards/guardian_card.dart';
-import '../../../components/dialogs/invite_dialog.dart';
+import '../../../components/dialogs/options_dialog.dart';
 import '../../../components/loadings/loading.dart';
 import '../../../components/shines/empty_list_animation.dart';
 import '../../../theme/colors.dart';
@@ -103,7 +103,7 @@ class MyGuardianPageState extends State<MyGuardianPage> {
                         content: "Pronta para ajudar",
                         image: guardian.image,
                         onTap: () {
-                          InviteDialog.show(
+                          OptionsDialog.show(
                             title: "Remover",
                             refuseButton: "Cancelar",
                             acceptButton: "Remover",

@@ -23,7 +23,7 @@ class DashPageLoading extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Spacer(),
-            Image.asset(GiAppAssets.logo, height: Responsive.getSize(200)),
+            Image.asset(BasAppAssets.logo, height: Responsive.getSize(200)),
             Spacer(),
             Text(
               title!,

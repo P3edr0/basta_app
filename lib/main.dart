@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import 'domain/providers.dart';
 import 'firebase_options.dart';
+import 'services/notifications/notification_service.dart';
 import 'theme/custom_themes/theme.dart';
 import 'utils/routes/app_pages.dart';
 import 'utils/routes/route_observer.dart';
@@ -61,12 +62,18 @@ Future<void> main() async {
 
 Future<void> checkPermissions() async {
   var status = await Permission.bluetooth.request();
+  var notifyStatus = await Permission.notification.request();
   if (status.isPermanentlyDenied) {
     log('Bluetooth Permission disabled');
   }
   status = await Permission.bluetoothConnect.request();
+  notifyStatus = await Permission.notification.request();
   if (status.isPermanentlyDenied) {
     log('Bluetooth Connect Permission disabled');
+  }
+  if (!notifyStatus.isPermanentlyDenied && !notifyStatus.isDenied) {
+    log('Notification Connect Permission disabled');
+    await initializeBackgroundService();
   }
 }
 

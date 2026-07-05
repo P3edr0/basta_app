@@ -15,6 +15,8 @@ class UserEntity {
   Uint8List? imageFile;
   AddressEntity address;
   AttackerEntity? attacker;
+  bool active;
+  int? scheduleToDelete;
   final List<String>? myGuardians;
   final List<String>? protect;
   UserEntity({
@@ -30,6 +32,8 @@ class UserEntity {
     this.myGuardians,
     this.protect,
     this.imageFile,
+    this.scheduleToDelete,
+    this.active = true,
   });
 
   Map<String, dynamic> toMap() {
@@ -45,6 +49,8 @@ class UserEntity {
       'myGuardians': myGuardians,
       'protect': protect,
       'imageFile': imageFile,
+      'active': active,
+      'scheduleToDelete': scheduleToDelete,
     };
   }
 
@@ -59,6 +65,7 @@ class UserEntity {
     AddressEntity? address,
     AttackerEntity? attacker,
     List<String>? myGuardians,
+    int? scheduleToDelete,
     List<String>? protect,
     Uint8List? imageFile,
   }) {
@@ -75,6 +82,7 @@ class UserEntity {
       myGuardians: myGuardians ?? this.myGuardians,
       protect: protect ?? this.protect,
       imageFile: imageFile ?? this.imageFile,
+      scheduleToDelete: scheduleToDelete ?? this.scheduleToDelete,
     );
   }
 
@@ -93,8 +101,10 @@ class UserEntity {
       image: map['image'] as String,
       name: map['name'] as String,
       cpf: map['cpf'],
+      active: map['active'] ?? true,
       phone: map['phone'] as String,
       email: map['email'] as String,
+      scheduleToDelete: map['scheduleToDelete'],
       notificationToken: map['notificationToken'],
       address: AddressEntity.fromMap(map['address'] as Map<String, dynamic>),
       attacker: AttackerEntity.fromMap(map['attacker'] as Map<String, dynamic>),

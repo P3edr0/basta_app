@@ -15,7 +15,7 @@ class FetchAllGuardiansDatasource {
       final db = FirebaseFirestore.instance;
 
       final querySnapshot = await db.collection("users").get();
-      final allData =
+      final allUserData =
           querySnapshot.docs.map((doc) {
             Map<String, dynamic> data = doc.data();
             data['id'] = doc.id;
@@ -33,8 +33,12 @@ class FetchAllGuardiansDatasource {
           allOrdersData
               .map((order) => GuardianOrderEntity.fromMap(order))
               .toList();
+      final handledUserData =
+          allUserData.where((data) => (data['active'] ?? true)).toList();
       final guardians =
-          allData.map((guardian) => GuardianEntity.fromMap(guardian)).toList();
+          handledUserData
+              .map((guardian) => GuardianEntity.fromMap(guardian))
+              .toList();
 
       for (var order in orders) {
         for (var index = 0; index < guardians.length; index++) {

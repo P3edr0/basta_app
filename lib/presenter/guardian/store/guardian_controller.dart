@@ -86,7 +86,7 @@ class GuardianController extends ChangeNotifier {
     );
   }
 
-  Future<void> refreshNewGuardian(UserEntity newUser) async {
+  Future<UserEntity> refreshNewGuardian(UserEntity newUser) async {
     await fetchAllGuardians(newUser);
     final myGuardians =
         allGuardians.where((guardian) => guardian.status!.isAccept).toList();
@@ -111,6 +111,7 @@ class GuardianController extends ChangeNotifier {
         },
       );
     }
+    return newUser;
   }
 
   setUserId(UserEntity newUser) {

@@ -12,7 +12,7 @@ class BasEmptyAnimation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Lottie.asset(GiAppAssets.emptyList),
+        Lottie.asset(BasAppAssets.emptyList),
         Text(
           content,
           style: BasFontStyle.bodyLargeBold.copyWith(color: primaryColor),

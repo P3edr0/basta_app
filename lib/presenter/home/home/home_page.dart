@@ -17,7 +17,6 @@ import 'package:gina/utils/routes/app_routes.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../responsiveness/responsive.dart';
-import '../../../components/buttons/rounded_button.dart';
 import '../../../components/cards/home_card.dart';
 import '../../../components/dialogs/emergency_dialog.dart';
 import '../../../components/dialogs/quit_app_dialog.dart';
@@ -167,53 +166,53 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: Responsive.getSize(24),
-                        vertical: Responsive.getSize(16),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children:
-                            controller.tabs.map((item) {
-                              return InkWell(
-                                onTap:
-                                    () => InfoDialog.closeAuto(
-                                      "Em breve...",
-                                      "Estamos desenvolvendo esta funcionalidade.",
-                                      context,
-                                    ),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(
-                                        Responsive.getSize(10),
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: secondaryColor,
 
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        item.icon,
-                                        size: Responsive.getSize(24),
-                                        color: primaryColor,
-                                      ),
-                                    ),
-                                    SizedBox(height: Responsive.getSize(4)),
-                                    Text(
-                                      item.name,
-                                      style: BasFontStyle.smallBold.copyWith(
-                                        color: secondaryColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(
+                    //     horizontal: Responsive.getSize(24),
+                    //     vertical: Responsive.getSize(16),
+                    //   ),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //     children:
+                    //         controller.tabs.map((item) {
+                    //           return InkWell(
+                    //             onTap:
+                    //                 () => InfoDialog.closeAuto(
+                    //                   "Em breve...",
+                    //                   "Estamos desenvolvendo esta funcionalidade.",
+                    //                   context,
+                    //                 ),
+                    //             child: Column(
+                    //               children: [
+                    //                 Container(
+                    //                   padding: EdgeInsets.all(
+                    //                     Responsive.getSize(10),
+                    //                   ),
+                    //                   decoration: BoxDecoration(
+                    //                     color: secondaryColor,
 
+                    //                     shape: BoxShape.circle,
+                    //                   ),
+                    //                   child: Icon(
+                    //                     item.icon,
+                    //                     size: Responsive.getSize(24),
+                    //                     color: primaryColor,
+                    //                   ),
+                    //                 ),
+                    //                 SizedBox(height: Responsive.getSize(4)),
+                    //                 Text(
+                    //                   item.name,
+                    //                   style: BasFontStyle.smallBold.copyWith(
+                    //                     color: secondaryColor,
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           );
+                    //         }).toList(),
+                    //   ),
+                    // ),
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: Responsive.getSize(24),
@@ -295,8 +294,8 @@ class _HomePageState extends State<HomePage> {
                                       children: [
                                         Image.asset(
                                           isOnEmergency
-                                              ? GiAppAssets.emergencyWhite
-                                              : GiAppAssets.emergency,
+                                              ? BasAppAssets.emergencyWhite
+                                              : BasAppAssets.emergency,
                                         ),
                                         SizedBox(height: Responsive.getSize(8)),
 
@@ -318,13 +317,13 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           SizedBox(height: Responsive.getSize(20)),
-                          BasRoundedButton(
-                            child: Text("Cancelar Emergência"),
-                            onTap: () {
-                              controller.stopEmergency();
-                              guardianController.setEmergencyActivated(false);
-                            },
-                          ),
+                          // BasRoundedButton(
+                          //   child: Text("Cancelar Emergência"),
+                          //   onTap: () {
+                          //     controller.stopEmergency();
+                          //     guardianController.setEmergencyActivated(false);
+                          //   },
+                          // ),
                           SizedBox(height: Responsive.getSize(40)),
 
                           Row(
@@ -334,7 +333,7 @@ class _HomePageState extends State<HomePage> {
                                 title: "Delegacia",
                                 content:
                                     "Encontre a delegacia mais próxima de você.",
-                                icon: GiAppAssets.shield,
+                                icon: BasAppAssets.shield,
                                 onTap: () {
                                   navigator.goto(GiRoutes.policeStation);
                                 },
@@ -346,7 +345,7 @@ class _HomePageState extends State<HomePage> {
                                 title: "Anjo Guardião",
                                 content:
                                     "Adicione pessoas de segurança que serão alertadas.",
-                                icon: GiAppAssets.angel,
+                                icon: BasAppAssets.angel,
                                 onTap: () {
                                   navigator.goto(GiRoutes.guardian);
                                 },
@@ -420,7 +419,7 @@ class _HomePageState extends State<HomePage> {
                                     topRight: Radius.circular(20),
                                   ),
                                   child: Image.asset(
-                                    GiAppAssets.map,
+                                    BasAppAssets.map,
                                     fit: BoxFit.cover,
                                   ),
                                 ),

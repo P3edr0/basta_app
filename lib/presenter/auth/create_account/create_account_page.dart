@@ -78,7 +78,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                         Row(
                           children: [
                             Image.asset(
-                              GiAppAssets.logo,
+                              BasAppAssets.logo,
                               height: Responsive.getSize(30),
                             ),
                             SizedBox(width: Responsive.getSize(10)),

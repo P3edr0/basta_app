@@ -13,6 +13,10 @@ class AuthController extends ChangeNotifier {
   UserEntity? user;
   String? exception;
 
+  void setUser(UserEntity newUser) {
+    user = newUser;
+  }
+
   Future<bool> getUser() async {
     final getCredential = SecureStorageGetCredential();
     final getCredentialResponse = await getCredential();

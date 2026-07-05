@@ -1,6 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:gina/components/dialogs/error_dialog.dart';
+import 'package:gina/components/dialogs/info_dialog.dart';
+import 'package:gina/components/dialogs/options_dialog.dart';
+import 'package:gina/components/dialogs/success_dialog.dart';
 import 'package:gina/components/textfields/textfield.dart';
 import 'package:gina/presenter/auth/update_user/store/update_user_controller.dart';
 import 'package:gina/responsiveness/gi_font_style.dart';
@@ -58,7 +62,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      GiAppBar.secondary(title: "Editar perfil"),
+                      GiAppBar.secondary(title: "Perfil"),
 
                       SizedBox(height: Responsive.getSize(16)),
                       Align(
@@ -562,7 +566,8 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                       ),
                       SizedBox(height: Responsive.getSize(24)),
 
-                      BasRoundedButton(
+                      BasRoundedButton.solid(
+                        color: blue,
                         onTap: () async {
                           if (_formKey.currentState?.validate() ?? false) {
                             log("Tudo certo com o formulário");
@@ -587,16 +592,26 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                         child:
                             controller.isLoading
                                 ? BasLoadingButton()
-                                : Text(
-                                  "Atualizar",
-                                  style: BasFontStyle.bodyLargeBoldSec.copyWith(
-                                    color: secondaryColor,
-                                  ),
+                                : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      BasIcons.update,
+                                      color: secondaryColor,
+                                      size: Responsive.getSize(22),
+                                    ),
+                                    SizedBox(width: Responsive.getSize(10)),
+                                    Text(
+                                      "Atualizar",
+                                      style: BasFontStyle.bodyLargeBoldSec
+                                          .copyWith(color: secondaryColor),
+                                    ),
+                                  ],
                                 ),
                       ),
                       SizedBox(height: Responsive.getSize(16)),
                       BasRoundedButton.solid(
-                        color: alertColor,
+                        color: darkGrey,
                         onTap: () async {
                           final logoutSuccess = await controller.logout();
                           if (logoutSuccess) {
@@ -608,13 +623,158 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                         child:
                             controller.isLogoutLoading
                                 ? BasLoadingButton()
-                                : Text(
-                                  "Sair",
-                                  style: BasFontStyle.bodyLargeBoldSec.copyWith(
-                                    color: secondaryColor,
-                                  ),
+                                : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      BasIcons.logout,
+                                      color: secondaryColor,
+                                      size: Responsive.getSize(22),
+                                    ),
+                                    SizedBox(width: Responsive.getSize(10)),
+                                    Text(
+                                      "Sair",
+                                      style: BasFontStyle.bodyLargeBoldSec
+                                          .copyWith(color: secondaryColor),
+                                    ),
+                                  ],
                                 ),
                       ),
+                      SizedBox(height: Responsive.getSize(16)),
+                      if (controller.timeToCanDelete == null)
+                        BasRoundedButton.solid(
+                          color: alertColor,
+                          onTap: () async {
+                            OptionsDialog.show(
+                              title: "Atenção",
+                              content:
+                                  "Você tem certeza que deseja apagar a sua conta?",
+                              refuseButton: "Apagar",
+                              acceptButton: "voltar",
+                              acceptCallback: () {},
+                              refuseCallback: () async {
+                                final logoutSuccess =
+                                    await controller.scheduleToDeleteAccount();
+                                if (logoutSuccess) {
+                                  SuccessDialog.show(
+                                    "Agendado",
+                                    "Você agendou para deletar a sua conta!\n Retorne ao app em 24H para concluir a deleção!",
+                                    context,
+                                  );
+                                } else {
+                                  ErrorDialog.show(
+                                    title: "Falha",
+                                    content:
+                                        "houve uma falha ao tentar agendar a deleção!\n Por favor tente  novamente mais tarde",
+                                    context: context,
+                                  );
+                                }
+                              },
+                              context: context,
+                            );
+                          },
+                          child:
+                              controller.isLogoutLoading
+                                  ? BasLoadingButton()
+                                  : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        BasIcons.delete,
+                                        color: secondaryColor,
+                                        size: Responsive.getSize(22),
+                                      ),
+                                      SizedBox(width: Responsive.getSize(10)),
+                                      Text(
+                                        "Deletar conta",
+                                        style: BasFontStyle.bodyLargeBoldSec
+                                            .copyWith(color: secondaryColor),
+                                      ),
+                                    ],
+                                  ),
+                        ),
+
+                      if (controller.timeToCanDelete != null)
+                        Container(
+                          padding: EdgeInsets.all(Responsive.getSize(16)),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color:
+                                controller.canDelete
+                                    ? primaryColor
+                                    : alertColor,
+                          ),
+                          alignment: Alignment.center,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                BasIcons.timer,
+                                color: secondaryColor,
+                                size: Responsive.getSize(40),
+                              ),
+
+                              Text(
+                                controller.canDelete
+                                    ? 'Você já pode deletar sua conta com segurança!'
+                                    : 'Por segurança, você poderá\n deletar sua conta em ${controller.timeToCanDelete}H',
+                                style: BasFontStyle.bodyLargeBold.copyWith(
+                                  color: secondaryColor,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+
+                              SizedBox(height: Responsive.getSize(16)),
+
+                              if (controller.canDelete)
+                                BasRoundedButton.solid(
+                                  color: primaryFocusColor,
+                                  onTap: () async {
+                                    final deleteSuccess =
+                                        await controller.deleteAccount();
+                                    if (deleteSuccess) {
+                                      await InfoDialog.closeAuto(
+                                        "Sucesso",
+                                        "Sua conta foi deletada com sucesso.",
+                                        context,
+                                      );
+
+                                      _navigator.goto(
+                                        GiRoutes.login,
+                                        clearStack: true,
+                                      );
+                                    }
+                                  },
+                                  child:
+                                      controller.isLogoutLoading
+                                          ? BasLoadingButton()
+                                          : Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                BasIcons.safe,
+                                                color: secondaryColor,
+                                                size: Responsive.getSize(22),
+                                              ),
+                                              SizedBox(
+                                                width: Responsive.getSize(10),
+                                              ),
+                                              Text(
+                                                "Deletar conta",
+                                                style: BasFontStyle
+                                                    .bodyLargeBoldSec
+                                                    .copyWith(
+                                                      color: secondaryColor,
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
+                                ),
+                            ],
+                          ),
+                        ),
+
                       SizedBox(height: Responsive.getSize(24)),
                     ],
                   );

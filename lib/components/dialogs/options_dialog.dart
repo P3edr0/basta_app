@@ -5,8 +5,8 @@ import '../../responsiveness/gi_font_style.dart';
 import '../../theme/colors.dart';
 import '../buttons/rounded_button.dart';
 
-class InviteDialog {
-  const InviteDialog();
+class OptionsDialog {
+  const OptionsDialog();
 
   static Future show({
     required String title,

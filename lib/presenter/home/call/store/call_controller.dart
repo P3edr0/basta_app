@@ -32,7 +32,12 @@ class CallController extends ChangeNotifier {
       _estaConectado = true;
 
       // 4. Ativa a Câmera e o Microfone do celular Android imediatamente
-      await room!.localParticipant?.setCameraEnabled(true);
+      await room!.localParticipant?.setCameraEnabled(
+        true,
+        cameraCaptureOptions: const CameraCaptureOptions(
+          params: VideoParametersPresets.h720_169,
+        ),
+      );
       await room!.localParticipant?.setMicrophoneEnabled(true);
 
       // 5. Captura a faixa de vídeo do próprio usuário para exibir o "preview" na tela

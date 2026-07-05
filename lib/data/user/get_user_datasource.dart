@@ -19,7 +19,8 @@ class GetUserDatasource {
             return data;
           }).toList();
       final selectedData = allData.firstWhere(
-        (element) => element["email"] == credential,
+        (element) =>
+            element["email"] == credential && (element["active"] ?? true),
         orElse: () => {},
       );
       if (selectedData.isEmpty) {
@@ -28,13 +29,12 @@ class GetUserDatasource {
         );
       }
       final user = UserEntity.fromMap(selectedData);
+
       return Right(user);
     } catch (e, stack) {
       log(e.toString());
       log(stack.toString());
-      return Left(
-        BadRequestJackException(message: "Falha ao fazer criação de usuária"),
-      );
+      return Left(BadRequestJackException(message: "Falha ao fazer o login"));
     }
   }
 }

@@ -85,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                               Align(
                                 alignment: Alignment.center,
                                 child: Image.asset(
-                                  GiAppAssets.logo,
+                                  BasAppAssets.logo,
                                   height: Responsive.getSize(160),
                                 ),
                               ),
@@ -165,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                                               await ErrorDialog.show(
                                                 title: "Atenção",
                                                 content:
-                                                    "não foi possível realizar o login, por favor tente mais tarde",
+                                                    authController.exception!,
                                                 context: context,
                                               );
                                             }

@@ -135,7 +135,7 @@ class PolicyStationController extends ChangeNotifier {
   Future<AssetMapBitmap> _loadCustomMarker() async {
     return await BitmapDescriptor.asset(
       const ImageConfiguration(size: Size(42, 42)),
-      GiAppAssets.pin,
+      BasAppAssets.pin,
     );
   }
 

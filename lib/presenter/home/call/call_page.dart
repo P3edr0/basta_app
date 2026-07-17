@@ -8,6 +8,7 @@ import 'package:gina/utils/routes/app_routes.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:provider/provider.dart';
 
+import '../../../components/dialogs/info_dialog.dart';
 import '../../../utils/routes/app_navigator.dart';
 import '../home/store/home_controller.dart';
 import 'store/call_controller.dart';
@@ -28,8 +29,25 @@ class _CallPageState extends State<CallPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final controller = context.read<CallController>();
-      controller.startCall();
+      final successOnStartCall = await controller.startCall();
+      if (!successOnStartCall) {
+        InfoDialog.closeAuto(
+          "Atenção",
+          "Você precisa conceder permissão para acessar o microfone e a câmera para iniciar uma chamada de emergência.",
+          context,
+        );
+        await _endCall(controller);
+      }
     });
+  }
+
+  Future<void> _endCall(CallController controller) async {
+    final homeController = context.read<HomeController>();
+    final guardianController = context.read<GuardianController>();
+    homeController.stopEmergency();
+    guardianController.setEmergencyActivated(false);
+    await controller.finishCall();
+    navigator.goto(GiRoutes.home, clearStack: true);
   }
 
   @override
@@ -111,15 +129,7 @@ class _CallPageState extends State<CallPage> {
                 children: [
                   FloatingActionButton(
                     backgroundColor: Colors.red,
-                    onPressed: () async {
-                      final homeController = context.read<HomeController>();
-                      final guardianController =
-                          context.read<GuardianController>();
-                      homeController.stopEmergency();
-                      guardianController.setEmergencyActivated(false);
-                      await controller.finishCall();
-                      navigator.goto(GiRoutes.home, clearStack: true);
-                    },
+                    onPressed: () async => await _endCall(controller),
                     child: const Icon(Icons.call_end, color: Colors.white),
                   ),
                 ],

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io'; // IMPORTANTE: Adicionado para verificar a plataforma (Platform.isAndroid)
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -21,24 +22,25 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    // 1. Verificamos se já existe alguma instância do Firebase rodando na memória
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
-        options:
-            DefaultFirebaseOptions
-                .currentPlatform, // Se você usar o flutterfire configure
+        options: DefaultFirebaseOptions.currentPlatform,
       );
       print("🔥 Firebase inicializado com sucesso!");
     } else {
-      // Se já existia, nós apenas reaproveitamos a que está na memória
       Firebase.app();
       print("🔄 Instância existente do Firebase reaproveitada.");
     }
   } catch (e) {
     print("Erro ao inicializar o Firebase: $e");
   }
+
   await checkPermissions();
-  await initializeAndroidAudioSettings();
+
+  // 4. INICIALIZA CONFIGURAÇÕES DE ÁUDIO APENAS SE FOR ANDROID
+  if (Platform.isAndroid) {
+    await initializeAndroidAudioSettings();
+  }
 
   // 5. OBSERVER DE ROTA
   final routeObserver = RouteStackObserver.instance();
@@ -61,19 +63,28 @@ Future<void> main() async {
 }
 
 Future<void> checkPermissions() async {
+  // Solicita a permissão padrão de Bluetooth (Válida para iOS e Android antigo)
   var status = await Permission.bluetooth.request();
   var notifyStatus = await Permission.notification.request();
+
   if (status.isPermanentlyDenied) {
     log('Bluetooth Permission disabled');
   }
-  status = await Permission.bluetoothConnect.request();
-  notifyStatus = await Permission.notification.request();
-  if (status.isPermanentlyDenied) {
-    log('Bluetooth Connect Permission disabled');
+
+  // Permissões específicas do Android 12+ para buscar dispositivos Bluetooth próximos
+  if (Platform.isAndroid) {
+    status = await Permission.bluetoothConnect.request();
+    if (status.isPermanentlyDenied) {
+      log('Bluetooth Connect Permission disabled');
+    }
   }
+
+  // Tratamento da Notificação e ativação do botão na tela de bloqueio
   if (!notifyStatus.isPermanentlyDenied && !notifyStatus.isDenied) {
-    log('Notification Connect Permission disabled');
+    log('Notification Permission granted, initializing service');
     await initializeBackgroundService();
+  } else {
+    log('Notification Permission disabled');
   }
 }
 

@@ -2,47 +2,62 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>Basta</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>O Basta precisa acessar a câmera para a videochamada de suporte com nossa Central de Atendimento.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Sua localização é necessária para que os Anjos Guardiões te acompanhem em situações de risco, mesmo com o app em segundo plano.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Sua localização é necessária para que os Anjos Guardiões te acompanhem em situações de risco.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>O Basta precisa da sua localização para mostrar as delegacias próximas e permitir que seus Anjos Guardiões te protejam.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>O Basta precisa acessar o microfone para que você possa falar com nossa Central de Atendimento.</string>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-	</array>
-	<key>io.flutter.embedded_views_preview</key>
-	<true/>
+    <key>CADisableMinimumFrameDurationOnPhone</key>
+    <true/>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>Basta</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>$(FLUTTER_BUILD_NAME)</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>CFBundleVersion</key>
+    <string>$(FLUTTER_BUILD_NUMBER)</string>
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+    
+    <!-- Descrições de Privacidade bem fundamentadas -->
+    <key>NSCameraUsageDescription</key>
+    <string>O Basta precisa acessar a câmera para a videochamada de suporte com nossa Central de Atendimento que será implementado em atualizações futuras.</string>
+    <!-- <key>NSLocalNetworkUsageDescription</key>
+    <string>O Basta precisa de acesso à rede local para estabelecer conexões estáveis de voz e vídeo ponto a ponto.</string>-->
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Sua localização é necessária para que os Anjos Guardiões te acompanhem em situações de risco, mesmo com o app em segundo plano.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Sua localização é necessária para que os Anjos Guardiões te acompanhem em situações de risco.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>O Basta precisa da sua localização para mostrar as delegacias próximas e permitir que seus Anjos Guardiões te protejam.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>O Basta precisa acessar o microfone para que você possa falar com nossa Central de Atendimento que será implementado em atualizações futuras.</string>
+    
+    <key>UIApplicationSupportsIndirectInputEvents</key>
+    <true/>
+    
+    <!-- Modos de Background otimizados para LiveKit + GPS -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <!--<string>audio</string>
+        <string>voip</string>-->
+        <string>location</string>
+        <string>remote-notification</string>
+    </array>
+    
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
+    <key>UIMainStoryboardFile</key>
+    <string>Main</string>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+    <key>io.flutter.embedded_views_preview</key>
+    <true/>
 </dict>
 </plist>

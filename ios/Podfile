@@ -1,6 +1,20 @@
 # Uncomment this line to define a global platform for your project
 platform :ios, '15.6'
 
+# FORÇAR UNIFICAÇÃO DO WEBRTC-SDK (Resolve o conflito de versões)
+pre_install do |installer|
+  Pod::Specification.class_eval do
+    alias_method :old_dependency, :dependency
+    def dependency(*args)
+      # Se qualquer plugin pedir o WebRTC-SDK (seja o LiveKit ou o Flutter WebRTC), forçamos a 137.7151.03
+      if args[0] == 'WebRTC-SDK'
+        args[1] = '137.7151.03'
+      end
+      old_dependency(*args)
+    end
+  end
+end
+
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
@@ -40,10 +54,10 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
-      # Força todos os plugins (incluindo o cloud_firestore) para iOS 13.0
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      # Garante compatibilidade do iOS Deployment Target com o LiveKit
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.6'
       
-      # Necessário para compatibilidade com Apple Silicon (M1/M2)
+      # Necessário para compatibilidade com Apple Silicon (M1/M2 do seu Mac mini)
       config.build_settings['ONLY_ACTIVE_ARCH'] = 'YES'
     end
   end

@@ -18,7 +18,7 @@ class CallController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> startCall() async {
+  Future<bool> startCall() async {
     try {
       // 1. Instancia a Sala com as configurações padrão do LiveKit
       room = Room();
@@ -30,16 +30,19 @@ class CallController extends ChangeNotifier {
       // 3. Conecta nativamente na infraestrutura
       await room!.connect(call!.serverUrl, call!.token);
       _estaConectado = true;
-
-      // 4. Ativa a Câmera e o Microfone do celular Android imediatamente
-      await room!.localParticipant?.setCameraEnabled(
-        true,
-        cameraCaptureOptions: const CameraCaptureOptions(
-          params: VideoParametersPresets.h720_169,
-        ),
-      );
-      await room!.localParticipant?.setMicrophoneEnabled(true);
-
+      try {
+        // 4. Ativa a Câmera e o Microfone do celular Android imediatamente
+        final cameraStatus = await room!.localParticipant?.setCameraEnabled(
+          true,
+          cameraCaptureOptions: const CameraCaptureOptions(
+            params: VideoParametersPresets.h720_169,
+          ),
+        );
+        final microphoneStatus = await room!.localParticipant
+            ?.setMicrophoneEnabled(true);
+      } catch (e, stack) {
+        return false;
+      }
       // 5. Captura a faixa de vídeo do próprio usuário para exibir o "preview" na tela
       final localVideoPublication =
           room!.localParticipant?.videoTrackPublications.firstOrNull;
@@ -48,8 +51,10 @@ class CallController extends ChangeNotifier {
       }
 
       notifyListeners();
+      return true;
     } catch (e) {
       debugPrint("Erro ao conectar no LiveKit Android: $e");
+      return false;
     }
   }
 

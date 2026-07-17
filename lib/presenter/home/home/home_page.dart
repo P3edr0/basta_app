@@ -2,13 +2,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gina/components/buttons/rounded_button.dart';
 import 'package:gina/components/dialogs/error_dialog.dart';
 import 'package:gina/components/dialogs/info_dialog.dart';
+import 'package:gina/components/dialogs/success_dialog.dart';
 import 'package:gina/presenter/auth/store/auth_controller.dart';
 import 'package:gina/presenter/auth/update_user/store/update_user_controller.dart';
 import 'package:gina/presenter/guardian/emergency_details/store/emergency_details_controller.dart';
 import 'package:gina/presenter/guardian/store/guardian_controller.dart';
-import 'package:gina/presenter/home/call/store/call_controller.dart';
 import 'package:gina/presenter/home/home/store/home_controller.dart';
 import 'package:gina/responsiveness/gi_font_style.dart';
 import 'package:gina/theme/icons.dart';
@@ -251,6 +252,24 @@ class _HomePageState extends State<HomePage> {
                                   log("Emergência já ativa");
                                   return;
                                 }
+                                /* var audioStatus =
+                                    await Permission.microphone.request();
+                                var cameraStatus =
+                                    await Permission.camera.request();
+
+                                if (audioStatus.isDenied ||
+                                    audioStatus.isPermanentlyDenied ||
+                                    cameraStatus.isDenied ||
+                                    cameraStatus.isPermanentlyDenied) {
+                                  InfoDialog.closeAuto(
+                                    "Atenção",
+                                    "Você precisa conceder permissão para acessar o microfone e a câmera para iniciar uma chamada de emergência.",
+                                    context,
+                                  );
+                                  log("Sem permissão para video Chamadas");
+                                  return;
+                                }
+*/
                                 final callData = await controller.createCall();
                                 if (callData == null) {
                                   ErrorDialog.show(
@@ -261,12 +280,19 @@ class _HomePageState extends State<HomePage> {
                                   );
                                   return;
                                 }
-                                final callController =
+                                /* final callController =
                                     context.read<CallController>();
                                 callController.setCall(callData);
-                                navigator.goto(GiRoutes.call);
+                                navigator.goto(GiRoutes.call);*/
                                 guardianController.setEmergencyActivated(true);
                                 await controller.startEmergency();
+                                SuccessDialog.show(
+                                  "Emergencia ativada",
+                                  "Você está sendo monitorada por seus anjos guardiões, eles receberão sua localização em tempo real.",
+                                  context,
+                                );
+                                log("Emergência já ativa");
+                                return;
                               },
                               child: CircleAvatar(
                                 backgroundColor:
@@ -317,13 +343,20 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           SizedBox(height: Responsive.getSize(20)),
-                          // BasRoundedButton(
-                          //   child: Text("Cancelar Emergência"),
-                          //   onTap: () {
-                          //     controller.stopEmergency();
-                          //     guardianController.setEmergencyActivated(false);
-                          //   },
-                          // ),
+                          if (isOnEmergency)
+                            BasRoundedButton.solid(
+                              color: blue,
+                              child: Text(
+                                "Finalizar Emergência",
+                                style: BasFontStyle.bodyLargeBold.copyWith(
+                                  color: secondaryColor,
+                                ),
+                              ),
+                              onTap: () {
+                                controller.stopEmergency();
+                                guardianController.setEmergencyActivated(false);
+                              },
+                            ),
                           SizedBox(height: Responsive.getSize(40)),
 
                           Row(

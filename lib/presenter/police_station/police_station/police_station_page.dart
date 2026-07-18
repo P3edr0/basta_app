@@ -11,6 +11,7 @@ import '../../../components/cards/police_station_card.dart';
 import '../../../responsiveness/gi_font_style.dart';
 import '../../../theme/colors.dart';
 import '../../../utils/routes/app_navigator.dart';
+import '../../../utils/routes/app_routes.dart';
 import '../../core/widgets/bottom_navigation_bar.dart';
 
 class PoliceStationPage extends StatefulWidget {
@@ -39,6 +40,9 @@ class _PoliceStationPageState extends State<PoliceStationPage> {
               "Você recusou o acesso a sua localização. Precisamos dela para te mostrar as delegacias próximas!",
           context: context,
         );
+        Future.delayed(Duration(seconds: 3), () {
+          navigator.goto(GiRoutes.home, clearStack: true);
+        });
       }
     });
   }

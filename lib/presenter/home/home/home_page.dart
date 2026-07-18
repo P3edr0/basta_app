@@ -81,7 +81,15 @@ class _HomePageState extends State<HomePage> {
         },
       );
       final controller = context.read<HomeController>();
-      await controller.getCurrentAddress();
+      final haveLocationPermission = await controller.getCurrentAddress();
+      if (!haveLocationPermission) {
+        ErrorDialog.show(
+          context: context,
+          title: "Atenção",
+          content:
+              "Você precisa conceder permissão à localização do seu dispositivo para ter acesso as funcionalidades do Basta.",
+        );
+      }
     });
   }
 
@@ -243,6 +251,17 @@ class _HomePageState extends State<HomePage> {
                             child: InkWell(
                               onTap: () async {
                                 ///////////////////////////////////////////////////////
+                                final haveLocationPermission =
+                                    await controller.getCurrentAddress();
+                                if (!haveLocationPermission) {
+                                  ErrorDialog.show(
+                                    context: context,
+                                    title: "Atenção",
+                                    content:
+                                        "Você precisa conceder permissão à localização do seu dispositivo para ter acesso ao botão de emergência.",
+                                  );
+                                  return;
+                                }
                                 if (isOnEmergency) {
                                   InfoDialog.closeAuto(
                                     "Atenção",

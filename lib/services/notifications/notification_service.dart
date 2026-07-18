@@ -7,13 +7,12 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 Future<void> initializeBackgroundService() async {
   final service = FlutterBackgroundService();
 
-  // Configuração do canal de notificação local
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'emergency_shortcut_channel', // ID do canal
-    'Acesso Rápido de Emergência', // Nome visível
+    'emergency_shortcut_channel',
+    'Acesso Rápido de Emergência',
     description: 'Mantém o botão de acesso rápido ativo na tela de bloqueio.',
     importance: Importance.max,
   );
@@ -28,10 +27,14 @@ Future<void> initializeBackgroundService() async {
     androidConfiguration: AndroidConfiguration(
       onStart: onStart,
       autoStart: true,
-      isForegroundMode: true,
+      isForegroundMode: true, // Força a execução contínua em segundo plano
       notificationChannelId: 'emergency_shortcut_channel',
-      initialNotificationTitle: 'Proteção Ativa',
-      initialNotificationContent: 'Toque para abrir o app instantaneamente',
+      autoStartOnBoot: true,
+
+      // 🔥 DEFINA OS TEXTOS DA NOTIFICAÇÃO DO SEU BOTÃO DIRETO AQUI
+      initialNotificationTitle: 'Proteção para você',
+      initialNotificationContent:
+          '🚨 TOQUE AQUI PARA ABRIR O APP IMEDIATAMENTE',
       foregroundServiceNotificationId: 888,
     ),
     iosConfiguration: IosConfiguration(
@@ -53,27 +56,18 @@ Future<bool> onIosBackground(ServiceInstance service) async {
 void onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
-  // Se for Android, exibe a notificação FIXA apenas UMA VEZ no início
+  // 🔥 SOLUÇÃO DEFINITIVA: Satisfez o Android nativo instantaneamente
   if (service is AndroidServiceInstance) {
-    flutterLocalNotificationsPlugin.show(
-      888,
-      'Proteção para você',
-      '🚨 TOQUE AQUI PARA ABRIR O APP IMEDIATAMENTE',
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'emergency_shortcut_channel',
-          'Acesso Rápido de Emergência',
-          ongoing: true, // Garante que NUNCA seja apagada deslizando
-          importance: Importance.max,
-          priority: Priority.high,
-          visibility:
-              NotificationVisibility.public, // Visível na tela de bloqueio
-          icon: 'ic_notification', // Seu ícone customizado
-        ),
-      ),
+    // Comunica ao Android nativo nos primeiros milissegundos que este serviço é Foreground
+    service.setAsForegroundService();
+
+    // Força a atualização dos textos e garante que os parâmetros de visibilidade fiquem travados
+    service.setForegroundNotificationInfo(
+      title: "Proteção para você",
+      content: "🚨 TOQUE AQUI PARA ABRIR O APP IMEDIATAMENTE",
     );
   }
+
+  // Se você precisar escutar atualizações de localização, banco de dados ou
+  // robôs de chamadas em segundo plano daqui para frente, faça abaixo desta linha:
 }

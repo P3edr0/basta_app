@@ -56,7 +56,7 @@ class HomeController extends ChangeNotifier {
             "${currentPlace.thoroughfare}, ${currentPlace.subThoroughfare} - ${currentPlace.subLocality}, ${currentPlace.subAdministrativeArea}";
       }
       notifyListeners();
-      return false;
+      return true;
     } catch (e) {
       return false;
     }

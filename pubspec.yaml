@@ -1,7 +1,7 @@
 name: gina
 description: "A new Flutter project."
 publish_to: "none"
-version: 1.0.5+7
+version: 1.0.5+10
 
 environment:
   sdk: ^3.7.2
@@ -38,6 +38,9 @@ dependencies:
   livekit_client: ^2.5.7
   flutter_background_service: ^5.1.0
   flutter_local_notifications: ^19.5.0
+
+# flutter_background_service_android:
+#   path: packages/flutter_background_service_android
 
 dev_dependencies:
   flutter_test:

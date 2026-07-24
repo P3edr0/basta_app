@@ -20,9 +20,11 @@ import 'package:provider/provider.dart';
 import '../../../../responsiveness/responsive.dart';
 import '../../../components/cards/home_card.dart';
 import '../../../components/dialogs/emergency_dialog.dart';
+import '../../../components/dialogs/internet_dialog.dart';
 import '../../../components/dialogs/quit_app_dialog.dart';
 import '../../../data/emergency/guardian_tracking_datasource.dart';
 import '../../../main.dart';
+import '../../../services/internet_service/internet_service_impl.dart';
 import '../../../theme/colors.dart';
 import '../../../utils/assets/app_assets.dart';
 import '../../../utils/enums/emergency_status.dart';
@@ -75,7 +77,7 @@ class _HomePageState extends State<HomePage> {
                 true,
                 EmergencyStatus.active,
               );
-              navigator.goto(GiRoutes.emergencyDetails);
+              navigator.goto(BasRoutes.emergencyDetails);
             },
           );
         },
@@ -132,22 +134,14 @@ class _HomePageState extends State<HomePage> {
                       color: secondaryColor,
                       child: Row(
                         children: [
-                          InkWell(
-                            onTap:
-                                () => InfoDialog.closeAuto(
-                                  "Em breve...",
-                                  "Estamos desenvolvendo esta funcionalidade.",
-                                  context,
-                                ),
-                            child: Icon(
-                              Icons.menu,
-                              size: Responsive.getSize(30),
-                            ),
+                          Image.asset(
+                            BasAppAssets.logo,
+                            height: Responsive.getSize(28),
                           ),
                           SizedBox(width: Responsive.getSize(5)),
                           Text(
                             "BASTA",
-                            style: BasFontStyle.titleBoldSec.copyWith(
+                            style: BasFontStyle.h3Bold.copyWith(
                               color: primaryColor,
                             ),
                           ),
@@ -160,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                                   context.read<UpdateUserController>();
                               final user = authController.user;
                               updateUserController.setUser(user);
-                              navigator.goto(GiRoutes.updateUser);
+                              navigator.goto(BasRoutes.updateUser);
                             },
 
                             child: CircleAvatar(
@@ -251,6 +245,24 @@ class _HomePageState extends State<HomePage> {
                             child: InkWell(
                               onTap: () async {
                                 ///////////////////////////////////////////////////////
+                                ///
+                                final hasInternet =
+                                    await NetworkService.hasInternet();
+                                if (!hasInternet) {
+                                  InternetDialog.show(
+                                    "Atenção",
+                                    "Você precisa de conexão com a internet para iniciar uma emergência.",
+                                    context,
+                                    () async {
+                                      final testInternetAgain =
+                                          await NetworkService.hasInternet();
+                                      if (testInternetAgain) {
+                                        Navigator.of(context).pop();
+                                      }
+                                    },
+                                  );
+                                  return;
+                                }
                                 final haveLocationPermission =
                                     await controller.getCurrentAddress();
                                 if (!haveLocationPermission) {
@@ -387,7 +399,7 @@ class _HomePageState extends State<HomePage> {
                                     "Encontre a delegacia mais próxima de você.",
                                 icon: BasAppAssets.shield,
                                 onTap: () {
-                                  navigator.goto(GiRoutes.policeStation);
+                                  navigator.goto(BasRoutes.policeStation);
                                 },
                               ),
 
@@ -399,7 +411,7 @@ class _HomePageState extends State<HomePage> {
                                     "Adicione pessoas de segurança que serão alertadas.",
                                 icon: BasAppAssets.angel,
                                 onTap: () {
-                                  navigator.goto(GiRoutes.guardian);
+                                  navigator.goto(BasRoutes.guardian);
                                 },
                               ),
                             ],

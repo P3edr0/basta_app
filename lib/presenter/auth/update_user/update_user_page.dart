@@ -62,7 +62,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      GiAppBar.secondary(title: "Perfil"),
+                      BasAppBar.secondary(title: "Perfil"),
 
                       SizedBox(height: Responsive.getSize(16)),
                       Align(
@@ -583,7 +583,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                             final hasUser = await authController.getUser();
                             if (hasUser) {
                               homeController.user = authController.user;
-                              _navigator.goto(GiRoutes.home, clearStack: true);
+                              _navigator.goto(BasRoutes.home, clearStack: true);
                             } else {
                               log("Falha ao buscar novo usuário");
                             }
@@ -615,7 +615,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                         onTap: () async {
                           final logoutSuccess = await controller.logout();
                           if (logoutSuccess) {
-                            _navigator.goto(GiRoutes.login, clearStack: true);
+                            _navigator.goto(BasRoutes.login, clearStack: true);
                           } else {
                             log("Falha ao fazer logout");
                           }
@@ -740,7 +740,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                                       );
 
                                       _navigator.goto(
-                                        GiRoutes.login,
+                                        BasRoutes.login,
                                         clearStack: true,
                                       );
                                     }

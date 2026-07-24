@@ -5,14 +5,14 @@ import '../../responsiveness/responsive.dart';
 import '../../theme/colors.dart';
 import '../buttons/back_button.dart';
 
-class GiAppBar extends StatelessWidget {
-  const GiAppBar({
+class BasAppBar extends StatelessWidget {
+  const BasAppBar({
     super.key,
     required this.title,
     this.withPadding = false,
     this.onTap,
   }) : secondary = false;
-  const GiAppBar.secondary({
+  const BasAppBar.secondary({
     super.key,
     required this.title,
     this.withPadding = false,

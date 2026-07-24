@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class BasIcons {
   static IconData check = FeatherIcons.check;
+  static IconData withoutNetwork = FeatherIcons.wifiOff;
   static IconData delete = Icons.delete_forever;
   static IconData safe = Icons.security_rounded;
   static IconData x = FeatherIcons.x;

@@ -96,6 +96,7 @@ class UpdateUserController extends ChangeNotifier {
     attackerNameController.text = user!.attacker?.name ?? "";
     protectionIdController.text = user!.attacker?.protectionId ?? "";
     selectedState = user!.address.state;
+    postalCodeController.text = user!.address.postalCode ?? "";
 
     if (user!.image != null) {
       networkProfileImage = user!.image!;
@@ -184,7 +185,7 @@ class UpdateUserController extends ChangeNotifier {
 
     final name = nameController.text;
     final userImage = networkProfileImage;
-    final newProfileImage = profileImage!;
+    final newProfileImage = profileImage;
     final cpf = documentController.text;
     final phone = phoneController.text;
     final email = emailController.text;

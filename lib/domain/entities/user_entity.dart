@@ -89,13 +89,16 @@ class UserEntity {
   factory UserEntity.fromMap(Map<String, dynamic> map) {
     List<String>? myGuardians;
     List<String>? protect;
+    bool hasAttacker = true;
     if (map['myGuardians'] != null) {
       myGuardians = List<String>.from(map['myGuardians'] as List<dynamic>);
     }
     if (map['protected'] != null) {
       protect = List<String>.from(map['protected'] as List<dynamic>);
     }
-
+    if (map['attacker'] == null) {
+      hasAttacker = false;
+    }
     return UserEntity(
       id: map['id'],
       image: map['image'] as String,
@@ -107,7 +110,10 @@ class UserEntity {
       scheduleToDelete: map['scheduleToDelete'],
       notificationToken: map['notificationToken'],
       address: AddressEntity.fromMap(map['address'] as Map<String, dynamic>),
-      attacker: AttackerEntity.fromMap(map['attacker'] as Map<String, dynamic>),
+      attacker:
+          hasAttacker
+              ? AttackerEntity.fromMap(map['attacker'] as Map<String, dynamic>)
+              : null,
       myGuardians: myGuardians,
       protect: protect,
     );

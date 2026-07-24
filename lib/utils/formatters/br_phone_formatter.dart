@@ -13,8 +13,13 @@ class BrPhoneInputFormatter extends TextInputFormatter {
     }
 
     String newText;
-
-    if (text.length <= 2) {
+    if (text.length <= 1) {
+      if (text.isEmpty) {
+        newText = '';
+      } else {
+        newText = '(${text.substring(0, 1)}';
+      }
+    } else if (text.length <= 2) {
       newText = '(${text.substring(0, 2)}';
     } else if (text.length <= 6) {
       newText = '(${text.substring(0, 2)}) ${text.substring(2)}';
@@ -23,15 +28,18 @@ class BrPhoneInputFormatter extends TextInputFormatter {
       final numberPart = text.substring(2);
       if (numberPart.length <= 8) {
         // 8 dígitos
-        newText = '(${text.substring(0, 2)}) '
+        newText =
+            '(${text.substring(0, 2)}) '
             '${numberPart.substring(0, 4)}-${numberPart.substring(4)}';
       } else {
         // 9 dígitos
-        newText = '(${text.substring(0, 2)}) '
+        newText =
+            '(${text.substring(0, 2)}) '
             '${numberPart.substring(0, 2)}-${numberPart.substring(2)}';
       }
     } else {
-      newText = '(${text.substring(0, 2)}) '
+      newText =
+          '(${text.substring(0, 2)}) '
           '${text.substring(2, 7)}-${text.substring(7, 11)}';
     }
 

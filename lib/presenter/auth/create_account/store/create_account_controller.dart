@@ -27,11 +27,11 @@ class CreateAccountController extends ChangeNotifier {
   final TextEditingController attackerNameController = TextEditingController();
   final TextEditingController protectionIdController = TextEditingController();
   bool isLoading = false;
+  bool termsAccepted = false;
   CepEntity? cepContent;
   String? exception;
   String selectedState = 'SP';
-  bool showAddress = false;
-  bool showRiskInfo = false;
+
   Uint8List? profileImage;
   Uint8List? attackerImage;
   final states = [
@@ -67,11 +67,6 @@ class CreateAccountController extends ChangeNotifier {
   /////////////////////////////////// GETS
   bool get hasError => exception != null;
 
-  setShowAddress() {
-    showAddress = !showAddress;
-    notifyListeners();
-  }
-
   setIsLoading([bool? newLoading]) {
     if (newLoading == null) {
       isLoading = !isLoading;
@@ -81,8 +76,8 @@ class CreateAccountController extends ChangeNotifier {
     notifyListeners();
   }
 
-  setShowRiskInfo() {
-    showRiskInfo = !showRiskInfo;
+  setTermsAccepted() {
+    termsAccepted = !termsAccepted;
     notifyListeners();
   }
 
@@ -122,6 +117,27 @@ class CreateAccountController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearFormData() {
+    exception = null;
+    selectedState = 'SP';
+
+    profileImage = null;
+    attackerImage = null;
+    nameController.clear();
+    documentController.clear();
+    phoneController.clear();
+    emailController.clear();
+    postalCodeController.clear();
+    streetController.clear();
+    complementController.clear();
+    numberController.clear();
+    neighborhoodController.clear();
+    cityController.clear();
+    attackerNameController.clear();
+    protectionIdController.clear();
+    notifyListeners();
+  }
+
   Future<bool> createUser() async {
     setIsLoading(true);
 
@@ -146,18 +162,24 @@ class CreateAccountController extends ChangeNotifier {
       state: state,
       number: number,
       complement: complement,
+      postalCode: postalCodeController.text,
     );
 
     final attackerName = attackerNameController.text;
     final protectionId = protectionIdController.text;
-    final attackerUserImage = attackerImage!;
+    final attackerUserImage = attackerImage;
 
-    final attacker = AttackerEntity(
-      name: attackerName,
+    AttackerEntity? attacker = AttackerEntity(
+      name: attackerName.isEmpty ? null : attackerName,
       imageFile: attackerUserImage,
-      protectionId: protectionId,
+      protectionId: protectionId.isEmpty ? null : protectionId,
     );
 
+    if (attackerName.isEmpty &&
+        protectionId.isEmpty &&
+        attackerUserImage == null) {
+      attacker = null;
+    }
     final newUser = UserEntity(
       imageFile: userImage,
       name: name,

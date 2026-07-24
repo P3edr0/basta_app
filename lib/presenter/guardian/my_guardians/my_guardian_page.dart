@@ -60,7 +60,7 @@ class MyGuardianPageState extends State<MyGuardianPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    GiAppBar.secondary(title: "Meus Anjos Guardiões"),
+                    BasAppBar.secondary(title: "Meus Anjos Guardiões"),
 
                     SizedBox(height: Responsive.getSize(16)),
 
@@ -79,7 +79,7 @@ class MyGuardianPageState extends State<MyGuardianPage> {
                       title: "+ Adicionar novo anjo",
                       content: "Convide uma pessoa de confiança",
                       onTap: () {
-                        navigator.goto(GiRoutes.addGuardian);
+                        navigator.goto(BasRoutes.addGuardian);
                       },
                     ),
                     SizedBox(height: Responsive.getSize(16)),
@@ -88,7 +88,7 @@ class MyGuardianPageState extends State<MyGuardianPage> {
                       title: "Ver emergências",
                       content: "Veja o histórico de emergências",
                       onTap: () {
-                        navigator.goto(GiRoutes.emergencyHistory);
+                        navigator.goto(BasRoutes.emergencyHistory);
                       },
                     ),
                     SizedBox(height: Responsive.getSize(30)),

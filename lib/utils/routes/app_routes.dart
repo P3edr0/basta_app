@@ -1,6 +1,8 @@
-class GiRoutes {
+class BasRoutes {
   static const splash = '/';
-  static const createAccount = '/create_account';
+  static const createAccountPersonal = '/create_account_personal';
+  static const createAccountAddress = '/create_account_address';
+  static const createAccountAttacker = '/create_account_attacker';
   static const updateUser = '/update_user';
   static const guardian = '/guardian';
   static const addGuardian = '/add_guardian';

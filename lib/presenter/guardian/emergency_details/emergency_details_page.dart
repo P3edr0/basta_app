@@ -85,7 +85,7 @@ class _EmergencyDetailsPageState extends State<EmergencyDetailsPage> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GiAppBar.secondary(title: "Emergências", withPadding: true),
+                BasAppBar.secondary(title: "Emergências", withPadding: true),
                 SizedBox(height: Responsive.getSize(10)),
 
                 Expanded(

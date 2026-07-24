@@ -68,8 +68,8 @@ class BasBottomNavigationBar extends StatelessWidget {
                 icon: BasIcons.policy,
                 isSelected: routeObserver.currentPageindex == 1,
                 onTap: () {
-                  if (routeObserver.currentRoute != GiRoutes.policeStation) {
-                    _navigator.goto(GiRoutes.policeStation);
+                  if (routeObserver.currentRoute != BasRoutes.policeStation) {
+                    _navigator.goto(BasRoutes.policeStation);
                   }
                 },
               ),
@@ -79,8 +79,8 @@ class BasBottomNavigationBar extends StatelessWidget {
                 icon: BasIcons.home,
                 isSelected: routeObserver.currentPageindex == 2,
                 onTap: () {
-                  if (routeObserver.currentRoute != GiRoutes.home) {
-                    _navigator.goto(GiRoutes.home);
+                  if (routeObserver.currentRoute != BasRoutes.home) {
+                    _navigator.goto(BasRoutes.home);
                   }
                 },
               ),
@@ -92,8 +92,8 @@ class BasBottomNavigationBar extends StatelessWidget {
                 onTap: () {
                   // routeObserver.changeCurrentPage(3);
 
-                  if (routeObserver.currentRoute != GiRoutes.guardian) {
-                    _navigator.goto(GiRoutes.guardian);
+                  if (routeObserver.currentRoute != BasRoutes.guardian) {
+                    _navigator.goto(BasRoutes.guardian);
                   }
                 },
               ),
@@ -109,8 +109,8 @@ class BasBottomNavigationBar extends StatelessWidget {
                       context.read<UpdateUserController>();
                   final user = authController.user;
                   updateUserController.setUser(user);
-                  if (routeObserver.currentRoute != GiRoutes.updateUser) {
-                    _navigator.goto(GiRoutes.updateUser);
+                  if (routeObserver.currentRoute != BasRoutes.updateUser) {
+                    _navigator.goto(BasRoutes.updateUser);
                   }
                 },
               ),

@@ -37,7 +37,7 @@ class EmergencyHistoryPageState extends State<EmergencyHistoryPage> {
       controller.setUser(user);
       await controller.fetchEmergencyHistory(
         userId: user.id!,
-        guardians: user.myGuardians!,
+        guardians: user.myGuardians ?? [],
       );
     });
   }
@@ -63,7 +63,7 @@ class EmergencyHistoryPageState extends State<EmergencyHistoryPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    GiAppBar.secondary(title: "Histórico de Emergências"),
+                    BasAppBar.secondary(title: "Histórico de Emergências"),
 
                     SizedBox(height: Responsive.getSize(16)),
 
@@ -96,7 +96,7 @@ class EmergencyHistoryPageState extends State<EmergencyHistoryPage> {
                           final emergencyDetails =
                               context.read<EmergencyDetailsController>();
                           emergencyDetails.startPage(emergency);
-                          navigator.goto(GiRoutes.emergencyDetails);
+                          navigator.goto(BasRoutes.emergencyDetails);
                         },
                       );
                     }),

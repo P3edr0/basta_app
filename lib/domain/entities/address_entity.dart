@@ -51,6 +51,7 @@ class AddressEntity {
       'city': city,
       'state': state,
       'number': number,
+      'postalCode': postalCode,
     };
   }
 

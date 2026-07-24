@@ -41,7 +41,7 @@ class _PoliceStationPageState extends State<PoliceStationPage> {
           context: context,
         );
         Future.delayed(Duration(seconds: 3), () {
-          navigator.goto(GiRoutes.home, clearStack: true);
+          navigator.goto(BasRoutes.home, clearStack: true);
         });
       }
     });
@@ -67,7 +67,7 @@ class _PoliceStationPageState extends State<PoliceStationPage> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GiAppBar.secondary(
+                BasAppBar.secondary(
                   title: "Delegacias Próximas",
                   withPadding: true,
                 ),

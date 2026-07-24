@@ -15,6 +15,7 @@ class UrlLauncherServiceImpl implements IUrlLauncherService {
     }
   }
 
+  @override
   Future<bool> makePhoneCall(String phoneNumber) async {
     final String cleanNumber = phoneNumber.replaceAll(RegExp(r'\s+\(\)\-'), '');
 

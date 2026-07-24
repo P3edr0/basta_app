@@ -47,7 +47,7 @@ class _CallPageState extends State<CallPage> {
     homeController.stopEmergency();
     guardianController.setEmergencyActivated(false);
     await controller.finishCall();
-    navigator.goto(GiRoutes.home, clearStack: true);
+    navigator.goto(BasRoutes.home, clearStack: true);
   }
 
   @override

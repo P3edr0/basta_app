@@ -38,6 +38,8 @@ dependencies:
   livekit_client: ^2.5.7
   flutter_background_service: ^5.1.0
   flutter_local_notifications: ^19.5.0
+  connectivity_plus: ^7.3.1
+  internet_connection_checker_plus: ^3.1.1
 
 # flutter_background_service_android:
 #   path: packages/flutter_background_service_android

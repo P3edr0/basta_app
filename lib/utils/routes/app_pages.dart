@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gina/presenter/auth/create_account/create_account_page.dart';
+import 'package:gina/presenter/auth/create_account/create_account_personal_page.dart';
 import 'package:gina/presenter/auth/login/login_page.dart';
 import 'package:gina/presenter/auth/update_user/update_user_page.dart';
 import 'package:gina/presenter/guardian/add_guardian/add_guardian_page.dart';
@@ -9,6 +9,8 @@ import 'package:gina/presenter/home/call/call_page.dart';
 import 'package:gina/presenter/home/home/home_page.dart';
 import 'package:gina/presenter/police_station/police_station/police_station_page.dart';
 
+import '../../presenter/auth/create_account/create_account_address_page.dart';
+import '../../presenter/auth/create_account/create_account_attacker_page.dart';
 import '../../presenter/guardian/emergency_details/emergency_details_page.dart';
 import '../../presenter/splash/splash_page.dart';
 import 'app_routes.dart';
@@ -16,57 +18,67 @@ import 'app_routes.dart';
 class AppPages {
   static Route onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case == GiRoutes.splash:
+      case == BasRoutes.splash:
         return MaterialPageRoute(
           builder: (_) => SplashPage(),
           settings: settings,
         );
-      case == GiRoutes.home:
+      case == BasRoutes.home:
         return MaterialPageRoute(
           builder: (_) => HomePage(),
           settings: settings,
         );
-      case == GiRoutes.login:
+      case == BasRoutes.login:
         return MaterialPageRoute(
           builder: (_) => LoginPage(),
           settings: settings,
         );
-      case == GiRoutes.createAccount:
+      case == BasRoutes.createAccountPersonal:
         return MaterialPageRoute(
-          builder: (_) => CreateAccountPage(),
+          builder: (_) => CreateAccountPersonalPage(),
           settings: settings,
         );
-      case == GiRoutes.updateUser:
+      case == BasRoutes.createAccountAddress:
+        return MaterialPageRoute(
+          builder: (_) => CreateAccountAddressPage(),
+          settings: settings,
+        );
+      case == BasRoutes.createAccountAttacker:
+        return MaterialPageRoute(
+          builder: (_) => CreateAccountAttackerPage(),
+          settings: settings,
+        );
+      case == BasRoutes.updateUser:
         return MaterialPageRoute(
           builder: (_) => UpdateUserPage(),
           settings: settings,
         );
-      case == GiRoutes.guardian:
+      case == BasRoutes.guardian:
         return MaterialPageRoute(
           builder: (_) => MyGuardianPage(),
           settings: settings,
         );
-      case == GiRoutes.addGuardian:
+      case == BasRoutes.addGuardian:
         return MaterialPageRoute(
           builder: (_) => AddGuardianPage(),
           settings: settings,
         );
-      case == GiRoutes.policeStation:
+      case == BasRoutes.policeStation:
         return MaterialPageRoute(
           builder: (_) => PoliceStationPage(),
           settings: settings,
         );
-      case == GiRoutes.emergencyHistory:
+      case == BasRoutes.emergencyHistory:
         return MaterialPageRoute(
           builder: (_) => EmergencyHistoryPage(),
           settings: settings,
         );
-      case == GiRoutes.emergencyDetails:
+      case == BasRoutes.emergencyDetails:
         return MaterialPageRoute(
           builder: (_) => EmergencyDetailsPage(),
           settings: settings,
         );
-      case == GiRoutes.call:
+      case == BasRoutes.call:
         return MaterialPageRoute(
           builder: (_) => CallPage(),
           settings: settings,

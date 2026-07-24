@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gina/components/dialogs/internet_dialog.dart';
 import 'package:gina/presenter/auth/store/auth_controller.dart';
 import 'package:gina/presenter/guardian/store/guardian_controller.dart';
 import 'package:gina/presenter/home/home/store/home_controller.dart';
@@ -6,6 +7,7 @@ import 'package:gina/responsiveness/gi_font_style.dart';
 import 'package:provider/provider.dart';
 
 import '../../../responsiveness/responsive.dart';
+import '../../services/internet_service/internet_service_impl.dart';
 import '../../theme/colors.dart';
 import '../../utils/assets/app_assets.dart';
 import '../../utils/routes/app_navigator.dart';
@@ -26,30 +28,51 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final size = MediaQuery.of(context).size;
-      Responsive.defineSize(size, pixelRatio: size.aspectRatio);
-      final authController = context.read<AuthController>();
-      final guardianController = context.read<GuardianController>();
-      final homeController = context.read<HomeController>();
-      final hasUser = await authController.getUser();
-      if (hasUser) {
-        homeController.user = authController.user;
-        final newUser = await guardianController.refreshNewGuardian(
-          authController.user!,
+      final hasInternet = await NetworkService.hasInternet();
+      if (!hasInternet) {
+        InternetDialog.show(
+          "Atenção",
+          "Você precisa de conexão com a internet para continuar.",
+          context,
+          () async {
+            final testInternetAgain = await NetworkService.hasInternet();
+            if (testInternetAgain) {
+              Navigator.of(context).pop();
+              await startApp();
+              return;
+            }
+          },
         );
-        authController.setUser(newUser);
+        return;
       }
-      redirect(hasUser);
+      await startApp();
     });
+  }
+
+  Future<void> startApp() async {
+    final size = MediaQuery.of(context).size;
+    Responsive.defineSize(size, pixelRatio: size.aspectRatio);
+    final authController = context.read<AuthController>();
+    final guardianController = context.read<GuardianController>();
+    final homeController = context.read<HomeController>();
+    final hasUser = await authController.getUser();
+    if (hasUser) {
+      homeController.user = authController.user;
+      final newUser = await guardianController.refreshNewGuardian(
+        authController.user!,
+      );
+      authController.setUser(newUser);
+    }
+    redirect(hasUser);
   }
 
   redirect(bool hasUser) async {
     if (hasUser) {
-      navigator.goto(GiRoutes.home, clearStack: true);
+      navigator.goto(BasRoutes.home, clearStack: true);
       return;
     }
 
-    navigator.goto(GiRoutes.createAccount, clearStack: true);
+    navigator.goto(BasRoutes.createAccountPersonal, clearStack: true);
   }
 
   @override

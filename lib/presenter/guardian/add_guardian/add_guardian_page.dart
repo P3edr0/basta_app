@@ -64,7 +64,7 @@ class AddGuardianPageState extends State<AddGuardianPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    GiAppBar.secondary(title: "Adicionar anjos"),
+                    BasAppBar.secondary(title: "Adicionar anjos"),
 
                     SizedBox(height: Responsive.getSize(16)),
                     Text(

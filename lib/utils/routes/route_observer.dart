@@ -28,17 +28,17 @@ class RouteStackObserver extends NavigatorObserver with ChangeNotifier {
       debugPrint(route.settings.name);
     }
     log('Pushed: ${route.settings.name}');
-    if (route.settings.name == GiRoutes.home) {
+    if (route.settings.name == BasRoutes.home) {
       changeCurrentPage(2);
     }
-    if (route.settings.name == GiRoutes.policeStation) {
+    if (route.settings.name == BasRoutes.policeStation) {
       changeCurrentPage(1);
     }
-    if (route.settings.name == GiRoutes.addGuardian ||
-        route.settings.name == GiRoutes.guardian) {
+    if (route.settings.name == BasRoutes.addGuardian ||
+        route.settings.name == BasRoutes.guardian) {
       changeCurrentPage(3);
     }
-    if (route.settings.name == GiRoutes.updateUser) {
+    if (route.settings.name == BasRoutes.updateUser) {
       changeCurrentPage(4);
     }
   }
@@ -48,17 +48,17 @@ class RouteStackObserver extends NavigatorObserver with ChangeNotifier {
     _routeStack.remove(route);
     log('Popped: ${route.settings.name}');
 
-    if (previousRoute?.settings.name == GiRoutes.policeStation) {
+    if (previousRoute?.settings.name == BasRoutes.policeStation) {
       changeCurrentPage(1);
     }
-    if (previousRoute?.settings.name == GiRoutes.home) {
+    if (previousRoute?.settings.name == BasRoutes.home) {
       changeCurrentPage(2);
     }
-    if (previousRoute?.settings.name == GiRoutes.addGuardian ||
-        previousRoute?.settings.name == GiRoutes.guardian) {
+    if (previousRoute?.settings.name == BasRoutes.addGuardian ||
+        previousRoute?.settings.name == BasRoutes.guardian) {
       changeCurrentPage(3);
     }
-    if (previousRoute?.settings.name == GiRoutes.updateUser) {
+    if (previousRoute?.settings.name == BasRoutes.updateUser) {
       changeCurrentPage(4);
     }
   }

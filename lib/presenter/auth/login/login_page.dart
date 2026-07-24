@@ -64,11 +64,11 @@ class _LoginPageState extends State<LoginPage> {
 
             child: Column(
               children: [
-                GiAppBar.secondary(
+                BasAppBar.secondary(
                   title: "Entrar",
                   onTap:
                       () => navigator.goto(
-                        GiRoutes.createAccount,
+                        BasRoutes.createAccountPersonal,
                         clearStack: true,
                       ),
                 ),
@@ -157,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                                               controller.setIsLoading(false);
 
                                               navigator.goto(
-                                                GiRoutes.home,
+                                                BasRoutes.home,
                                                 clearStack: true,
                                               );
                                             } else {
@@ -192,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                               InkWell(
                                 onTap: () {
                                   navigator.goto(
-                                    GiRoutes.createAccount,
+                                    BasRoutes.createAccountPersonal,
                                     clearStack: true,
                                   );
                                 },

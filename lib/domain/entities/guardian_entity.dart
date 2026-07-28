@@ -10,7 +10,6 @@ class GuardianEntity {
   final String name;
   final GuardianStatus? status;
 
-
   GuardianEntity({
     this.id,
     this.image,
@@ -18,7 +17,6 @@ class GuardianEntity {
     required this.name,
     this.status,
     this.orderId,
-  
   });
 
   Map<String, dynamic> toMap() {
@@ -32,7 +30,7 @@ class GuardianEntity {
       id: map['id'],
       image: map['image'],
       name: map['name'] as String,
-     
+
       addressResume: addressResume,
       status: GuardianStatus.none,
     );
@@ -49,8 +47,8 @@ class GuardianEntity {
     String? image,
     String? addressResume,
     String? name,
-     List<String>? myGuardians,   
-       List<String>? protect,
+    List<String>? myGuardians,
+    List<String>? protect,
     GuardianStatus? status,
     String? orderId,
   }) {
@@ -61,7 +59,6 @@ class GuardianEntity {
       name: name ?? this.name,
       orderId: orderId ?? this.orderId,
       status: status ?? this.status,
-     
     );
   }
 }

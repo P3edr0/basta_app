@@ -5,7 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:gina/components/buttons/rounded_button.dart';
 import 'package:gina/components/dialogs/error_dialog.dart';
 import 'package:gina/components/dialogs/info_dialog.dart';
+import 'package:gina/components/dialogs/server_config_dialog.dart';
 import 'package:gina/components/dialogs/success_dialog.dart';
+import 'package:gina/domain/entities/call_data_entity.dart';
 import 'package:gina/presenter/auth/store/auth_controller.dart';
 import 'package:gina/presenter/auth/update_user/store/update_user_controller.dart';
 import 'package:gina/presenter/guardian/emergency_details/store/emergency_details_controller.dart';
@@ -30,6 +32,7 @@ import '../../../utils/assets/app_assets.dart';
 import '../../../utils/enums/emergency_status.dart';
 import '../../../utils/routes/app_navigator.dart';
 import '../../core/widgets/bottom_navigation_bar.dart';
+import '../call/store/call_controller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -239,13 +242,74 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           SizedBox(height: Responsive.getSize(40)),
+                          Row(
+                            children: [
+                              InkWell(
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.settings,
+                                      color: secondaryColor,
+                                      size: Responsive.getSize(24),
+                                    ),
+                                    SizedBox(width: Responsive.getSize(10)),
+                                    Text(
+                                      "Editar servidor",
+                                      style: BasFontStyle.bodyLargeBold
+                                          .copyWith(color: lightGrey),
+                                    ),
+                                  ],
+                                ),
+                                onTap: () {
+                                  ServerConfigDialog.show(
+                                    participantTokenController:
+                                        controller.participantTokenController,
+                                    saveServerDataCallback: () async {
+                                      await controller.updateVideoConfig();
+                                    },
+                                    roomNameController:
+                                        controller.roomNameController,
+                                    serverUrlController:
+                                        controller.serverUrlController,
+                                    context: context,
+                                  );
+                                },
+                              ),
+                              Spacer(),
+                              InkWell(
+                                child: Row(
+                                  children: [
+                                    controller.loadingVideoConfig
+                                        ? SizedBox.square(
+                                          dimension: Responsive.getSize(20),
+                                          child: CircularProgressIndicator(
+                                            color: secondaryColor,
+                                          ),
+                                        )
+                                        : Icon(
+                                          Icons.refresh,
+                                          color: secondaryColor,
+                                          size: Responsive.getSize(24),
+                                        ),
+                                    SizedBox(width: Responsive.getSize(10)),
+                                    Text(
+                                      "Atualizar",
+                                      style: BasFontStyle.bodyLargeBold
+                                          .copyWith(color: lightGrey),
+                                    ),
+                                  ],
+                                ),
+                                onTap: () async {
+                                  await controller.fetchVideoConfig();
+                                },
+                              ),
+                            ],
+                          ),
 
                           Align(
                             alignment: Alignment.center,
                             child: InkWell(
                               onTap: () async {
-                                ///////////////////////////////////////////////////////
-                                ///
                                 final hasInternet =
                                     await NetworkService.hasInternet();
                                 if (!hasInternet) {
@@ -301,28 +365,28 @@ class _HomePageState extends State<HomePage> {
                                   return;
                                 }
 */
-                                final callData = await controller.createCall();
-                                if (callData == null) {
-                                  ErrorDialog.show(
-                                    title: "Falha",
-                                    content:
-                                        "Houve um erro ao tentar iniciar a chamada, por favor tente mais tarde!",
-                                    context: context,
-                                  );
-                                  return;
-                                }
-                                /* final callController =
+                                // TODO:REMOVIDO PARA CUSTOMIZAÇÃO DO SERVIDOR"
+                                // final callData = await controller.createCall();
+                                final serverConfig = controller.videoConfig;
+                                final callData = CallDataEntity(
+                                  serverUrl: serverConfig!.serverUrl!,
+                                  roomName: serverConfig.roomName!,
+                                  token: serverConfig.participantToken!,
+                                );
+
+                                final callController =
                                     context.read<CallController>();
                                 callController.setCall(callData);
-                                navigator.goto(GiRoutes.call);*/
                                 guardianController.setEmergencyActivated(true);
                                 await controller.startEmergency();
-                                SuccessDialog.show(
+                                await SuccessDialog.show(
                                   "Emergencia ativada",
                                   "Você está sendo monitorada por seus anjos guardiões, eles receberão sua localização em tempo real.",
                                   context,
                                 );
                                 log("Emergência já ativa");
+                                navigator.goto(BasRoutes.call);
+
                                 return;
                               },
                               child: CircleAvatar(

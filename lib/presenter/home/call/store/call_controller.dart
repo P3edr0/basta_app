@@ -8,7 +8,7 @@ class CallController extends ChangeNotifier {
   bool _estaConectado = false;
   bool get estaConectado => _estaConectado;
   CallDataEntity? call;
-
+  String? exception;
   // Transmissões de vídeo locais (usuário) e remotas (robô/atendente)
   VideoTrack? localVideoTrack;
   VideoTrack? remoteVideoTrack;
@@ -41,6 +41,8 @@ class CallController extends ChangeNotifier {
         final microphoneStatus = await room!.localParticipant
             ?.setMicrophoneEnabled(true);
       } catch (e, stack) {
+        exception =
+            "Você precisa conceder permissão para acessar o microfone e a câmera para iniciar uma chamada de emergência.";
         return false;
       }
       // 5. Captura a faixa de vídeo do próprio usuário para exibir o "preview" na tela
@@ -49,10 +51,11 @@ class CallController extends ChangeNotifier {
       if (localVideoPublication != null) {
         localVideoTrack = localVideoPublication.track as VideoTrack?;
       }
-
+      exception = null;
       notifyListeners();
       return true;
     } catch (e) {
+      exception = "Erro ao conectar no LiveKit Android!\n Erro:$e";
       debugPrint("Erro ao conectar no LiveKit Android: $e");
       return false;
     }

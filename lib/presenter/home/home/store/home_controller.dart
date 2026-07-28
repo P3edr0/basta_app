@@ -1,18 +1,25 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gina/data/call/create_call_datasource.dart';
+import 'package:gina/data/server/fetch_video_config_datasource.dart';
 import 'package:gina/domain/entities/call_data_entity.dart';
 import 'package:gina/domain/entities/tab_menu.dart';
 import 'package:gina/domain/entities/user_entity.dart';
+import 'package:gina/domain/entities/video_config_entity.dart';
 
 import '../../../../data/emergency/create_emergency_datasource.dart';
+import '../../../../data/server/update_video_config_datasource.dart';
 import '../../../../theme/icons.dart';
 
 class HomeController extends ChangeNotifier {
   UserEntity? user;
   CallDataEntity? call;
+  VideoConfigEntity? videoConfig;
+  bool loadingVideoConfig = false;
+  final participantTokenController = TextEditingController();
+  final roomNameController = TextEditingController();
+  final serverUrlController = TextEditingController();
   String place = "Carregando...";
   Position? currentPosition;
   final tabs = [
@@ -21,6 +28,11 @@ class HomeController extends ChangeNotifier {
     TabMenuEntity(name: "Apoiadores", icon: BasIcons.sponsors),
     TabMenuEntity(name: "Compartilhar", icon: BasIcons.share),
   ];
+
+  void setLoadingVideoConfig() {
+    loadingVideoConfig = !loadingVideoConfig;
+    notifyListeners();
+  }
 
   Future<bool> getCurrentAddress() async {
     try {
@@ -73,6 +85,52 @@ class HomeController extends ChangeNotifier {
       (newCall) {
         call = newCall;
         return newCall;
+      },
+    );
+  }
+
+  Future<VideoConfigEntity?> fetchVideoConfig() async {
+    setLoadingVideoConfig();
+    final fetchVideoConfig = FetchVideoConfigDatasource();
+    final response = await fetchVideoConfig();
+
+    return response.fold(
+      (l) {
+        setLoadingVideoConfig();
+        return null;
+      },
+      (newVideoConfig) {
+        videoConfig = newVideoConfig;
+
+        participantTokenController.text = videoConfig!.participantToken ?? "";
+        roomNameController.text = videoConfig!.roomName ?? "";
+        serverUrlController.text = videoConfig!.serverUrl ?? "";
+        setLoadingVideoConfig();
+
+        return newVideoConfig;
+      },
+    );
+  }
+
+  Future<bool> updateVideoConfig() async {
+    final newVideoConfig = VideoConfigEntity(
+      id: videoConfig?.id,
+      participantToken: participantTokenController.text,
+      roomName: roomNameController.text,
+      serverUrl: serverUrlController.text,
+    );
+    final fetchVideoConfig = UpdateVideoConfigDatasource();
+    final response = await fetchVideoConfig(newVideoConfig);
+
+    return response.fold(
+      (l) {
+        return false;
+      },
+      (success) {
+        videoConfig = newVideoConfig;
+
+        notifyListeners();
+        return success;
       },
     );
   }

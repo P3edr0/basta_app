@@ -63,6 +63,7 @@ class _SplashPageState extends State<SplashPage> {
       );
       authController.setUser(newUser);
     }
+    await homeController.fetchVideoConfig();
     redirect(hasUser);
   }
 

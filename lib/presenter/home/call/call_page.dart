@@ -31,11 +31,9 @@ class _CallPageState extends State<CallPage> {
       final controller = context.read<CallController>();
       final successOnStartCall = await controller.startCall();
       if (!successOnStartCall) {
-        InfoDialog.closeAuto(
-          "Atenção",
-          "Você precisa conceder permissão para acessar o microfone e a câmera para iniciar uma chamada de emergência.",
-          context,
-        );
+        InfoDialog.show("Atenção", controller.exception!, context);
+
+        await Future.delayed(Duration(seconds: 5));
         await _endCall(controller);
       }
     });

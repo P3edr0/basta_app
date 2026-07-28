@@ -10,7 +10,7 @@ class MyGuardianController extends ChangeNotifier {
   String? exception;
   List<GuardianEntity> allGuardians = [];
   List<GuardianEntity> myGuardians = [];
-   AngelFilterType angelFilterType = AngelFilterType.myGuardians; 
+  AngelFilterType angelFilterType = AngelFilterType.myGuardians;
   setException(String newException) {
     exception = newException;
     notifyListeners();
@@ -32,7 +32,7 @@ class MyGuardianController extends ChangeNotifier {
     notifyListeners();
   }
 
-setAngelFilterType(AngelFilterType newType) {
+  setAngelFilterType(AngelFilterType newType) {
     angelFilterType = newType;
     notifyListeners();
   }

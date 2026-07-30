@@ -35,6 +35,7 @@ class RouteStackObserver extends NavigatorObserver with ChangeNotifier {
       changeCurrentPage(1);
     }
     if (route.settings.name == BasRoutes.addGuardian ||
+        route.settings.name == BasRoutes.emergencyDetails ||
         route.settings.name == BasRoutes.guardian) {
       changeCurrentPage(3);
     }
@@ -55,7 +56,8 @@ class RouteStackObserver extends NavigatorObserver with ChangeNotifier {
       changeCurrentPage(2);
     }
     if (previousRoute?.settings.name == BasRoutes.addGuardian ||
-        previousRoute?.settings.name == BasRoutes.guardian) {
+        previousRoute?.settings.name == BasRoutes.guardian ||
+        previousRoute?.settings.name == BasRoutes.emergencyDetails) {
       changeCurrentPage(3);
     }
     if (previousRoute?.settings.name == BasRoutes.updateUser) {

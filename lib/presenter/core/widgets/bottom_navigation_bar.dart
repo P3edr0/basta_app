@@ -22,99 +22,105 @@ class BasBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CoreController>(
       builder: (context, controller, child) {
-        return Container(
-          height: Responsive.getSize(80),
-          padding: EdgeInsets.symmetric(vertical: Responsive.getSize(8)),
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                offset: Offset(2, -2),
-                blurRadius: 6,
-                spreadRadius: 2,
-                color: primaryColor.withValues(alpha: 0.3),
-              ),
-              BoxShadow(
-                offset: Offset(-2, -2),
-                blurRadius: 6,
-                spreadRadius: 2,
+        return SafeArea(
+          top: false,
+          left: false,
+          right: false,
+          bottom: true,
+          child: Container(
+            height: Responsive.getSize(80),
+            padding: EdgeInsets.symmetric(vertical: Responsive.getSize(8)),
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(2, -2),
+                  blurRadius: 6,
+                  spreadRadius: 2,
+                  color: primaryColor.withValues(alpha: 0.3),
+                ),
+                BoxShadow(
+                  offset: Offset(-2, -2),
+                  blurRadius: 6,
+                  spreadRadius: 2,
 
-                color: primaryColor.withValues(alpha: 0.3),
+                  color: primaryColor.withValues(alpha: 0.3),
+                ),
+              ],
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
               ),
-            ],
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
+              color: secondaryColor,
             ),
-            color: secondaryColor,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              BottomNavigationItem(
-                title: "Psicólogo",
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                BottomNavigationItem(
+                  title: "Psicólogo",
 
-                icon: BasIcons.psychology,
-                isSelected: routeObserver.currentPageindex == 0,
-                onTap:
-                    () => InfoDialog.closeAuto(
-                      "Em breve...",
-                      "Estamos desenvolvendo esta funcionalidade.",
-                      context,
-                    ),
-              ),
-              BottomNavigationItem(
-                title: "Delegacias",
+                  icon: BasIcons.psychology,
+                  isSelected: routeObserver.currentPageindex == 0,
+                  onTap:
+                      () => InfoDialog.closeAuto(
+                        "Em breve...",
+                        "Estamos desenvolvendo esta funcionalidade.",
+                        context,
+                      ),
+                ),
+                BottomNavigationItem(
+                  title: "Delegacia",
 
-                icon: BasIcons.policy,
-                isSelected: routeObserver.currentPageindex == 1,
-                onTap: () {
-                  if (routeObserver.currentRoute != BasRoutes.policeStation) {
-                    _navigator.goto(BasRoutes.policeStation);
-                  }
-                },
-              ),
-              BottomNavigationItem(
-                title: "Início",
+                  icon: BasIcons.policy,
+                  isSelected: routeObserver.currentPageindex == 1,
+                  onTap: () {
+                    if (routeObserver.currentRoute != BasRoutes.policeStation) {
+                      _navigator.goto(BasRoutes.policeStation);
+                    }
+                  },
+                ),
+                BottomNavigationItem(
+                  title: "Início",
 
-                icon: BasIcons.home,
-                isSelected: routeObserver.currentPageindex == 2,
-                onTap: () {
-                  if (routeObserver.currentRoute != BasRoutes.home) {
-                    _navigator.goto(BasRoutes.home);
-                  }
-                },
-              ),
-              BottomNavigationItem(
-                title: "Anjos",
+                  icon: BasIcons.home,
+                  isSelected: routeObserver.currentPageindex == 2,
+                  onTap: () {
+                    if (routeObserver.currentRoute != BasRoutes.home) {
+                      _navigator.goto(BasRoutes.home);
+                    }
+                  },
+                ),
+                BottomNavigationItem(
+                  title: "Anjos",
 
-                icon: BasIcons.angel,
-                isSelected: routeObserver.currentPageindex == 3,
-                onTap: () {
-                  // routeObserver.changeCurrentPage(3);
+                  icon: BasIcons.angel,
+                  isSelected: routeObserver.currentPageindex == 3,
+                  onTap: () {
+                    // routeObserver.changeCurrentPage(3);
 
-                  if (routeObserver.currentRoute != BasRoutes.guardian) {
-                    _navigator.goto(BasRoutes.guardian);
-                  }
-                },
-              ),
-              BottomNavigationItem(
-                title: "Perfil",
+                    if (routeObserver.currentRoute != BasRoutes.guardian) {
+                      _navigator.goto(BasRoutes.guardian);
+                    }
+                  },
+                ),
+                BottomNavigationItem(
+                  title: "Perfil",
 
-                icon: BasIcons.profile,
-                isSelected: routeObserver.currentPageindex == 4,
-                onTap: () {
-                  // routeObserver.changeCurrentPage(4);
-                  final authController = context.read<AuthController>();
-                  final updateUserController =
-                      context.read<UpdateUserController>();
-                  final user = authController.user;
-                  updateUserController.setUser(user);
-                  if (routeObserver.currentRoute != BasRoutes.updateUser) {
-                    _navigator.goto(BasRoutes.updateUser);
-                  }
-                },
-              ),
-            ],
+                  icon: BasIcons.profile,
+                  isSelected: routeObserver.currentPageindex == 4,
+                  onTap: () {
+                    // routeObserver.changeCurrentPage(4);
+                    final authController = context.read<AuthController>();
+                    final updateUserController =
+                        context.read<UpdateUserController>();
+                    final user = authController.user;
+                    updateUserController.setUser(user);
+                    if (routeObserver.currentRoute != BasRoutes.updateUser) {
+                      _navigator.goto(BasRoutes.updateUser);
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         );
       },

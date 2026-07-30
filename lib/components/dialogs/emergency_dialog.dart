@@ -57,6 +57,20 @@ class EmergencyDialog {
                   ),
                 ),
               ),
+              SizedBox(height: Responsive.getSize(16)),
+              BasRoundedButton.solid(
+                color: grey,
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+
+                child: Text(
+                  'Ignorar',
+                  style: BasFontStyle.bodyBoldSec.copyWith(
+                    color: secondaryColor,
+                  ),
+                ),
+              ),
             ],
           ),
     );

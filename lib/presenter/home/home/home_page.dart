@@ -5,9 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:gina/components/buttons/rounded_button.dart';
 import 'package:gina/components/dialogs/error_dialog.dart';
 import 'package:gina/components/dialogs/info_dialog.dart';
-import 'package:gina/components/dialogs/server_config_dialog.dart';
 import 'package:gina/components/dialogs/success_dialog.dart';
-import 'package:gina/domain/entities/call_data_entity.dart';
 import 'package:gina/presenter/auth/store/auth_controller.dart';
 import 'package:gina/presenter/auth/update_user/store/update_user_controller.dart';
 import 'package:gina/presenter/guardian/emergency_details/store/emergency_details_controller.dart';
@@ -22,17 +20,14 @@ import 'package:provider/provider.dart';
 import '../../../../responsiveness/responsive.dart';
 import '../../../components/cards/home_card.dart';
 import '../../../components/dialogs/emergency_dialog.dart';
-import '../../../components/dialogs/internet_dialog.dart';
 import '../../../components/dialogs/quit_app_dialog.dart';
 import '../../../data/emergency/guardian_tracking_datasource.dart';
 import '../../../main.dart';
-import '../../../services/internet_service/internet_service_impl.dart';
 import '../../../theme/colors.dart';
 import '../../../utils/assets/app_assets.dart';
 import '../../../utils/enums/emergency_status.dart';
 import '../../../utils/routes/app_navigator.dart';
 import '../../core/widgets/bottom_navigation_bar.dart';
-import '../call/store/call_controller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -64,11 +59,12 @@ class _HomePageState extends State<HomePage> {
           final emergencyDetailsController =
               navigatorContext.read<EmergencyDetailsController>();
 
-          if (guardiansController.emergencyActivated) return;
-          guardiansController.setEmergencyActivated(true);
+          if (guardiansController.guardianEmergencyActivated) return;
           final guardian = guardiansController.allGuardians.firstWhere(
             (guard) => guard.id == victimId,
           );
+          guardiansController.setGuardianEmergencyActivated(true, guardian);
+
           emergencyDetailsController.setEmergencyData(emergencyId, guardian);
 
           EmergencyDialog.show(
@@ -125,7 +121,9 @@ class _HomePageState extends State<HomePage> {
             child: Consumer2<HomeController, GuardianController>(
               builder: (context, controller, guardianController, child) {
                 final bool hasImage = controller.user?.image != null;
-                final isOnEmergency = guardianController.emergencyActivated;
+                final isOnGuardianEmergency =
+                    guardianController.guardianEmergencyActivated;
+                final isOnEmergency = controller.emergencyActivated;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -242,93 +240,93 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           SizedBox(height: Responsive.getSize(40)),
-                          Row(
-                            children: [
-                              InkWell(
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.settings,
-                                      color: secondaryColor,
-                                      size: Responsive.getSize(24),
-                                    ),
-                                    SizedBox(width: Responsive.getSize(10)),
-                                    Text(
-                                      "Editar servidor",
-                                      style: BasFontStyle.bodyLargeBold
-                                          .copyWith(color: lightGrey),
-                                    ),
-                                  ],
-                                ),
-                                onTap: () {
-                                  ServerConfigDialog.show(
-                                    participantTokenController:
-                                        controller.participantTokenController,
-                                    saveServerDataCallback: () async {
-                                      await controller.updateVideoConfig();
-                                    },
-                                    roomNameController:
-                                        controller.roomNameController,
-                                    serverUrlController:
-                                        controller.serverUrlController,
-                                    context: context,
-                                  );
-                                },
-                              ),
-                              Spacer(),
-                              InkWell(
-                                child: Row(
-                                  children: [
-                                    controller.loadingVideoConfig
-                                        ? SizedBox.square(
-                                          dimension: Responsive.getSize(20),
-                                          child: CircularProgressIndicator(
-                                            color: secondaryColor,
-                                          ),
-                                        )
-                                        : Icon(
-                                          Icons.refresh,
-                                          color: secondaryColor,
-                                          size: Responsive.getSize(24),
-                                        ),
-                                    SizedBox(width: Responsive.getSize(10)),
-                                    Text(
-                                      "Atualizar",
-                                      style: BasFontStyle.bodyLargeBold
-                                          .copyWith(color: lightGrey),
-                                    ),
-                                  ],
-                                ),
-                                onTap: () async {
-                                  await controller.fetchVideoConfig();
-                                },
-                              ),
-                            ],
-                          ),
 
+                          // Row(
+                          //   children: [
+                          //     InkWell(
+                          //       child: Row(
+                          //         children: [
+                          //           Icon(
+                          //             Icons.settings,
+                          //             color: secondaryColor,
+                          //             size: Responsive.getSize(24),
+                          //           ),
+                          //           SizedBox(width: Responsive.getSize(10)),
+                          //           Text(
+                          //             "Editar servidor",
+                          //             style: BasFontStyle.bodyLargeBold
+                          //                 .copyWith(color: lightGrey),
+                          //           ),
+                          //         ],
+                          //       ),
+                          //       onTap: () {
+                          //         ServerConfigDialog.show(
+                          //           participantTokenController:
+                          //               controller.participantTokenController,
+                          //           saveServerDataCallback: () async {
+                          //             await controller.updateVideoConfig();
+                          //           },
+                          //           roomNameController:
+                          //               controller.roomNameController,
+                          //           serverUrlController:
+                          //               controller.serverUrlController,
+                          //           context: context,
+                          //         );
+                          //       },
+                          //     ),
+                          //     Spacer(),
+                          //     InkWell(
+                          //       child: Row(
+                          //         children: [
+                          //           controller.loadingVideoConfig
+                          //               ? SizedBox.square(
+                          //                 dimension: Responsive.getSize(20),
+                          //                 child: CircularProgressIndicator(
+                          //                   color: secondaryColor,
+                          //                 ),
+                          //               )
+                          //               : Icon(
+                          //                 Icons.refresh,
+                          //                 color: secondaryColor,
+                          //                 size: Responsive.getSize(24),
+                          //               ),
+                          //           SizedBox(width: Responsive.getSize(10)),
+                          //           Text(
+                          //             "Atualizar",
+                          //             style: BasFontStyle.bodyLargeBold
+                          //                 .copyWith(color: lightGrey),
+                          //           ),
+                          //         ],
+                          //       ),
+                          //       onTap: () async {
+                          //         await controller.fetchVideoConfig();
+                          //       },
+                          //     ),
+                          //   ],
+                          // ),
                           Align(
                             alignment: Alignment.center,
                             child: InkWell(
                               onTap: () async {
-                                final hasInternet =
-                                    await NetworkService.hasInternet();
-                                if (!hasInternet) {
-                                  InternetDialog.show(
-                                    "Atenção",
-                                    "Você precisa de conexão com a internet para iniciar uma emergência.",
-                                    context,
-                                    () async {
-                                      final testInternetAgain =
-                                          await NetworkService.hasInternet();
-                                      if (testInternetAgain) {
-                                        Navigator.of(context).pop();
-                                      }
-                                    },
-                                  );
-                                  return;
-                                }
+                                // final hasInternet =
+                                //     await NetworkService.hasInternet();
+                                // if (!hasInternet) {
+                                //   InternetDialog.show(
+                                //     "Atenção",
+                                //     "Você precisa de conexão com a internet para iniciar uma emergência.",
+                                //     context,
+                                //     () async {
+                                //       final testInternetAgain =
+                                //           await NetworkService.hasInternet();
+                                //       if (testInternetAgain) {
+                                //         Navigator.of(context).pop();
+                                //       }
+                                //     },
+                                //   );
+                                //   return;
+                                // }
                                 final haveLocationPermission =
-                                    await controller.getCurrentAddress();
+                                    await controller.checkLocationPermission();
                                 if (!haveLocationPermission) {
                                   ErrorDialog.show(
                                     context: context,
@@ -366,26 +364,29 @@ class _HomePageState extends State<HomePage> {
                                 }
 */
                                 // TODO:REMOVIDO PARA CUSTOMIZAÇÃO DO SERVIDOR"
-                                // final callData = await controller.createCall();
-                                final serverConfig = controller.videoConfig;
-                                final callData = CallDataEntity(
-                                  serverUrl: serverConfig!.serverUrl!,
-                                  roomName: serverConfig.roomName!,
-                                  token: serverConfig.participantToken!,
-                                );
 
-                                final callController =
-                                    context.read<CallController>();
-                                callController.setCall(callData);
-                                guardianController.setEmergencyActivated(true);
+                                // final serverConfig = controller.videoConfig;
+
+                                // final callData = CallDataEntity(
+                                //   serverUrl: serverConfig!.serverUrl!,
+                                //   roomName: serverConfig.roomName!,
+                                //   token: serverConfig.participantToken!,
+                                // );
+                                //TODO: CALL COMPONENTS
+                                // final callData = await controller.createCall();
+
+                                // final callController =
+                                //     context.read<CallController>();
+                                // callController.setCall(callData!);
+                                controller.setEmergencyActivated(true);
                                 await controller.startEmergency();
-                                await SuccessDialog.show(
+                                SuccessDialog.show(
                                   "Emergencia ativada",
                                   "Você está sendo monitorada por seus anjos guardiões, eles receberão sua localização em tempo real.",
                                   context,
                                 );
                                 log("Emergência já ativa");
-                                navigator.goto(BasRoutes.call);
+                                // navigator.goto(BasRoutes.call);
 
                                 return;
                               },
@@ -393,6 +394,8 @@ class _HomePageState extends State<HomePage> {
                                 backgroundColor:
                                     isOnEmergency
                                         ? blue.withValues(alpha: 0.2)
+                                        : isOnGuardianEmergency
+                                        ? mediumDarkBlue.withValues(alpha: 0.2)
                                         : secondaryColor.withValues(alpha: 0.1),
                                 radius: Responsive.getSize(120),
 
@@ -401,12 +404,20 @@ class _HomePageState extends State<HomePage> {
                                   backgroundColor:
                                       isOnEmergency
                                           ? blue.withValues(alpha: 0.3)
+                                          : isOnGuardianEmergency
+                                          ? mediumDarkBlue.withValues(
+                                            alpha: 0.3,
+                                          )
                                           : secondaryColor.withValues(
                                             alpha: 0.3,
                                           ),
                                   child: CircleAvatar(
                                     backgroundColor:
-                                        isOnEmergency ? blue : secondaryColor,
+                                        isOnEmergency
+                                            ? blue
+                                            : isOnGuardianEmergency
+                                            ? mediumDarkBlue
+                                            : secondaryColor,
 
                                     radius: Responsive.getSize(80),
                                     child: Column(
@@ -425,8 +436,9 @@ class _HomePageState extends State<HomePage> {
                                           style: BasFontStyle.titleBoldSec
                                               .copyWith(
                                                 color:
-                                                    isOnEmergency
-                                                        ? secondaryColor
+                                                    isOnEmergency ||
+                                                            isOnGuardianEmergency
+                                                        ? primaryColor
                                                         : primaryColor,
                                               ),
                                         ),
@@ -449,7 +461,25 @@ class _HomePageState extends State<HomePage> {
                               ),
                               onTap: () {
                                 controller.stopEmergency();
-                                guardianController.setEmergencyActivated(false);
+                              },
+                            ),
+                          if (isOnGuardianEmergency)
+                            BasRoundedButton.solid(
+                              color: mediumDarkBlue,
+                              child: Text(
+                                "Acompanhar ${guardianController.guardianOnEmergency?.name ?? "emergência"}",
+                                style: BasFontStyle.bodyLargeBold.copyWith(
+                                  color: primaryColor,
+                                ),
+                              ),
+                              onTap: () {
+                                final emergencyDetailsController =
+                                    context.read<EmergencyDetailsController>();
+                                emergencyDetailsController.setIsEmergency(
+                                  true,
+                                  EmergencyStatus.active,
+                                );
+                                navigator.goto(BasRoutes.emergencyDetails);
                               },
                             ),
                           SizedBox(height: Responsive.getSize(40)),

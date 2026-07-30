@@ -45,14 +45,14 @@ Future<void> main() async {
   }
 
   // Executa as permissões e serviços
-  await checkPermissions();
+  await _checkPermissions();
 
   // Executa a configuração de áudio APENAS se for Android (evita crashes futuros no iOS)
   if (Platform.isAndroid) {
     await initializeAndroidAudioSettings();
   }
 
-  await checkPermissions();
+  await _checkPermissions();
 
   final routeObserver = RouteStackObserver.instance();
 
@@ -72,7 +72,7 @@ Future<void> main() async {
   );
 }
 
-Future<void> checkPermissions() async {
+Future<void> _checkPermissions() async {
   // <<<<<<< HEAD
   //   // Solicita a permissão padrão de Bluetooth (Válida para iOS e Android antigo)
   //   var status = await Permission.bluetooth.request();

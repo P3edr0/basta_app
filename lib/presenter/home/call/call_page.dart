@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gina/presenter/guardian/store/guardian_controller.dart';
 import 'package:gina/responsiveness/gi_font_style.dart';
 import 'package:gina/responsiveness/responsive.dart';
 import 'package:gina/theme/colors.dart';
@@ -41,9 +40,7 @@ class _CallPageState extends State<CallPage> {
 
   Future<void> _endCall(CallController controller) async {
     final homeController = context.read<HomeController>();
-    final guardianController = context.read<GuardianController>();
     homeController.stopEmergency();
-    guardianController.setEmergencyActivated(false);
     await controller.finishCall();
     navigator.goto(BasRoutes.home, clearStack: true);
   }

@@ -17,6 +17,7 @@ class HomeController extends ChangeNotifier {
   CallDataEntity? call;
   VideoConfigEntity? videoConfig;
   bool loadingVideoConfig = false;
+  bool emergencyActivated = false;
   final participantTokenController = TextEditingController();
   final roomNameController = TextEditingController();
   final serverUrlController = TextEditingController();
@@ -35,21 +36,9 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<bool> getCurrentAddress() async {
+    final hasPermission = await checkLocationPermission();
+    if (!hasPermission) return false;
     try {
-      //final status = await Permission.location.request();
-      LocationPermission permission = await Geolocator.checkPermission();
-
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) return false;
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        // Aqui o iOS não abre mais o pop-up. Você deve avisar a usuária
-        // para abrir as configurações.
-        return false;
-      }
-
       currentPosition = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.high,
@@ -72,6 +61,22 @@ class HomeController extends ChangeNotifier {
     } catch (e) {
       return false;
     }
+  }
+
+  Future<bool> checkLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return false;
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Aqui o iOS não abre mais o pop-up. Você deve avisar a usuária
+      // para abrir as configurações.
+      return false;
+    }
+    return true;
   }
 
   Future<CallDataEntity?> createCall() async {
@@ -141,7 +146,13 @@ class HomeController extends ChangeNotifier {
     await emergencyDatasource(userId: user!.id!, guardians: guardians);
   }
 
+  void setEmergencyActivated(bool value) {
+    emergencyActivated = value;
+    notifyListeners();
+  }
+
   Future<void> stopEmergency() async {
+    setEmergencyActivated(false);
     final emergencyDatasource = CreateEmergencyDatasource();
     final guardians = user!.myGuardians ?? [];
     emergencyDatasource.stopEmergency(user!.id!, guardians);

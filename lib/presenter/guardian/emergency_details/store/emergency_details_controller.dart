@@ -27,7 +27,7 @@ class EmergencyDetailsController extends ChangeNotifier {
   bool isLoading = true;
   int? selectedStation;
   List<LatLng> polylineCoordinates = [];
-  bool isEmergency = false;
+  bool isGuardianEmergency = false;
   EmergencyStatus emergencyStatus = EmergencyStatus.closed;
   PolylinePoints polylinePoints = PolylinePoints(apiKey: Environment.mapKey);
   Set<Polyline> polylines = {};
@@ -49,20 +49,20 @@ class EmergencyDetailsController extends ChangeNotifier {
   }
 
   void setEmergencyData(String newEmergencyId, GuardianEntity guardian) {
-    setcurrentGuardian(guardian);
+    setCurrentGuardian(guardian);
     currentEmergency = null;
     victimPositions = [];
     emergencyId = newEmergencyId;
     notifyListeners();
   }
 
-  setcurrentGuardian(GuardianEntity? newGuardian) {
+  setCurrentGuardian(GuardianEntity? newGuardian) {
     currentVictim = newGuardian;
     notifyListeners();
   }
 
   setIsEmergency(bool newEmergency, EmergencyStatus newStatus) {
-    isEmergency = newEmergency;
+    isGuardianEmergency = newEmergency;
     emergencyStatus = newStatus;
 
     notifyListeners();

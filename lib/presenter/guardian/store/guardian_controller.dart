@@ -23,13 +23,18 @@ class GuardianController extends ChangeNotifier {
   MyGuardianController myGuardianController;
   List<GuardianEntity> allGuardians = [];
   List<GuardianEntity> guardiansWithoutUser = [];
+  GuardianEntity? guardianOnEmergency;
   List<GuardianOrderEntity> allOrders = [];
   String? exception;
   UserEntity? user;
-  bool emergencyActivated = false;
+  bool guardianEmergencyActivated = false;
 
-  void setEmergencyActivated(bool value) {
-    emergencyActivated = value;
+  void setGuardianEmergencyActivated(
+    bool isActivated,
+    GuardianEntity? newGuardianOnEmergency,
+  ) {
+    guardianEmergencyActivated = isActivated;
+    guardianOnEmergency = newGuardianOnEmergency;
     notifyListeners();
   }
 

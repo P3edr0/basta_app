@@ -5,8 +5,8 @@ import 'package:livekit_client/livekit_client.dart';
 
 class CallController extends ChangeNotifier {
   Room? room;
-  bool _estaConectado = false;
-  bool get estaConectado => _estaConectado;
+  bool _isConnected = false;
+  bool get isConnected => _isConnected;
   CallDataEntity? call;
   String? exception;
   // Transmissões de vídeo locais (usuário) e remotas (robô/atendente)
@@ -29,7 +29,7 @@ class CallController extends ChangeNotifier {
 
       // 3. Conecta nativamente na infraestrutura
       await room!.connect(call!.serverUrl, call!.token);
-      _estaConectado = true;
+      _isConnected = true;
       try {
         // 4. Ativa a Câmera e o Microfone do celular Android imediatamente
         final cameraStatus = await room!.localParticipant?.setCameraEnabled(
@@ -72,7 +72,7 @@ class CallController extends ChangeNotifier {
 
     // Se o outro lado desligar ou a emergência fechar
     listener.on<RoomDisconnectedEvent>((event) {
-      _estaConectado = false;
+      _isConnected = false;
       localVideoTrack = null;
       remoteVideoTrack = null;
       room = null;
@@ -83,7 +83,7 @@ class CallController extends ChangeNotifier {
   // Chame sempre ao sair da tela para liberar a câmera do Android
   Future<void> finishCall() async {
     await room?.disconnect();
-    _estaConectado = false;
+    _isConnected = false;
     localVideoTrack = null;
     remoteVideoTrack = null;
     notifyListeners();

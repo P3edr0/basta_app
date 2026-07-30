@@ -34,7 +34,7 @@ class _EmergencyDetailsPageState extends State<EmergencyDetailsPage> {
     final controller = context.read<EmergencyDetailsController>();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       bool response = false;
-      if (controller.isEmergency) {
+      if (controller.isGuardianEmergency) {
         response = await controller.startListenVictimPositions(
           onClosedEmergency,
         );
@@ -62,7 +62,7 @@ class _EmergencyDetailsPageState extends State<EmergencyDetailsPage> {
     );
     final guardiansController = context.read<GuardianController>();
     controller.setIsEmergency(false, EmergencyStatus.closedNow);
-    guardiansController.setEmergencyActivated(false);
+    guardiansController.setGuardianEmergencyActivated(false, null);
   }
 
   _onMapCreated(GoogleMapController newMapController) {

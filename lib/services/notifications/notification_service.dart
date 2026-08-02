@@ -1,50 +1,190 @@
 import 'dart:async';
+import 'dart:developer';
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+class FirebaseNotificationService {
+  static final _firebaseMessaging = FirebaseMessaging.instance;
+  static final flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  Future<void> createLocalNotificationChannel() async {
+    const AndroidNotificationChannel androidNotificationChannel =
+        AndroidNotificationChannel(
+          'high_importance_channel',
+          'High Importance Notifications',
+          description: 'This channel is used for important notifications',
+          importance: Importance.high,
+        );
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.createNotificationChannel(androidNotificationChannel);
+  }
+
+  Future<void> init() async {
+    final permission = await _firebaseMessaging.requestPermission();
+    if (permission.authorizationStatus == AuthorizationStatus.denied) {
+      throw Exception("O usuário recusou receber notificações.");
+    }
+
+    await getToken();
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      log(message.notification!.title!.toString(), name: 'Notification');
+    });
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+
+      if (notification != null && android != null) {
+        AndroidNotificationDetails? androidPlatformChannelSpecifics;
+        if (Platform.isAndroid && message.notification?.android != null) {
+          androidPlatformChannelSpecifics = AndroidNotificationDetails(
+            'high_importance_channel',
+            'High Importance Notifications',
+            channelDescription:
+                'This channel is used for important notifications',
+            importance: Importance.high,
+            priority: Priority.high,
+            icon: '@mipmap/ic_launcher',
+          );
+        }
+
+        DarwinNotificationDetails? iosPlatformChannelSpecifics;
+        if (Platform.isIOS) {
+          iosPlatformChannelSpecifics = DarwinNotificationDetails(
+            presentAlert: true, // Mostra alerta
+            presentBadge: true, // Atualiza badge
+            presentSound: true, // Toca som
+          );
+        }
+
+        // Exibir notificação com configurações específicas da plataforma
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: androidPlatformChannelSpecifics,
+            iOS: iosPlatformChannelSpecifics, // <-- ADICIONADO
+          ),
+        );
+      }
+    });
+
+    final AndroidInitializationSettings androidInitializationSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    final DarwinInitializationSettings
+    darwinInitializationSettings = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+      // onDidReceiveLocalNotification: (int id, String? title, String? body, String? payload) async {
+      //   // Lógica opcional quando uma notificação local é recebida no iOS
+      //   log('Notificação local recebida no iOS: $title', name: 'NotificationService');
+      // },
+    );
+
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: androidInitializationSettings,
+          iOS: darwinInitializationSettings,
+        );
+    // NOVO: Configuração para iOS
+    // Apenas solicita permissão para exibir alertas, sons e badges.
+
+    await flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: _onNotificationTap,
+
+      onDidReceiveBackgroundNotificationResponse: _onNotificationTap,
+    );
+
+    await createLocalNotificationChannel();
+  }
+
+  Future<String?> getToken() async {
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    String? token = "";
+
+    try {
+      token = await _firebaseMessaging.getToken();
+    } catch (e) {
+      token = "notification_token";
+    }
+    log(token.toString(), name: 'Token');
+    return token;
+  }
+
+  static void _onNotificationTap(NotificationResponse details) {
+    log('Notificação tocada: ${details.payload}', name: 'NotificationService');
+    // Aqui você pode navegar para uma tela específica
+  }
+}
 
 Future<void> initializeBackgroundService() async {
   final service = FlutterBackgroundService();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  // 👈 AQUI: Defina explicitamente o ícone nativo padrão do seu plugin local
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('ic_notification');
 
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'emergency_shortcut_channel',
+    'emergency_shortcut_channel_v3',
     'Acesso Rápido de Emergência',
     description: 'Mantém o botão de acesso rápido ativo na tela de bloqueio.',
     importance: Importance.max,
   );
 
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin
-      >()
-      ?.createNotificationChannel(channel);
+  // Cria o canal no Android nativo
+  final androidPlugin =
+      flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+
+  if (androidPlugin != null) {
+    await androidPlugin.createNotificationChannel(channel);
+  }
 
   await service.configure(
     androidConfiguration: AndroidConfiguration(
       onStart: onStart,
-      autoStart: true,
-      isForegroundMode: true, // Força a execução contínua em segundo plano
-      notificationChannelId: 'emergency_shortcut_channel',
+      autoStart:
+          false, // 👈 MUDOU PARA FALSE: Vamos controlar o início manualmente sem conflito
+      isForegroundMode: true,
+      notificationChannelId: 'emergency_shortcut_channel_v3',
       autoStartOnBoot: true,
-
-      // 🔥 DEFINA OS TEXTOS DA NOTIFICAÇÃO DO SEU BOTÃO DIRETO AQUI
       initialNotificationTitle: 'Proteção para você',
       initialNotificationContent:
           '🚨 TOQUE AQUI PARA ABRIR O APP IMEDIATAMENTE',
       foregroundServiceNotificationId: 888,
+      // 👈 OBRIGATÓRIO PARA XIAOMI/REDMI: Aponta para o ícone padrão da aplicação no Android
+      //  notificationIcon: 'ic_bg_service_small',
     ),
     iosConfiguration: IosConfiguration(
-      autoStart: true,
+      autoStart: false,
       onForeground: onStart,
       onBackground: onIosBackground,
     ),
   );
 
-  service.startService();
+  // Inicia o serviço manualmente após o configure ter terminado totalmente
+  await service.startService();
 }
 
 @pragma('vm:entry-point')
@@ -56,18 +196,26 @@ Future<bool> onIosBackground(ServiceInstance service) async {
 void onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
 
-  // 🔥 SOLUÇÃO DEFINITIVA: Satisfez o Android nativo instantaneamente
   if (service is AndroidServiceInstance) {
-    // Comunica ao Android nativo nos primeiros milissegundos que este serviço é Foreground
-    service.setAsForegroundService();
+    // 👈 Sinais essenciais para o Android nativo não derrubar o serviço nos primeiros ms
+    await service.setAsForegroundService();
 
-    // Força a atualização dos textos e garante que os parâmetros de visibilidade fiquem travados
+    service.on('setAsForeground').listen((event) {
+      service.setAsForegroundService();
+    });
+
+    service.on('setAsBackground').listen((event) {
+      service.setAsBackgroundService();
+    });
+
+    service.on('stopService').listen((event) {
+      service.stopSelf();
+    });
+
+    // Define as informações de exibição da notificação persistente
     service.setForegroundNotificationInfo(
       title: "Proteção para você",
       content: "🚨 TOQUE AQUI PARA ABRIR O APP IMEDIATAMENTE",
     );
   }
-
-  // Se você precisar escutar atualizações de localização, banco de dados ou
-  // robôs de chamadas em segundo plano daqui para frente, faça abaixo desta linha:
 }

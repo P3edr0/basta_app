@@ -46,13 +46,18 @@ class _HomePageState extends State<HomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final guardianTracking = GuardianTrackingDataSource();
       final authController = context.read<AuthController>();
+      final navigatorContext = navigatorKey.currentContext;
 
       guardianTracking.call(
         userId: authController.user!.id!,
         protectedVictimsIds: authController.user?.myGuardians ?? [],
 
-        onEmergencyDetected: (victimId, emergencyId) {
-          final navigatorContext = navigatorKey.currentContext;
+        onEmergencyDetected: (victimId, emergencyId) async {
+          if (navigatorContext == null) {
+            log("Context = null");
+          } else {
+            log("Context é diferente de null");
+          }
           if (navigatorContext == null) return;
           final guardiansController =
               navigatorContext.read<GuardianController>();
@@ -66,11 +71,12 @@ class _HomePageState extends State<HomePage> {
           guardiansController.setGuardianEmergencyActivated(true, guardian);
 
           emergencyDetailsController.setEmergencyData(emergencyId, guardian);
+          await Future.delayed(Durations.medium3);
 
-          EmergencyDialog.show(
+          await EmergencyDialog.show(
             "Atenção",
             "${guardian.name} acionou o botão de emergência!\nAcompanhe a localização dela em tempo real.",
-            context,
+            navigatorContext,
             () {
               emergencyDetailsController.setIsEmergency(
                 true,
@@ -85,7 +91,7 @@ class _HomePageState extends State<HomePage> {
       final haveLocationPermission = await controller.getCurrentAddress();
       if (!haveLocationPermission) {
         ErrorDialog.show(
-          context: context,
+          context: navigatorContext!,
           title: "Atenção",
           content:
               "Você precisa conceder permissão à localização do seu dispositivo para ter acesso as funcionalidades do Basta.",
@@ -340,6 +346,15 @@ class _HomePageState extends State<HomePage> {
                                   InfoDialog.closeAuto(
                                     "Atenção",
                                     "Você já está com uma emergência ativa",
+                                    context,
+                                  );
+                                  log("Emergência já ativa");
+                                  return;
+                                }
+                                if (isOnGuardianEmergency) {
+                                  InfoDialog.closeAuto(
+                                    "Atenção",
+                                    "Um de seus anjos já está com uma emergência ativa",
                                     context,
                                   );
                                   log("Emergência já ativa");

@@ -17,6 +17,7 @@ import '../../../components/loadings/loading_button.dart';
 import '../../../theme/colors.dart';
 import '../../../utils/assets/app_assets.dart';
 import '../../../utils/routes/app_navigator.dart';
+import '../../guardian/store/guardian_controller.dart';
 import '../../home/home/store/home_controller.dart';
 import '../store/auth_controller.dart';
 
@@ -141,6 +142,9 @@ class _LoginPageState extends State<LoginPage> {
                                             controller.setIsLoading(true);
                                             log("Tudo certo com o email");
 
+                                            final guardianController =
+                                                context
+                                                    .read<GuardianController>();
                                             final authController =
                                                 context.read<AuthController>();
                                             final homeController =
@@ -152,6 +156,13 @@ class _LoginPageState extends State<LoginPage> {
                                             if (hasUser) {
                                               homeController.user =
                                                   authController.user;
+
+                                              final newUser =
+                                                  await guardianController
+                                                      .refreshNewGuardian(
+                                                        authController.user!,
+                                                      );
+
                                               controller.emailController
                                                   .clear();
                                               controller.setIsLoading(false);

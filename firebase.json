@@ -1,1 +1,40 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"basta-82cce","appId":"1:926124252420:android:5d22557189586fd4cb8451","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"basta-82cce","configurations":{"android":"1:926124252420:android:5d22557189586fd4cb8451","ios":"1:926124252420:ios:9ade28edbbe6078bcb8451","web":"1:926124252420:web:a21e246699dfed80cb8451"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "basta-82cce",
+          "appId": "1:926124252420:android:5d22557189586fd4cb8451",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "basta-82cce",
+          "configurations": {
+            "android": "1:926124252420:android:5d22557189586fd4cb8451",
+            "ios": "1:926124252420:ios:9ade28edbbe6078bcb8451",
+            "web": "1:926124252420:web:a21e246699dfed80cb8451"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    }
+  ]
+}

@@ -52,8 +52,6 @@ Future<void> main() async {
     await initializeAndroidAudioSettings();
   }
 
-  await _checkPermissions();
-
   final routeObserver = RouteStackObserver.instance();
 
   runApp(
@@ -73,30 +71,6 @@ Future<void> main() async {
 }
 
 Future<void> _checkPermissions() async {
-  // <<<<<<< HEAD
-  //   // Solicita a permissão padrão de Bluetooth (Válida para iOS e Android antigo)
-  //   var status = await Permission.bluetooth.request();
-  //   var notifyStatus = await Permission.notification.request();
-
-  //   if (status.isPermanentlyDenied) {
-  //     log('Bluetooth Permission disabled');
-  //   }
-
-  //   // Permissões específicas do Android 12+ para buscar dispositivos Bluetooth próximos
-  //   if (Platform.isAndroid) {
-  //     status = await Permission.bluetoothConnect.request();
-  //     if (status.isPermanentlyDenied) {
-  //       log('Bluetooth Connect Permission disabled');
-  //     }
-  //   }
-
-  //   // Tratamento da Notificação e ativação do botão na tela de bloqueio
-  //   if (!notifyStatus.isPermanentlyDenied && !notifyStatus.isDenied) {
-  //     log('Notification Permission granted, initializing service');
-  //     await initializeBackgroundService();
-  //   } else {
-  //     log('Notification Permission disabled');
-  // =======
   // Ajuste nas permissões de notificação
   var notifyStatus = await Permission.notification.request();
 
@@ -123,6 +97,9 @@ Future<void> _checkPermissions() async {
   if (notifyStatus.isGranted) {
     log('Notification Permission granted, initializing background service');
     await initializeBackgroundService();
+
+    final notificationService = FirebaseNotificationService();
+    await notificationService.init();
   } else {
     log('Notification Permission denied or permanently denied');
   }

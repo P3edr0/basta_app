@@ -20,26 +20,28 @@
     
      <!--Permissões de Rede e Áudio -->
     <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" -->
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <!-- <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" /> -->
+    <!-- <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> -->
     
     <!-- Permissões de Bluetooth (para fones/dispositivos de áudio no LiveKit) -->
 <!-- >>>>>>> feat_video_call -->
 
 
-    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <!-- <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />    
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />     -->
     
     <!-- 🔥 PERMISSÕES DE SEGUNDO PLANO EXIGIDAS NO ANDROID 14+ (API 34+) -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>, 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <!-- <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" /> -->
    <!-- Remove a permissão de espelhamento de tela do LiveKit se você não usa -->
     <!-- <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" tools:node="remove" -->
-    <!-- Remove a permissão genérica de uso especial se você não usa />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" tools:node="remove"  -->
+    <!-- Remove a permissão genérica de uso especial se você não usa -->
 
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>

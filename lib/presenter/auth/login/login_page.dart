@@ -14,6 +14,7 @@ import '../../../components/app_bar/app_bar.dart';
 import '../../../components/buttons/rounded_button.dart';
 import '../../../components/dialogs/quit_app_dialog.dart';
 import '../../../components/loadings/loading_button.dart';
+import '../../../services/notifications/notification_service.dart';
 import '../../../theme/colors.dart';
 import '../../../utils/assets/app_assets.dart';
 import '../../../utils/routes/app_navigator.dart';
@@ -156,12 +157,18 @@ class _LoginPageState extends State<LoginPage> {
                                             if (hasUser) {
                                               homeController.user =
                                                   authController.user;
+                                              final notificationService =
+                                                  FirebaseNotificationService();
+                                              final token =
+                                                  notificationService.token!;
+                                              final newUser = authController
+                                                  .user!
+                                                  .copyWith(
+                                                    notificationToken: token,
+                                                  );
 
-                                              final newUser =
-                                                  await guardianController
-                                                      .refreshNewGuardian(
-                                                        authController.user!,
-                                                      );
+                                              await guardianController
+                                                  .refreshNewGuardian(newUser);
 
                                               controller.emailController
                                                   .clear();

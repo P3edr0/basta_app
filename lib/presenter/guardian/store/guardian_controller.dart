@@ -95,27 +95,27 @@ class GuardianController extends ChangeNotifier {
     await fetchAllGuardians(newUser);
     final myGuardians =
         allGuardians.where((guardian) => guardian.status!.isAccept).toList();
-    final hasChanges = myGuardians.length != (newUser.myGuardians ?? []).length;
+    // final hasChanges = myGuardians.length != (newUser.myGuardians ?? []).length;
 
     final updateUser = UpdateUserDatasource();
 
-    if (hasChanges) {
-      final guardiansId = myGuardians.map((guardian) => guardian.id!).toList();
+    // if (hasChanges) {
+    final guardiansId = myGuardians.map((guardian) => guardian.id!).toList();
 
-      newUser = newUser.copyWith(myGuardians: guardiansId);
-      final userResponse = await updateUser(newUser);
-      userResponse.fold(
-        (newException) {
-          log("Falha ao atualizar guardiões do usuário");
+    newUser = newUser.copyWith(myGuardians: guardiansId);
+    final userResponse = await updateUser(newUser);
+    userResponse.fold(
+      (newException) {
+        log("Falha ao atualizar guardiões do usuário");
 
-          return;
-        },
-        (success) {
-          exception = null;
-          log("Guardiões do usuário atualizado com sucesso");
-        },
-      );
-    }
+        return;
+      },
+      (success) {
+        exception = null;
+        log("Guardiões do usuário atualizado com sucesso");
+      },
+    );
+    // }
     return newUser;
   }
 

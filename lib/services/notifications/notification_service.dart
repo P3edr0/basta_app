@@ -3,8 +3,8 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -12,6 +12,7 @@ class FirebaseNotificationService {
   static final _firebaseMessaging = FirebaseMessaging.instance;
   static final flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  String? token;
 
   Future<void> createLocalNotificationChannel() async {
     const AndroidNotificationChannel androidNotificationChannel =
@@ -110,9 +111,7 @@ class FirebaseNotificationService {
   }
 
   Future<String?> getToken() async {
-    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-
-    String? token = "";
+    // final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
     try {
       token = await _firebaseMessaging.getToken();
@@ -120,6 +119,7 @@ class FirebaseNotificationService {
       token = "notification_token";
     }
     log(token.toString(), name: 'Token');
+    debugPrint(token.toString());
     return token;
   }
 
@@ -173,8 +173,6 @@ Future<void> initializeBackgroundService() async {
       initialNotificationContent:
           '🚨 TOQUE AQUI PARA ABRIR O APP IMEDIATAMENTE',
       foregroundServiceNotificationId: 888,
-      // 👈 OBRIGATÓRIO PARA XIAOMI/REDMI: Aponta para o ícone padrão da aplicação no Android
-      //  notificationIcon: 'ic_bg_service_small',
     ),
     iosConfiguration: IosConfiguration(
       autoStart: false,

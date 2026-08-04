@@ -138,7 +138,7 @@ class CreateAccountController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> createUser() async {
+  Future<bool> createUser(String notifyToken) async {
     setIsLoading(true);
 
     final datasource = CreateUserDatasource();
@@ -188,6 +188,7 @@ class CreateAccountController extends ChangeNotifier {
       email: email,
       address: address,
       attacker: attacker,
+      notificationToken: notifyToken,
     );
 
     final response = await datasource.createUser(newUser);

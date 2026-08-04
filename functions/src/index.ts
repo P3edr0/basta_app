@@ -1,6 +1,8 @@
 import * as admin from "firebase-admin";
 import { onValueCreated } from "firebase-functions/v2/database";
+import { onDocumentWritten } from "firebase-functions/v2/firestore";
 
+// Se admin e os outros imports já estiverem no topo do arquivo, não precisa repetir:
 admin.initializeApp();
 
 // 💡 onValueCreated garante que a função SÓ RODA UMA VEZ por emergência criada
@@ -65,7 +67,7 @@ export const sendEmergencyNotificationOnUpdate = onValueCreated(
                         guardianTokens.push(token);
                         console.log(`[TOKEN] Token encontrado para o guardião ${doc.id}`);
                     } else {
-                        console.warn(`[WARN] Guardião ${doc.id} não possui 'fcmToken' cadastrado.`);
+                        console.warn(`[WARN] Guardião ${doc.id} não possui 'notificationToken' cadastrado.`);
                     }
                 } else {
                     console.warn(`[WARN] Documento do guardião ${doc.id} não foi encontrado no Firestore.`);
@@ -85,6 +87,7 @@ export const sendEmergencyNotificationOnUpdate = onValueCreated(
                 notification: {
                     title: "🚨 ALERTA DE EMERGÊNCIA!",
                     body: `${victimName} acionou o botão de emergência!`,
+
                 },
                 data: {
                     victimId: userId,
@@ -132,3 +135,364 @@ export const sendEmergencyNotificationOnUpdate = onValueCreated(
         }
     }
 );
+
+
+
+// -------------------------------------------------------------
+// FUNÇÃO 2: Notificação e Atualização Mútua de Anjo Guardião
+// -------------------------------------------------------------
+export const sendGuardianOrderNotification = onDocumentWritten(
+    "orders/{orderId}",
+    async (event) => {
+        const orderId = event.params.orderId;
+        console.log(`[ORDER_ENTRY] Evento acionado para o pedido: ${orderId}`);
+
+        // 1. Valida se o documento foi excluído
+        if (!event.data?.after.exists) {
+            console.log(`[ORDER_ABORT] Documento de pedido ${orderId} foi deletado.`);
+            return;
+        }
+
+        const previousData = event.data.before.exists ? event.data.before.data() : null;
+        const newData = event.data.after.data();
+
+        if (!newData) {
+            console.log(`[ORDER_ABORT] Dados do pedido ${orderId} estão vazios.`);
+            return;
+        }
+
+        const previousAnswer = previousData?.answer;
+        const newAnswer = newData.answer;
+        const applicantId = newData.applicantId;
+        const receiverId = newData.receiverId;
+
+        console.log(
+            `[ORDER_STATUS] Pedido: ${orderId} | Applicant: ${applicantId} | Receiver: ${receiverId} | PreviousAnswer: ${previousAnswer} | NewAnswer: ${newAnswer}`
+        );
+
+        try {
+            // -------------------------------------------------------------------
+            // CENÁRIO 1: Novo Pedido Criado (answer é null / undefined)
+            // -------------------------------------------------------------------
+            if ((previousAnswer === undefined || previousAnswer === null) && (newAnswer === null || newAnswer === undefined)) {
+                console.log(`[ORDER_FLOW] Novo pedido detectado. Notificando receiverId: ${receiverId}`);
+
+                if (!receiverId) {
+                    console.warn(`[ORDER_WARN] 'receiverId' ausente no pedido ${orderId}.`);
+                    return;
+                }
+
+                const applicantDoc = await admin.firestore().collection("users").doc(applicantId).get();
+                const applicantName = applicantDoc.exists ? applicantDoc.data()?.name || "Alguém" : "Alguém";
+
+                const receiverDoc = await admin.firestore().collection("users").doc(receiverId).get();
+                const receiverToken = receiverDoc.data()?.notificationToken;
+
+                if (!receiverToken) {
+                    console.warn(`[ORDER_WARN] Receiver ${receiverId} não possui 'notificationToken' cadastrado.`);
+                    return;
+                }
+
+                const payload: admin.messaging.Message = {
+                    token: receiverToken,
+                    notification: {
+                        title: "🤝 Nova Solicitação de Anjo Guardião",
+                        body: `${applicantName} enviou um pedido para ser seu anjo guardião!`,
+                    },
+                    data: {
+                        orderId: orderId,
+                        applicantId: applicantId,
+                        type: "GUARDIAN_ORDER_RECEIVED",
+                        click_action: "FLUTTER_NOTIFICATION_CLICK",
+                    },
+                    android: {
+                        priority: "high",
+                        notification: {
+                            channelId: "high_importance_channel",
+                            sound: "default",
+                        },
+                    },
+                    apns: {
+                        payload: {
+                            aps: {
+                                contentAvailable: true,
+                                sound: "default",
+                            },
+                        },
+                    },
+                };
+
+                const response = await admin.messaging().send(payload);
+                console.log(`[ORDER_FCM_SUCCESS] Notificação de pedido criada enviada para ${receiverId}. ID: ${response}`);
+                return;
+            }
+
+            // -------------------------------------------------------------------
+            // CENÁRIO 2: Pedido Respondido (answer mudou de null para boolean)
+            // -------------------------------------------------------------------
+            if ((previousAnswer === null || previousAnswer === undefined) && typeof newAnswer === "boolean") {
+                console.log(`[ORDER_FLOW] Pedido respondido com answer=${newAnswer}.`);
+
+                if (!applicantId || !receiverId) {
+                    console.warn(`[ORDER_WARN] 'applicantId' ou 'receiverId' ausentes no pedido ${orderId}.`);
+                    return;
+                }
+
+                // =================================================================
+                // MUTUALIDADE: Se aceito (answer === true), vincula ambos os usuários
+                // =================================================================
+                if (newAnswer === true) {
+                    console.log(`[MUTUALITY] Pedido aceito! Atualizando a lista 'myGuardians' de ambos os usuários...`);
+
+                    const batch = admin.firestore().batch();
+
+                    const applicantRef = admin.firestore().collection("users").doc(applicantId);
+                    // const receiverRef = admin.firestore().collection("users").doc(receiverId);
+
+                    // Adiciona o guardião (receiverId) ao solicitante
+                    batch.update(applicantRef, {
+                        myGuardians: admin.firestore.FieldValue.arrayUnion(receiverId),
+                    });
+
+                    // // Adiciona o solicitante (applicantId) ao guardião (Relação mútua)
+                    // batch.update(receiverRef, {
+                    //     myGuardians: admin.firestore.FieldValue.arrayUnion(applicantId),
+                    // });
+
+                    await batch.commit();
+                    console.log(`[MUTUALITY_SUCCESS] 'myGuardians' atualizado com sucesso em ambos os perfis!`);
+                }
+
+                // =================================================================
+                // ENVIO DA NOTIFICAÇÃO DE RESPOSTA
+                // =================================================================
+                const receiverDoc = await admin.firestore().collection("users").doc(receiverId).get();
+                const receiverName = receiverDoc.exists ? receiverDoc.data()?.name || "O usuário" : "O usuário";
+
+                const applicantDoc = await admin.firestore().collection("users").doc(applicantId).get();
+                const applicantToken = applicantDoc.data()?.notificationToken;
+
+                if (!applicantToken) {
+                    console.warn(`[ORDER_WARN] Solicitante ${applicantId} não possui 'notificationToken' cadastrado.`);
+                    return;
+                }
+
+                const isAccepted = newAnswer === true;
+                const title = isAccepted ? "✅ Pedido Aceito!" : "❌ Pedido Recusado";
+                const body = isAccepted
+                    ? `${receiverName} aceitou o seu pedido de anjo guardião.`
+                    : `${receiverName} recusou o seu pedido de anjo guardião.`;
+
+                const payload: admin.messaging.Message = {
+                    token: applicantToken,
+                    notification: {
+                        title: title,
+                        body: body,
+                    },
+                    data: {
+                        orderId: orderId,
+                        receiverId: receiverId,
+                        status: isAccepted ? "accepted" : "rejected",
+                        type: "GUARDIAN_ORDER_RESPONSE",
+                        click_action: "FLUTTER_NOTIFICATION_CLICK",
+                    },
+                    android: {
+                        priority: "high",
+                        notification: {
+                            channelId: "high_importance_channel",
+                            sound: "default",
+                        },
+                    },
+                    apns: {
+                        payload: {
+                            aps: {
+                                contentAvailable: true,
+                                sound: "default",
+                            },
+                        },
+                    },
+                };
+
+                const response = await admin.messaging().send(payload);
+                console.log(`[ORDER_FCM_SUCCESS] Notificação de resposta enviada para ${applicantId}. ID: ${response}`);
+                return;
+            }
+
+            console.log(`[ORDER_SKIP] Atualização no pedido ${orderId} ignorada.`);
+
+        } catch (error) {
+            console.error(`[ORDER_FATAL_ERROR] Erro ao processar o pedido ${orderId}:`, error);
+        }
+    }
+);
+
+
+
+
+
+// // -------------------------------------------------------------
+// // FUNÇÃO 2: Notificação de Pedidos de Anjo Guardião (Firestore)
+// // -------------------------------------------------------------
+// export const sendGuardianOrderNotification = onDocumentWritten(
+//     "orders/{orderId}",
+//     async (event) => {
+//         const orderId = event.params.orderId;
+//         console.log(`[ORDER_ENTRY] Evento em orders/{orderId} acionado para ID: ${orderId}`);
+
+//         // 1. Valida se o documento foi excluído
+//         if (!event.data?.after.exists) {
+//             console.log(`[ORDER_ABORT] Documento de pedido ${orderId} foi deletado.`);
+//             return;
+//         }
+
+//         const previousData = event.data.before.exists ? event.data.before.data() : null;
+//         const newData = event.data.after.data();
+
+//         if (!newData) {
+//             console.log(`[ORDER_ABORT] Dados do pedido ${orderId} estão vazios.`);
+//             return;
+//         }
+
+//         const previousAnswer = previousData?.answer;
+//         const newAnswer = newData.answer;
+//         const applicantId = newData.applicantId;
+//         const receiverId = newData.receiverId;
+
+//         console.log(
+//             `[ORDER_STATUS] Pedido: ${orderId} | Applicant: ${applicantId} | Receiver: ${receiverId} | Answer Anterior: ${previousAnswer} | Answer Atual: ${newAnswer}`
+//         );
+
+//         try {
+//             // -------------------------------------------------------------------
+//             // CENÁRIO 1: Novo Pedido Criado (answer é null / undefined)
+//             // -------------------------------------------------------------------
+//             if ((previousAnswer === undefined || previousAnswer === null) && (newAnswer === null || newAnswer === undefined)) {
+//                 console.log(`[ORDER_FLOW] Novo pedido detectado. Notificando receiverId: ${receiverId}`);
+
+//                 if (!receiverId) {
+//                     console.warn(`[ORDER_WARN] 'receiverId' não encontrado no pedido ${orderId}.`);
+//                     return;
+//                 }
+
+//                 // Busca dados do solicitante (applicantId) para exibir o nome na notificação
+//                 const applicantDoc = await admin.firestore().collection("users").doc(applicantId).get();
+//                 const applicantName = applicantDoc.exists ? applicantDoc.data()?.name || "Alguém" : "Alguém";
+
+//                 // Busca token FCM do destinatário (receiverId)
+//                 const receiverDoc = await admin.firestore().collection("users").doc(receiverId).get();
+//                 const receiverToken = receiverDoc.data()?.notificationToken;
+
+//                 if (!receiverToken) {
+//                     console.warn(`[ORDER_WARN] Destinatário ${receiverId} não possui 'notificationToken' cadastrado.`);
+//                     return;
+//                 }
+
+//                 // Payload de Novo Pedido
+//                 const payload: admin.messaging.Message = {
+//                     token: receiverToken,
+//                     notification: {
+//                         title: "🤝 Nova Solicitação de Anjo Guardião",
+//                         body: `${applicantName} enviou um pedido para ser seu anjo guardião!`,
+//                     },
+//                     data: {
+//                         orderId: orderId,
+//                         applicantId: applicantId,
+//                         type: "GUARDIAN_ORDER_RECEIVED",
+//                         click_action: "FLUTTER_NOTIFICATION_CLICK",
+//                     },
+//                     android: {
+//                         priority: "high",
+//                         notification: {
+//                             channelId: "high_importance_channel",
+//                             sound: "default",
+//                         },
+//                     },
+//                     apns: {
+//                         payload: {
+//                             aps: {
+//                                 contentAvailable: true,
+//                                 sound: "default",
+//                             },
+//                         },
+//                     },
+//                 };
+
+//                 const response = await admin.messaging().send(payload);
+//                 console.log(`[ORDER_FCM_SUCCESS] Notificação de novo pedido enviada para ${receiverId}. Message ID: ${response}`);
+//                 return;
+//             }
+
+//             // -------------------------------------------------------------------
+//             // CENÁRIO 2: Pedido Respondido (answer mudou de null para boolean)
+//             // -------------------------------------------------------------------
+//             if ((previousAnswer === null || previousAnswer === undefined) && typeof newAnswer === "boolean") {
+//                 console.log(`[ORDER_FLOW] Pedido respondido com answer=${newAnswer}. Notificando applicantId: ${applicantId}`);
+
+//                 if (!applicantId) {
+//                     console.warn(`[ORDER_WARN] 'applicantId' não encontrado no pedido ${orderId}.`);
+//                     return;
+//                 }
+
+//                 // Busca o nome de quem respondeu (receiverId)
+//                 const receiverDoc = await admin.firestore().collection("users").doc(receiverId).get();
+//                 const receiverName = receiverDoc.exists ? receiverDoc.data()?.name || "O usuário" : "O usuário";
+
+//                 // Busca token FCM de quem solicitou (applicantId)
+//                 const applicantDoc = await admin.firestore().collection("users").doc(applicantId).get();
+//                 const applicantToken = applicantDoc.data()?.notificationToken;
+
+//                 if (!applicantToken) {
+//                     console.warn(`[ORDER_WARN] Solicitante ${applicantId} não possui 'notificationToken' cadastrado.`);
+//                     return;
+//                 }
+
+//                 const isAccepted = newAnswer === true;
+//                 const title = isAccepted ? "✅ Pedido Aceito!" : "❌ Pedido Recusado";
+//                 const body = isAccepted
+//                     ? `${receiverName} aceitou o seu pedido de anjo guardião.`
+//                     : `${receiverName} recusou o seu pedido de anjo guardião.`;
+
+//                 // Payload de Resposta do Pedido
+//                 const payload: admin.messaging.Message = {
+//                     token: applicantToken,
+//                     notification: {
+//                         title: title,
+//                         body: body,
+//                     },
+//                     data: {
+//                         orderId: orderId,
+//                         receiverId: receiverId,
+//                         status: isAccepted ? "accepted" : "rejected",
+//                         type: "GUARDIAN_ORDER_RESPONSE",
+//                         click_action: "FLUTTER_NOTIFICATION_CLICK",
+//                     },
+//                     android: {
+//                         priority: "high",
+//                         notification: {
+//                             channelId: "high_importance_channel",
+
+//                             sound: "default",
+//                         },
+//                     },
+//                     apns: {
+//                         payload: {
+//                             aps: {
+//                                 contentAvailable: true,
+//                                 sound: "default",
+//                             },
+//                         },
+//                     },
+//                 };
+
+//                 const response = await admin.messaging().send(payload);
+//                 console.log(`[ORDER_FCM_SUCCESS] Notificação de resposta enviada para ${applicantId}. Message ID: ${response}`);
+//                 return;
+//             }
+
+//             console.log(`[ORDER_SKIP] Atualização no pedido ${orderId} ignorada pois não corresponde a criação ou resposta.`);
+
+//         } catch (error) {
+//             console.error(`[ORDER_FATAL_ERROR] Erro ao processar pedido ${orderId}:`, error);
+//         }
+//     }
+// );

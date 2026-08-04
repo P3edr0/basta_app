@@ -160,7 +160,8 @@ class _LoginPageState extends State<LoginPage> {
                                               final notificationService =
                                                   FirebaseNotificationService();
                                               final token =
-                                                  notificationService.token!;
+                                                  await notificationService
+                                                      .getToken();
                                               final newUser = authController
                                                   .user!
                                                   .copyWith(

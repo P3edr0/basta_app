@@ -53,6 +53,11 @@ class FetchAllGuardiansDatasource {
                 status: GuardianStatus.accepted,
                 orderId: order.id,
               );
+            } else if (order.answer == false) {
+              guardians[index] = guardians[index].copyWith(
+                status: GuardianStatus.refused,
+                orderId: order.id,
+              );
             }
           } else if (order.receiverId == userId &&
               order.applicantId == guardians[index].id) {

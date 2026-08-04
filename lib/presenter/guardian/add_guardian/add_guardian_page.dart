@@ -161,7 +161,7 @@ class AddGuardianPageState extends State<AddGuardianPage> {
                             if (guardian.status!.isRefused) {
                               InfoDialog.show(
                                 "Recusado",
-                                "A outra pessoa não aceitou ser seu anjo guardião.",
+                                "O pedido para ser anjo guardião foi recusado.",
 
                                 context,
                               );

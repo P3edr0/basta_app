@@ -18,6 +18,7 @@ import '../../../../responsiveness/responsive.dart';
 import '../../../components/app_bar/app_bar.dart';
 import '../../../components/buttons/rounded_button.dart';
 import '../../../components/shines/step_by_step.dart';
+import '../../../services/notifications/notification_service.dart';
 import '../../../services/url_launcher_service.dart/url_launcher_service.dart';
 import '../../../theme/colors.dart';
 import '../../../utils/assets/app_assets.dart';
@@ -381,7 +382,12 @@ class _CreateAccountAttackerPageState extends State<CreateAccountAttackerPage> {
                           }
                           if (_formKey.currentState?.validate() ?? false) {
                             log("Tudo certo com o formulário");
-                            final response = await controller.createUser();
+                            final notificationService =
+                                FirebaseNotificationService();
+                            final token = await notificationService.getToken();
+                            final response = await controller.createUser(
+                              token!,
+                            );
                             if (!response) {
                               ErrorDialog.show(
                                 title: "Atenção",

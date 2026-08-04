@@ -12,7 +12,7 @@ class FirebaseNotificationService {
   static final _firebaseMessaging = FirebaseMessaging.instance;
   static final flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-  String? token;
+  static String? token;
 
   Future<void> createLocalNotificationChannel() async {
     const AndroidNotificationChannel androidNotificationChannel =

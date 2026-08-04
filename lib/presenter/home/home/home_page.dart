@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
       final guardianTracking = GuardianTrackingDataSource();
       final authController = context.read<AuthController>();
       final navigatorContext = navigatorKey.currentContext;
-
+      await authController.getUser();
       guardianTracking.call(
         userId: authController.user!.id!,
         protectedVictimsIds: authController.user?.myGuardians ?? [],
@@ -451,9 +451,8 @@ class _HomePageState extends State<HomePage> {
                                           style: BasFontStyle.titleBoldSec
                                               .copyWith(
                                                 color:
-                                                    isOnEmergency ||
-                                                            isOnGuardianEmergency
-                                                        ? primaryColor
+                                                    isOnEmergency
+                                                        ? secondaryColor
                                                         : primaryColor,
                                               ),
                                         ),

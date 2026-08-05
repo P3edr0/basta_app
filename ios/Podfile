@@ -49,6 +49,12 @@ target 'Runner' do
     inherit! :search_paths
   end
 end
+# ADICIONE ESTE BLOCO PARA O SEU WIDGET:
+target 'EmergencyWidgetExtension' do
+  use_frameworks!
+  use_modular_headers!
+end
+
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|

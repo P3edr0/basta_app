@@ -123,6 +123,7 @@ class PolicyStationController extends ChangeNotifier {
                   place['vicinity'],
                   context,
                   photoUrl,
+                  BasAppAssets.policeStationError,
                 );
               },
             );

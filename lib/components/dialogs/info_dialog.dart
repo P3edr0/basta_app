@@ -13,6 +13,7 @@ class InfoDialog {
     String content,
     BuildContext context, [
     String? image,
+    String? errorImage,
   ]) async {
     return await showDialog(
       context: context,
@@ -23,7 +24,17 @@ class InfoDialog {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (image != null)
-                  Image.network(image, height: Responsive.getSize(120)),
+                  Image.network(
+                    image,
+                    height: Responsive.getSize(120),
+
+                    errorBuilder: (context, _, stackTrace) {
+                      return Image.asset(
+                        errorImage ?? 'assets/images/error.png',
+                        height: Responsive.getSize(120),
+                      );
+                    },
+                  ),
 
                 Text(content, textAlign: TextAlign.center),
               ],

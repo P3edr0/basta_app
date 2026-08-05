@@ -52,9 +52,12 @@ class HomeController extends ChangeNotifier {
 
       if (placemarks.isNotEmpty) {
         Placemark currentPlace = placemarks[0];
-
+        String sublocality = currentPlace.subLocality ?? '';
+        if (sublocality.isNotEmpty) {
+          sublocality = '- $sublocality';
+        }
         place =
-            "${currentPlace.thoroughfare}, ${currentPlace.subThoroughfare} - ${currentPlace.subLocality}, ${currentPlace.subAdministrativeArea}";
+            "${currentPlace.thoroughfare}, ${currentPlace.subThoroughfare}$sublocality, ${currentPlace.subAdministrativeArea}";
       }
       notifyListeners();
       return true;

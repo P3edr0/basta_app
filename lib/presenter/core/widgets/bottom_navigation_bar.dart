@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gina/presenter/core/store/core_controller.dart';
 import 'package:gina/theme/icons.dart';
@@ -26,7 +28,7 @@ class BasBottomNavigationBar extends StatelessWidget {
           top: false,
           left: false,
           right: false,
-          bottom: true,
+          bottom: Platform.isAndroid ? true : false,
           child: Container(
             height: Responsive.getSize(80),
             padding: EdgeInsets.symmetric(vertical: Responsive.getSize(8)),

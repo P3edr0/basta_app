@@ -43,10 +43,11 @@ class FirebaseNotificationService {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
 
-      if (notification != null && android != null) {
+      // 💡 Checa apenas se existe notificação (independente se for Android ou iOS)
+      if (notification != null) {
         AndroidNotificationDetails? androidPlatformChannelSpecifics;
         if (Platform.isAndroid && message.notification?.android != null) {
-          androidPlatformChannelSpecifics = AndroidNotificationDetails(
+          androidPlatformChannelSpecifics = const AndroidNotificationDetails(
             'high_importance_channel',
             'High Importance Notifications',
             channelDescription:
@@ -59,21 +60,21 @@ class FirebaseNotificationService {
 
         DarwinNotificationDetails? iosPlatformChannelSpecifics;
         if (Platform.isIOS) {
-          iosPlatformChannelSpecifics = DarwinNotificationDetails(
-            presentAlert: true, // Mostra alerta
-            presentBadge: true, // Atualiza badge
-            presentSound: true, // Toca som
+          iosPlatformChannelSpecifics = const DarwinNotificationDetails(
+            presentAlert: true, // Exibe o banner
+            presentBadge: true, // Atualiza o contador no ícone
+            presentSound: true, // Toca o som
           );
         }
 
-        // Exibir notificação com configurações específicas da plataforma
+        // Exibe a notificação local
         flutterLocalNotificationsPlugin.show(
           notification.hashCode,
           notification.title,
           notification.body,
           NotificationDetails(
             android: androidPlatformChannelSpecifics,
-            iOS: iosPlatformChannelSpecifics, // <-- ADICIONADO
+            iOS: iosPlatformChannelSpecifics,
           ),
         );
       }

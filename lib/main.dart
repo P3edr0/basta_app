@@ -28,20 +28,20 @@ Future<void> main() async {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
-      print("🔥 Firebase inicializado com sucesso!");
+      log("🔥 Firebase inicializado com sucesso!");
     } else {
       Firebase.app();
-      print("🔄 Instância existente do Firebase reaproveitada.");
+      log("🔄 Instância existente do Firebase reaproveitada.");
     }
   } catch (e) {
     // Se outra thread inicializar no exato milissegundo, capturamos o erro de duplicidade e reaproveitamos
     if (e.toString().contains('duplicate-app')) {
       Firebase.app();
-      print(
+      log(
         "🔄 Instância duplicada evitada. Firebase reaproveitado com sucesso.",
       );
     } else {
-      print("Erro ao inicializar o Firebase: $e");
+      log("Erro ao inicializar o Firebase: $e");
     }
   }
 
@@ -77,15 +77,12 @@ Future<void> handlerOnBackgroundMessage(RemoteMessage message) async {
 }
 
 Future<void> _checkPermissions() async {
-  // Ajuste nas permissões de notificação
-  var notifyStatus = await Permission.notification.request();
-
   // 🔥 RESOLUÇÃO DO CONGELAMENTO (BLUETOOTH):
   // No seu manifesto atual, você removeu a permissão básica BLUETOOTH para Android 12+,
   // mantendo apenas com maxSdkVersion="30". Chamar Permission.bluetooth.request()
   // sem ela no manifesto causou o travamento infinito da Main Thread.
   // Vamos checar o bluetooth apenas se o app possuir as tags ou rodar no fluxo correto.
-  if (Platform.isAndroid) {
+  /*if (Platform.isAndroid) {
     // Solicita apenas o connect que está liberado no seu manifesto atual para Android 12+ (como o Xiaomi dela)
     var bluetoothConnectStatus = await Permission.bluetoothConnect.request();
     if (bluetoothConnectStatus.isPermanentlyDenied) {
@@ -97,17 +94,51 @@ Future<void> _checkPermissions() async {
     if (status.isPermanentlyDenied) {
       log('Bluetooth Permission disabled');
     }
-  }
+  }*/
 
   // Inicializa o serviço contínuo de acesso rápido se a notificação for permitida
-  if (notifyStatus.isGranted) {
-    log('Notification Permission granted, initializing background service');
-    await initializeBackgroundService();
+  // Ajuste nas permissões de notificação
+  bool isGranted = false;
+
+  if (Platform.isIOS) {
+    // 💡 NO IOS: Usar a API do FirebaseMessaging com os parâmetros de UI (alert, badge, sound)
+    NotificationSettings settings = await FirebaseMessaging.instance
+        .requestPermission(
+          alert: true,
+          announcement: false,
+          badge: true,
+          carPlay: false,
+          criticalAlert: false,
+          provisional: false,
+          sound: true,
+        );
+
+    isGranted =
+        settings.authorizationStatus == AuthorizationStatus.authorized ||
+        settings.authorizationStatus == AuthorizationStatus.provisional;
+
+    log(
+      '📌 [iOS] Status da permissão de notificação: ${settings.authorizationStatus}',
+    );
+  } else {
+    // 💡 NO ANDROID: Pode continuar usando o permission_handler
+    var notifyStatus = await Permission.notification.request();
+    isGranted = notifyStatus.isGranted;
+  }
+
+  if (isGranted) {
+    log('Notification Permission granted');
 
     final notificationService = FirebaseNotificationService();
     await notificationService.init();
   } else {
     log('Notification Permission denied or permanently denied');
+    return;
+  }
+  if (Platform.isAndroid) {
+    log('initializing background service');
+
+    await initializeBackgroundService();
   }
 }
 

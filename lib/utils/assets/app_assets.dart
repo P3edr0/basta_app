@@ -4,6 +4,8 @@ class BasAppAssets {
   static const String emergency = "assets/icons/emergency.png";
   static const String emergencyWhite = "assets/icons/emergency_white.png";
   static const String map = "assets/images/map.png";
+  static const String policeStationError =
+      "assets/images/police_station_error.png";
   static const String pin = "assets/images/pin.png";
   static const String attendant = "assets/images/attendant.png";
 

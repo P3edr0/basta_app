@@ -54,7 +54,7 @@ class FirebaseNotificationService {
                 'This channel is used for important notifications',
             importance: Importance.high,
             priority: Priority.high,
-            icon: '@mipmap/ic_launcher',
+            icon: '@drawable/ic_notification',
           );
         }
 
@@ -81,7 +81,7 @@ class FirebaseNotificationService {
     });
 
     final AndroidInitializationSettings androidInitializationSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@drawable/ic_notification');
     final DarwinInitializationSettings
     darwinInitializationSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -145,7 +145,7 @@ Future<void> initializeBackgroundService() async {
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'emergency_shortcut_channel_v3',
+    'emergency_shortcut_channel_v4',
     'Acesso Rápido de Emergência',
     description: 'Mantém o botão de acesso rápido ativo na tela de bloqueio.',
     importance: Importance.max,
@@ -168,12 +168,12 @@ Future<void> initializeBackgroundService() async {
       autoStart:
           false, // 👈 MUDOU PARA FALSE: Vamos controlar o início manualmente sem conflito
       isForegroundMode: true,
-      notificationChannelId: 'emergency_shortcut_channel_v3',
+      notificationChannelId: 'emergency_shortcut_channel_v4',
       autoStartOnBoot: true,
       initialNotificationTitle: 'Proteção para você',
       initialNotificationContent:
           '🚨 TOQUE AQUI PARA ABRIR O APP IMEDIATAMENTE',
-      foregroundServiceNotificationId: 888,
+      foregroundServiceNotificationId: 889,
     ),
     iosConfiguration: IosConfiguration(
       autoStart: false,

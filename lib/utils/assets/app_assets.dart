@@ -8,6 +8,7 @@ class BasAppAssets {
       "assets/images/police_station_error.png";
   static const String pin = "assets/images/pin.png";
   static const String attendant = "assets/images/attendant.png";
+  static const String attendantAvatar = "assets/images/attendant_avatar.png";
 
   ////////   ICONS   ////////
   static const String shield = "assets/icons/shield.png";

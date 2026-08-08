@@ -5,11 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:gina/components/buttons/rounded_button.dart';
 import 'package:gina/components/dialogs/error_dialog.dart';
 import 'package:gina/components/dialogs/info_dialog.dart';
-import 'package:gina/components/dialogs/success_dialog.dart';
 import 'package:gina/presenter/auth/store/auth_controller.dart';
 import 'package:gina/presenter/auth/update_user/store/update_user_controller.dart';
 import 'package:gina/presenter/guardian/emergency_details/store/emergency_details_controller.dart';
 import 'package:gina/presenter/guardian/store/guardian_controller.dart';
+import 'package:gina/presenter/home/call/store/call_controller.dart';
 import 'package:gina/presenter/home/home/store/home_controller.dart';
 import 'package:gina/responsiveness/gi_font_style.dart';
 import 'package:gina/theme/icons.dart';
@@ -21,6 +21,7 @@ import '../../../../responsiveness/responsive.dart';
 import '../../../components/cards/home_card.dart';
 import '../../../components/dialogs/emergency_dialog.dart';
 import '../../../components/dialogs/quit_app_dialog.dart';
+import '../../../components/dialogs/success_dialog.dart';
 import '../../../data/emergency/guardian_tracking_datasource.dart';
 import '../../../main.dart';
 import '../../../theme/colors.dart';
@@ -380,19 +381,20 @@ class _HomePageState extends State<HomePage> {
 */
                                 // TODO:REMOVIDO PARA CUSTOMIZAÇÃO DO SERVIDOR"
 
-                                // final serverConfig = controller.videoConfig;
+                                final serverConfig = controller.videoConfig;
 
                                 // final callData = CallDataEntity(
                                 //   serverUrl: serverConfig!.serverUrl!,
                                 //   roomName: serverConfig.roomName!,
                                 //   token: serverConfig.participantToken!,
                                 // );
-                                //TODO: CALL COMPONENTS
-                                // final callData = await controller.createCall();
+                                //  TODO: REMOVIDO PARA TESTE DE WIDGET
 
-                                // final callController =
-                                //     context.read<CallController>();
-                                // callController.setCall(callData!);
+                                final callData = await controller.createCall();
+
+                                final callController =
+                                    context.read<CallController>();
+                                callController.setCall(callData!);
                                 controller.setEmergencyActivated(true);
                                 await controller.startEmergency();
                                 SuccessDialog.show(
@@ -401,7 +403,7 @@ class _HomePageState extends State<HomePage> {
                                   context,
                                 );
                                 log("Emergência já ativa");
-                                // navigator.goto(BasRoutes.call);
+                                navigator.goto(BasRoutes.call);
 
                                 return;
                               },

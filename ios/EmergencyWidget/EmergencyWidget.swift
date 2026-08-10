@@ -13,7 +13,6 @@ struct Provider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
         let entry = SimpleEntry(date: Date())
-        // Timeline estática, pois o botão é apenas um atalho de emergência
         let timeline = Timeline(entries: [entry], policy: .never)
         completion(timeline)
     }
@@ -28,31 +27,50 @@ struct EmergencyWidgetEntryView : View {
     @Environment(\.widgetFamily) var family
 
     var body: some View {
-        switch family {
-        case .accessoryCircular:
-            // Botão Circular para a Tela de Bloqueio (iOS 16+)
-            Link(destination: URL(string: "basta://home")!) {
+        Group {
+            switch family {
+            case .accessoryCircular:
                 ZStack {
                     AccessoryWidgetBackground()
-                    Image(systemName: "exclamationmark.shield.fill")
-                        .font(.title2)
+                    // Substituímos o ícone pelo logo
+                    Image("WidgetLogo")
+                        .resizable()
+                        .renderingMode(.template)
+                        .scaledToFit()
+                        .padding(8) // Dá um respiro para o logo não colar na borda
                 }
-            }
-        case .accessoryRectangular:
-            // Botão Retangular com Texto para a Tela de Bloqueio
-            Link(destination: URL(string: "basta://home")!) {
+            case .accessoryRectangular:
                 HStack {
-                    Image(systemName: "exclamationmark.shield.fill")
+                    // Substituímos o ícone pelo logo
+                    Image("WidgetLogo")
+                        .resizable()
+                        .renderingMode(.template)
+                        .scaledToFit()
+                        .frame(width: 42, height: 42) // Define um tamanho fixo para o logo aqui
+                    
                     VStack(alignment: .leading) {
-                        Text("EMERGÊNCIA")
+                        Text("BASTA")
                             .font(.headline)
-                        Text("Abrir Alerta")
+                        Text("Abrir para emergência")
                             .font(.caption)
                     }
                 }
+            default:
+                Text("Lock Screen")
             }
-        default:
-            Text("Apenas Lock Screen")
+        }
+        .widgetURL(URL(string: "basta://home"))
+        .applyWidgetBackground()
+    }
+}
+// Extensão segura para adicionar o fundo no iOS 17 e não quebrar em versões antigas
+extension View {
+    @ViewBuilder
+    func applyWidgetBackground() -> some View {
+        if #available(iOS 17.0, *) {
+            self.containerBackground(.clear, for: .widget)
+        } else {
+            self.background(Color.clear)
         }
     }
 }
@@ -64,8 +82,8 @@ struct EmergencyWidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             EmergencyWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Acesso Rápido de Emergência")
-        .description("Toque para disparar o pedido de ajuda imediatamente.")
+        .configurationDisplayName("Acesso Rápido")
+        .description("Toque para disparar o pedido de ajuda.")
         .supportedFamilies([.accessoryCircular, .accessoryRectangular])
     }
 }

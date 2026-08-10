@@ -7,6 +7,7 @@ import 'package:gina/responsiveness/gi_font_style.dart';
 import 'package:provider/provider.dart';
 
 import '../../../responsiveness/responsive.dart';
+import '../../main.dart';
 import '../../services/internet_service/internet_service_impl.dart';
 import '../../theme/colors.dart';
 import '../../utils/assets/app_assets.dart';
@@ -63,11 +64,13 @@ class _SplashPageState extends State<SplashPage> {
       );
       authController.setUser(newUser);
     }
-    await homeController.fetchVideoConfig();
+    //await homeController.fetchVideoConfig();
     redirect(hasUser);
   }
 
   redirect(bool hasUser) async {
+    WidgetLinkService.init(context, hasUser);
+
     if (hasUser) {
       navigator.goto(BasRoutes.home, clearStack: true);
       return;

@@ -42,6 +42,7 @@ dependencies:
   internet_connection_checker_plus: ^3.1.1
   device_info_plus: ^12.4.0
   firebase_messaging: ^16.4.3
+  app_links: ^7.0.0
 
 # flutter_background_service_android:
 #   path: packages/flutter_background_service_android

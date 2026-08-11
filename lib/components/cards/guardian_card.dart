@@ -60,7 +60,7 @@ class GuardianCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                padding: EdgeInsets.all(6),
+                padding: EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   color: primaryColor,
                   shape: BoxShape.circle,
@@ -79,6 +79,7 @@ class GuardianCard extends StatelessWidget {
                     title!,
                     style: BasFontStyle.bodyLargeBoldSec.copyWith(
                       color: primaryColor,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Text(
@@ -121,40 +122,41 @@ class GuardianCard extends StatelessWidget {
                 radius: 28,
               ),
               SizedBox(width: Responsive.getSize(10)),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title!,
-                    style: BasFontStyle.bodyLargeBoldSec.copyWith(
-                      color: darkGrey,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title!,
+                      style: BasFontStyle.bodyLargeBoldSec.copyWith(
+                        color: darkGrey,
+                      ),
                     ),
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(right: Responsive.getSize(2)),
-                        padding: EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: success,
-                          shape: BoxShape.circle,
+                    Row(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(right: Responsive.getSize(2)),
+                          padding: EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: success,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.check,
+                            color: secondaryColor,
+                            size: Responsive.getSize(8),
+                          ),
                         ),
-                        child: Icon(
-                          Icons.check,
-                          color: secondaryColor,
-                          size: Responsive.getSize(8),
-                        ),
-                      ),
 
-                      Text(
-                        content!,
-                        style: BasFontStyle.bodyBold.copyWith(color: success),
-                      ),
-                    ],
-                  ),
-                ],
+                        Text(
+                          content!,
+                          style: BasFontStyle.bodyBold.copyWith(color: success),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              Spacer(),
               Icon(
                 Icons.delete_forever_outlined,
                 size: Responsive.getSize(24),
@@ -188,19 +190,23 @@ class GuardianCard extends StatelessWidget {
             ),
 
             SizedBox(width: Responsive.getSize(10)),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title!,
-                  style: BasFontStyle.bodyLargeBoldSec.copyWith(
-                    color: darkGrey,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title!,
+                    style: BasFontStyle.bodyLargeBoldSec.copyWith(
+                      color: darkGrey,
+                    ),
                   ),
-                ),
-                Text(content!, style: BasFontStyle.body.copyWith(color: grey)),
-              ],
+                  Text(
+                    content!,
+                    style: BasFontStyle.body.copyWith(color: grey),
+                  ),
+                ],
+              ),
             ),
-            Spacer(),
             Container(
               padding: EdgeInsets.symmetric(
                 horizontal: Responsive.getSize(10),

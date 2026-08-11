@@ -4,6 +4,7 @@ import 'package:gina/presenter/auth/store/auth_controller.dart';
 import 'package:gina/presenter/guardian/store/guardian_controller.dart';
 import 'package:gina/presenter/home/home/store/home_controller.dart';
 import 'package:gina/responsiveness/gi_font_style.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import '../../../responsiveness/responsive.dart';
@@ -23,7 +24,7 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   final navigator = AppNavigator();
-
+  String appVersion = '0.0.0';
   @override
   void initState() {
     super.initState();
@@ -46,6 +47,10 @@ class _SplashPageState extends State<SplashPage> {
         );
         return;
       }
+      final info = await PackageInfo.fromPlatform();
+      setState(() {
+        appVersion = info.version;
+      });
       await startApp();
     });
   }
@@ -56,6 +61,7 @@ class _SplashPageState extends State<SplashPage> {
     final authController = context.read<AuthController>();
     final guardianController = context.read<GuardianController>();
     final homeController = context.read<HomeController>();
+
     final hasUser = await authController.getUser();
     if (hasUser) {
       homeController.user = authController.user;
@@ -103,6 +109,12 @@ class _SplashPageState extends State<SplashPage> {
                 "Sua segurança em primeiro lugar",
                 style: BasFontStyle.h4Bold.copyWith(color: grey),
               ),
+              Spacer(),
+              Text(
+                "Versão: $appVersion",
+                style: BasFontStyle.smallBold.copyWith(color: grey),
+              ),
+              SizedBox(height: Responsive.getSize(16)),
             ],
           ),
         ),

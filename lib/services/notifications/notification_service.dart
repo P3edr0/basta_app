@@ -29,6 +29,23 @@ class FirebaseNotificationService {
         ?.createNotificationChannel(androidNotificationChannel);
   }
 
+  Future<void> createEmergencyNotificationChannel() async {
+    const AndroidNotificationChannel emergencyNotificationChannel =
+        AndroidNotificationChannel(
+          'emergency_channel_v2',
+          'Emergency Notifications',
+          description: 'This channel is used for important notifications',
+          importance: Importance.high,
+          sound: RawResourceAndroidNotificationSound('alert'),
+          playSound: true,
+        );
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.createNotificationChannel(emergencyNotificationChannel);
+  }
+
   Future<void> init() async {
     final permission = await _firebaseMessaging.requestPermission();
     if (permission.authorizationStatus == AuthorizationStatus.denied) {
@@ -41,33 +58,59 @@ class FirebaseNotificationService {
     });
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
 
-      // 💡 Checa apenas se existe notificação (independente se for Android ou iOS)
       if (notification != null) {
+        // 💡 Lê o tipo que veio lá da Cloud Function (data.type)
+        final String? notificationType = message.data['type'];
+
+        // Verifica se é uma emergência
+        final bool isEmergency = notificationType == 'EMERGENCY_ALERT';
+
         AndroidNotificationDetails? androidPlatformChannelSpecifics;
-        if (Platform.isAndroid && message.notification?.android != null) {
-          androidPlatformChannelSpecifics = const AndroidNotificationDetails(
-            'high_importance_channel',
-            'High Importance Notifications',
+        if (Platform.isAndroid) {
+          androidPlatformChannelSpecifics = AndroidNotificationDetails(
+            // 👈 Se for emergência, usa o canal v2 com som de alerta. Se não, usa o canal comum.
+            isEmergency ? 'emergency_channel_v2' : 'high_importance_channel',
+            isEmergency
+                ? 'Emergency Notifications'
+                : 'High Importance Notifications',
             channelDescription:
                 'This channel is used for important notifications',
-            importance: Importance.high,
+            importance: Importance.max,
             priority: Priority.high,
             icon: '@drawable/ic_notification',
+            playSound: true,
+
+            // 👈 Só adiciona o som personalizado se for emergência real
+            sound:
+                isEmergency
+                    ? const RawResourceAndroidNotificationSound('alert')
+                    : null,
+            styleInformation:
+                isEmergency
+                    ? BigPictureStyleInformation(
+                      // Aqui você usa o ícone ou uma imagem dos assets locais (drawable)
+                      DrawableResourceAndroidBitmap('emergency_notification'),
+                      largeIcon: DrawableResourceAndroidBitmap(
+                        'ic_notification',
+                      ),
+                      contentTitle: message.notification?.title,
+                      summaryText: message.notification?.body,
+                    )
+                    : null,
           );
         }
 
         DarwinNotificationDetails? iosPlatformChannelSpecifics;
         if (Platform.isIOS) {
           iosPlatformChannelSpecifics = const DarwinNotificationDetails(
-            presentAlert: true, // Exibe o banner
-            presentBadge: true, // Atualiza o contador no ícone
-            presentSound: true, // Toca o som
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
           );
         }
 
-        // Exibe a notificação local
+        // Exibe a notificação local respeitando o canal adequado
         flutterLocalNotificationsPlugin.show(
           notification.hashCode,
           notification.title,
@@ -109,6 +152,7 @@ class FirebaseNotificationService {
     );
 
     await createLocalNotificationChannel();
+    await createEmergencyNotificationChannel();
   }
 
   Future<String?> getToken() async {

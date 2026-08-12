@@ -5,8 +5,10 @@ import 'dart:ui';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:path_provider/path_provider.dart';
 
 class FirebaseNotificationService {
   static final _firebaseMessaging = FirebaseMessaging.instance;
@@ -56,8 +58,16 @@ class FirebaseNotificationService {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       log(message.notification!.title!.toString(), name: 'Notification');
     });
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification? notification = message.notification;
+      String imagePath = '';
+      if (Platform.isIOS) {
+        // 1. Gera o caminho físico da imagem
+        imagePath = await _saveLocalImage(
+          'assets/images/emergency_notification.jpg', // O caminho no seu pubspec.yaml
+          'alert.jpg',
+        );
+      }
 
       if (notification != null) {
         // 💡 Lê o tipo que veio lá da Cloud Function (data.type)
@@ -102,11 +112,19 @@ class FirebaseNotificationService {
         }
 
         DarwinNotificationDetails? iosPlatformChannelSpecifics;
+        String? iosSound = message.notification?.apple?.sound?.name;
         if (Platform.isIOS) {
-          iosPlatformChannelSpecifics = const DarwinNotificationDetails(
+          iosPlatformChannelSpecifics = DarwinNotificationDetails(
             presentAlert: true,
             presentBadge: true,
             presentSound: true,
+            sound: iosSound,
+            interruptionLevel:
+                isEmergency
+                    ? InterruptionLevel.timeSensitive
+                    : InterruptionLevel.active,
+            attachments:
+                isEmergency ? [DarwinNotificationAttachment(imagePath)] : null,
           );
         }
 
@@ -172,6 +190,17 @@ class FirebaseNotificationService {
     log('Notificação tocada: ${details.payload}', name: 'NotificationService');
     // Aqui você pode navegar para uma tela específica
   }
+}
+
+// Função para extrair a imagem do Flutter e salvar na memória física do iPhone
+Future<String> _saveLocalImage(String assetPath, String nomeArquivo) async {
+  final byteData = await rootBundle.load(assetPath);
+  final tempDirectory = await getTemporaryDirectory();
+  final file = File('${tempDirectory.path}/$nomeArquivo');
+  await file.writeAsBytes(
+    byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
+  );
+  return file.path;
 }
 
 Future<void> initializeBackgroundService() async {

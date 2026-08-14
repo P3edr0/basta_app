@@ -127,6 +127,14 @@ class _CallPageState extends State<CallPage> {
                     onPressed: () async => await _endCall(controller),
                     child: const Icon(Icons.call_end, color: Colors.white),
                   ),
+                  FloatingActionButton(
+                    backgroundColor: Colors.blue,
+                    onPressed: () async => await controller.switchCamera(),
+                    child: const Icon(
+                      Icons.camera_enhance,
+                      color: Colors.white,
+                    ),
+                  ),
                 ],
               ),
             ),

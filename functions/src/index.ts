@@ -1,6 +1,8 @@
 import * as admin from "firebase-admin";
+import { DataSnapshot, getDatabase } from "firebase-admin/database";
 import { onValueCreated } from "firebase-functions/v2/database";
 import { onDocumentWritten } from "firebase-functions/v2/firestore";
+import { onSchedule } from "firebase-functions/v2/scheduler";
 
 // Se admin e os outros imports já estiverem no topo do arquivo, não precisa repetir:
 admin.initializeApp();
@@ -100,7 +102,7 @@ export const sendEmergencyNotificationOnUpdate = onValueCreated(
                     notification: {
                         sound: 'alert',
                         defaultSound: false,
-                        channelId: 'emergency_channel_v2',
+                        channelId: 'emergency_channel_v3',
                         visibility: 'public',
                         notificationCount: 1,
                         imageUrl: 'https://firebasestorage.googleapis.com/v0/b/basta-82cce.firebasestorage.app/o/assets%2Femergency_notification.jpg?alt=media&token=ca52544f-077a-4d21-b73d-193c9d2b1282'
@@ -109,10 +111,16 @@ export const sendEmergencyNotificationOnUpdate = onValueCreated(
                 apns: {
                     payload: {
                         aps: {
+                            mutableContent: true,
                             sound: 'alert.wav', // 👈 OBRIGATÓRIO: Nome completo com a extensão no iOS
-                            'interruption-level': 'critical' // Tenta furar o modo Não Perturbe (requer permissão da Apple)
+                            'interruption-level': 'time-sensitive' // Tenta furar o modo Não Perturbe (requer permissão da Apple)
                         },
+
                     },
+                    fcmOptions: {
+                        imageUrl: 'https://firebasestorage.googleapis.com/v0/b/basta-82cce.firebasestorage.app/o/assets%2Femergency_notification.jpg?alt=media&token=ca52544f-077a-4d21-b73d-193c9d2b1282'
+
+                    }
                 },
             };
 
@@ -326,6 +334,115 @@ export const sendGuardianOrderNotification = onDocumentWritten(
 
         } catch (error) {
             console.error(`[ORDER_FATAL_ERROR] Erro ao processar o pedido ${orderId}:`, error);
+        }
+    }
+);
+
+// -------------------------------------------------------------
+// FUNÇÃO 3: Fechamento de emergências inativas
+// -------------------------------------------------------------
+
+// 1. Interfaces de Tipagem
+interface LocationData {
+    last_update: number;
+    latitude: number;
+    longitude: number;
+    status: string;
+}
+
+interface EmergencyData {
+    status: string;
+    date?: string | number;
+    guardians?: Record<string, unknown>;
+    locations?: Record<string, LocationData>;
+    [key: string]: unknown;
+}
+
+// 2. Cloud Function V2 Agendada
+export const closeInactiveEmergencies = onSchedule(
+    {
+        schedule: "every 20 minutes",
+        timeZone: "America/Sao_Paulo", // Fuso horário padrão
+    },
+    async () => {
+        const db = getDatabase();
+        const emergenciesRef = db.ref("emergencies");
+
+        const snapshot = await emergenciesRef.once("value");
+
+        if (!snapshot.exists()) {
+            console.log("Nenhuma emergência encontrada no banco de dados.");
+            return;
+        }
+
+        const updates: Record<string, string> = {};
+        const now = Date.now();
+        const ONE_HOUR_IN_MS = 60 * 60 * 1000; // 1 hora em ms
+
+        // 3. Itera sobre cada /emergencies/{userId}
+        snapshot.forEach((userSnapshot: DataSnapshot) => {
+            const userId = userSnapshot.key;
+            console.log(`Analisando emergências do usuário ${userId}.`);
+
+            // 4. Itera sobre cada /emergencies/{userId}/{emergencyId}
+            userSnapshot.forEach((emergencySnapshot: DataSnapshot) => {
+                const emergencyId = emergencySnapshot.key;
+                const emergencyData = emergencySnapshot.val() as EmergencyData | null;
+
+                // Processa apenas emergências ativas que tenham locais cadastrados
+                if (
+                    emergencyData &&
+                    emergencyData.status === "active" &&
+                    emergencyData.locations
+                ) {
+                    console.log(`Emergência ${emergencyId} do usuário  ${userId} está ativa.`);
+
+                    let latestLocationId: string | null = null;
+                    let latestUpdate = 0;
+
+                    const locations = emergencyData.locations;
+
+                    // Busca a localização com o maior timestamp (last_update)
+                    for (const [locId, locData] of Object.entries(locations)) {
+                        if (locData.last_update && locData.last_update > latestUpdate) {
+                            latestUpdate = locData.last_update;
+                            latestLocationId = locId;
+                        }
+                    }
+
+                    // Se a última localização foi atualizada há mais de 1 hora
+                    if (latestLocationId && now - latestUpdate > ONE_HOUR_IN_MS) {
+                        console.log(
+                            `[EXPIRADO] Fechando emergência ${emergencyId} do usuário ${userId}`
+                        );
+
+                        // Prepara a atualização atômica do status da emergência e da última localização
+                        updates[`emergencies/${userId}/${emergencyId}/status`] = "closed";
+                        updates[
+                            `emergencies/${userId}/${emergencyId}/locations/${latestLocationId}/status`
+                        ] = "closed";
+                        console.log(`Emergência ${emergencyId} está inativa e será encerrada.`);
+
+                    } else {
+                        console.log(`Emergência ${emergencyId} ainda é válida.`);
+
+                    }
+                }
+
+                return false; // Necessário no DataSnapshot.forEach para TypeScript não interromper a iteração
+            });
+
+            return false;
+        });
+
+        // 5. Aplica as alterações no banco de uma só vez
+        if (Object.keys(updates).length > 0) {
+            await db.ref().update(updates);
+            console.log(
+                `Sucesso: ${Object.keys(updates).length / 2} emergência(s) inativa(s) encerrada(s).`
+            );
+        } else {
+            console.log("Nenhuma emergência inativa precisou ser fechada.");
         }
     }
 );

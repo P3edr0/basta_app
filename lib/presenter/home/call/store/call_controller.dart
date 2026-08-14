@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart' as rtc;
 import 'package:gina/domain/entities/call_data_entity.dart';
 import 'package:livekit_client/livekit_client.dart';
 
@@ -78,6 +79,23 @@ class CallController extends ChangeNotifier {
       room = null;
       notifyListeners();
     });
+  }
+
+  Future<void> switchCamera() async {
+    // 1. Pega a publicação de vídeo local (a mesma que você instanciou no startCall)
+    final localVideoPublication =
+        room!.localParticipant?.videoTrackPublications
+            .where((p) => p.source == TrackSource.camera)
+            .firstOrNull;
+
+    if (localVideoPublication != null) {
+      final track = localVideoPublication.track;
+
+      // 2. Extrai a MediaStreamTrack nativa e pede pro hardware inverter
+      if (track != null) {
+        await rtc.Helper.switchCamera(track.mediaStreamTrack);
+      }
+    }
   }
 
   // Chame sempre ao sair da tela para liberar a câmera do Android

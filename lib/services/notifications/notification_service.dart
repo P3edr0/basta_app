@@ -34,7 +34,7 @@ class FirebaseNotificationService {
   Future<void> createEmergencyNotificationChannel() async {
     const AndroidNotificationChannel emergencyNotificationChannel =
         AndroidNotificationChannel(
-          'emergency_channel_v2',
+          'emergency_channel_v3',
           'Emergency Notifications',
           description: 'This channel is used for important notifications',
           importance: Importance.high,
@@ -60,14 +60,13 @@ class FirebaseNotificationService {
     });
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification? notification = message.notification;
-      String imagePath = '';
-      if (Platform.isIOS) {
-        // 1. Gera o caminho físico da imagem
-        imagePath = await _saveLocalImage(
-          'assets/images/emergency_notification.jpg', // O caminho no seu pubspec.yaml
-          'alert.jpg',
-        );
-      }
+
+      // 1. Extrai a imagem do Flutter para o armazenamento físico do celular
+      // 👈 CORREÇÃO: Tiramos o "if (Platform.isIOS)" para que o Android também gere a imagem
+      String imagePath = await _saveLocalImage(
+        'assets/images/emergency_notification.jpg', // O caminho no seu pubspec.yaml
+        'alert.jpg',
+      );
 
       if (notification != null) {
         // 💡 Lê o tipo que veio lá da Cloud Function (data.type)
@@ -79,8 +78,7 @@ class FirebaseNotificationService {
         AndroidNotificationDetails? androidPlatformChannelSpecifics;
         if (Platform.isAndroid) {
           androidPlatformChannelSpecifics = AndroidNotificationDetails(
-            // 👈 Se for emergência, usa o canal v2 com som de alerta. Se não, usa o canal comum.
-            isEmergency ? 'emergency_channel_v2' : 'high_importance_channel',
+            isEmergency ? 'emergency_channel_v3' : 'high_importance_channel',
             isEmergency
                 ? 'Emergency Notifications'
                 : 'High Importance Notifications',
@@ -88,10 +86,11 @@ class FirebaseNotificationService {
                 'This channel is used for important notifications',
             importance: Importance.max,
             priority: Priority.high,
-            icon: '@drawable/ic_notification',
+
+            // 👈 CORREÇÃO 1: Removido o '@drawable/'. O correto é apenas o nome do arquivo.
+            icon: 'ic_notification',
             playSound: true,
 
-            // 👈 Só adiciona o som personalizado se for emergência real
             sound:
                 isEmergency
                     ? const RawResourceAndroidNotificationSound('alert')
@@ -99,9 +98,9 @@ class FirebaseNotificationService {
             styleInformation:
                 isEmergency
                     ? BigPictureStyleInformation(
-                      // Aqui você usa o ícone ou uma imagem dos assets locais (drawable)
-                      DrawableResourceAndroidBitmap('emergency_notification'),
-                      largeIcon: DrawableResourceAndroidBitmap(
+                      // 👈 CORREÇÃO 2: Usa a imagem que acabamos de extrair do Flutter (igual no iOS)
+                      FilePathAndroidBitmap(imagePath),
+                      largeIcon: const DrawableResourceAndroidBitmap(
                         'ic_notification',
                       ),
                       contentTitle: message.notification?.title,

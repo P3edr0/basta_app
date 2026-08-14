@@ -5,11 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:gina/components/buttons/rounded_button.dart';
 import 'package:gina/components/dialogs/error_dialog.dart';
 import 'package:gina/components/dialogs/info_dialog.dart';
-import 'package:gina/components/dialogs/success_dialog.dart';
 import 'package:gina/presenter/auth/store/auth_controller.dart';
 import 'package:gina/presenter/auth/update_user/store/update_user_controller.dart';
 import 'package:gina/presenter/guardian/emergency_details/store/emergency_details_controller.dart';
 import 'package:gina/presenter/guardian/store/guardian_controller.dart';
+import 'package:gina/presenter/home/call/store/call_controller.dart';
 import 'package:gina/presenter/home/home/store/home_controller.dart';
 import 'package:gina/responsiveness/gi_font_style.dart';
 import 'package:gina/theme/icons.dart';
@@ -388,20 +388,20 @@ class _HomePageState extends State<HomePage> {
                                 //   token: serverConfig.participantToken!,
                                 // );
                                 //TODO: CALL COMPONENTS
-                                // final callData = await controller.createCall();
+                                final callData = await controller.createCall();
 
-                                // final callController =
-                                //     context.read<CallController>();
-                                // callController.setCall(callData!);
+                                final callController =
+                                    context.read<CallController>();
+                                callController.setCall(callData!);
                                 controller.setEmergencyActivated(true);
                                 await controller.startEmergency();
-                                SuccessDialog.show(
-                                  "Emergencia ativada",
-                                  "Você está sendo monitorada por seus anjos guardiões, eles receberão sua localização em tempo real.",
-                                  context,
-                                );
+                                // SuccessDialog.show(
+                                //   "Emergencia ativada",
+                                //   "Você está sendo monitorada por seus anjos guardiões, eles receberão sua localização em tempo real.",
+                                //   context,
+                                // );
                                 log("Emergência já ativa");
-                                // navigator.goto(BasRoutes.call);
+                                navigator.goto(BasRoutes.call);
 
                                 return;
                               },

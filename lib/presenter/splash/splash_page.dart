@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gina/components/dialogs/internet_dialog.dart';
+import 'package:gina/domain/entities/user_entity.dart';
 import 'package:gina/presenter/auth/store/auth_controller.dart';
 import 'package:gina/presenter/guardian/store/guardian_controller.dart';
 import 'package:gina/presenter/home/home/store/home_controller.dart';
@@ -9,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../../../responsiveness/responsive.dart';
 import '../../services/internet_service/internet_service_impl.dart';
+import '../../services/notifications/notification_service.dart';
 import '../../theme/colors.dart';
 import '../../utils/assets/app_assets.dart';
 import '../../utils/routes/app_navigator.dart';
@@ -63,13 +65,21 @@ class _SplashPageState extends State<SplashPage> {
 
     final hasUser = await authController.getUser();
     if (hasUser) {
-      homeController.user = authController.user;
-      final newUser = await guardianController.refreshNewGuardian(
-        authController.user!,
+      UserEntity newUser = authController.user!;
+      final notificationService = FirebaseNotificationService();
+      final token = await notificationService.getToken();
+
+      if (token != newUser.notificationToken) {
+        newUser = authController.user!.copyWith(notificationToken: token);
+      }
+      final handledNewUser = await guardianController.refreshNewGuardian(
+        newUser,
       );
-      authController.setUser(newUser);
+      homeController.user = newUser;
+
+      authController.setUser(handledNewUser);
     }
-    await homeController.fetchVideoConfig();
+    // await homeController.fetchVideoConfig();
     redirect(hasUser);
   }
 

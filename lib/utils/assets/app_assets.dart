@@ -8,6 +8,7 @@ class BasAppAssets {
       "assets/images/police_station_error.png";
   static const String pin = "assets/images/pin.png";
   static const String attendant = "assets/images/attendant.png";
+  static const String attendantAvatar = "assets/images/attendant_avatar.png";
 
   ////////   ICONS   ////////
   static const String shield = "assets/icons/shield.png";
@@ -15,6 +16,9 @@ class BasAppAssets {
 
   ////////   ICONS   ////////
   static const String emptyList = "assets/animations/empty_orange.json";
+
+  ////////   AUDIO   ////////
+  static const String callSound = "audio/call_sound.MP3";
 
   ////////   DOCS   ////////
 }

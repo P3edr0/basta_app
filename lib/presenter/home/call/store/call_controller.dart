@@ -1,15 +1,22 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart' as rtc;
 import 'package:gina/domain/entities/call_data_entity.dart';
+import 'package:gina/utils/assets/app_assets.dart';
 import 'package:livekit_client/livekit_client.dart';
 
 class CallController extends ChangeNotifier {
   Room? room;
+  // 1. Instância do reprodutor de áudio
+  final AudioPlayer _ringtonePlayer = AudioPlayer();
   bool _isConnected = false;
+  bool isMuted = false;
+  LocalTrackPublication<LocalTrack>? microphoneStatus;
   bool get isConnected => _isConnected;
   CallDataEntity? call;
   String? exception;
+  bool isFrontCamera = true;
   // Transmissões de vídeo locais (usuário) e remotas (robô/atendente)
   VideoTrack? localVideoTrack;
   VideoTrack? remoteVideoTrack;
@@ -39,11 +46,15 @@ class CallController extends ChangeNotifier {
             params: VideoParametersPresets.h720_169,
           ),
         );
-        final microphoneStatus = await room!.localParticipant
-            ?.setMicrophoneEnabled(true);
+        microphoneStatus = await room!.localParticipant?.setMicrophoneEnabled(
+          true,
+        );
+        isMuted = false;
+        notifyListeners();
       } catch (e, stack) {
         exception =
             "Você precisa conceder permissão para acessar o microfone e a câmera para iniciar uma chamada de emergência.";
+        await stopRingtone();
         return false;
       }
       // 5. Captura a faixa de vídeo do próprio usuário para exibir o "preview" na tela
@@ -67,6 +78,7 @@ class CallController extends ChangeNotifier {
     listener.on<TrackSubscribedEvent>((event) {
       if (event.track.kind == TrackType.VIDEO) {
         remoteVideoTrack = event.track as VideoTrack?;
+        stopRingtone();
         notifyListeners();
       }
     });
@@ -89,21 +101,58 @@ class CallController extends ChangeNotifier {
             .firstOrNull;
 
     if (localVideoPublication != null) {
-      final track = localVideoPublication.track;
-
       // 2. Extrai a MediaStreamTrack nativa e pede pro hardware inverter
+      final track = localVideoPublication.track;
       if (track != null) {
+        // Inverte o hardware da câmera
         await rtc.Helper.switchCamera(track.mediaStreamTrack);
+
+        // 👈 Alterna o estado local da câmera
+        isFrontCamera = !isFrontCamera;
+        notifyListeners(); // Ou setState() se estiver na tela
       }
     }
+  }
+
+  Future<void> changeMicrophoneStatus() async {
+    if (isMuted) {
+      await microphoneStatus!.participant.setMicrophoneEnabled(true);
+      isMuted = false;
+    } else {
+      await microphoneStatus!.participant.setMicrophoneEnabled(false);
+      isMuted = true;
+    }
+    notifyListeners();
   }
 
   // Chame sempre ao sair da tela para liberar a câmera do Android
   Future<void> finishCall() async {
     await room?.disconnect();
+    stopRingtone();
     _isConnected = false;
     localVideoTrack = null;
     remoteVideoTrack = null;
     notifyListeners();
+  }
+
+  Future<void> startRingtone() async {
+    try {
+      await _ringtonePlayer.setReleaseMode(ReleaseMode.loop);
+      await _ringtonePlayer.play(
+        AssetSource(BasAppAssets.callSound),
+        volume: 0.1,
+      );
+    } catch (e) {
+      debugPrint("Erro ao tocar áudio de chamada: $e");
+    }
+  }
+
+  // Função utilitária para parar o som
+  Future<void> stopRingtone() async {
+    try {
+      await _ringtonePlayer.stop();
+    } catch (e) {
+      debugPrint("Erro ao parar áudio de chamada: $e");
+    }
   }
 }

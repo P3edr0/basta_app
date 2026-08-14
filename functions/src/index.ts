@@ -377,7 +377,7 @@ export const closeInactiveEmergencies = onSchedule(
 
         const updates: Record<string, string> = {};
         const now = Date.now();
-        const ONE_HOUR_IN_MS = 60 * 60 * 1000; // 1 hora em ms
+        const TWENTY_MINUTES_IN_MS = 20 * 60 * 1000; // 20 minutos em ms
 
         // 3. Itera sobre cada /emergencies/{userId}
         snapshot.forEach((userSnapshot: DataSnapshot) => {
@@ -411,7 +411,7 @@ export const closeInactiveEmergencies = onSchedule(
                     }
 
                     // Se a última localização foi atualizada há mais de 1 hora
-                    if (latestLocationId && now - latestUpdate > ONE_HOUR_IN_MS) {
+                    if (latestLocationId && now - latestUpdate > TWENTY_MINUTES_IN_MS) {
                         console.log(
                             `[EXPIRADO] Fechando emergência ${emergencyId} do usuário ${userId}`
                         );

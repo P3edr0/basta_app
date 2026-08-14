@@ -5,6 +5,7 @@ import 'package:gina/components/loadings/loading.dart';
 import 'package:gina/presenter/guardian/emergency_details/store/emergency_details_controller.dart';
 import 'package:gina/utils/enums/emergency_status.dart';
 import 'package:gina/utils/formatters/date_formatter.dart';
+import 'package:gina/utils/routes/app_routes.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +25,7 @@ class EmergencyDetailsPage extends StatefulWidget {
 }
 
 class _EmergencyDetailsPageState extends State<EmergencyDetailsPage> {
-  final navigator = AppNavigator();
+  final _navigator = AppNavigator();
   late GoogleMapController mapController;
   final dragController = DraggableScrollableController();
 
@@ -55,7 +56,7 @@ class _EmergencyDetailsPageState extends State<EmergencyDetailsPage> {
   void onClosedEmergency() async {
     final controller = context.read<EmergencyDetailsController>();
 
-    SuccessDialog.show(
+    await SuccessDialog.show(
       "Encerrado",
       "A vítima encerrou a emergência! Entre em contato com ela para garantir que esteja bem!",
       context,
@@ -63,6 +64,9 @@ class _EmergencyDetailsPageState extends State<EmergencyDetailsPage> {
     final guardiansController = context.read<GuardianController>();
     controller.setIsEmergency(false, EmergencyStatus.closedNow);
     guardiansController.setGuardianEmergencyActivated(false, null);
+    if (controller.victimPositions.isEmpty) {
+      await _navigator.goto(BasRoutes.home, clearStack: true);
+    }
   }
 
   _onMapCreated(GoogleMapController newMapController) {

@@ -380,7 +380,7 @@ class _HomePageState extends State<HomePage> {
 */
                                 // TODO:REMOVIDO PARA CUSTOMIZAÇÃO DO SERVIDOR"
 
-                                // final serverConfig = controller.videoConfig;
+                                final serverConfig = controller.videoConfig;
 
                                 // final callData = CallDataEntity(
                                 //   serverUrl: serverConfig!.serverUrl!,
@@ -388,6 +388,7 @@ class _HomePageState extends State<HomePage> {
                                 //   token: serverConfig.participantToken!,
                                 // );
                                 //TODO: CALL COMPONENTS
+
                                 final callData = await controller.createCall();
 
                                 final callController =

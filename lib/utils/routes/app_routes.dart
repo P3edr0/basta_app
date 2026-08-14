@@ -10,6 +10,7 @@ class BasRoutes {
   static const emergencyDetails = '/emergency_details';
   static const policeStation = '/police_station';
   static const home = '/home';
+  static const callTest = '/call_test';
   static const login = '/login';
   static const call = '/call';
 }

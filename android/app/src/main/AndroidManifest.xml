@@ -5,12 +5,11 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 <!-- <<<<<<< HEAD -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <!-- <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" /> -->
-    <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" /> -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 <!-- =======
@@ -20,8 +19,8 @@
     
      <!--Permissões de Rede e Áudio -->
     <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" -->
-    <!-- <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" /> -->
-    <!-- <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     
     <!-- Permissões de Bluetooth (para fones/dispositivos de áudio no LiveKit) -->
 <!-- >>>>>>> feat_video_call -->
@@ -37,8 +36,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>, 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <!-- <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" /> -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" /> 
    <!-- Remove a permissão de espelhamento de tela do LiveKit se você não usa -->
     <!-- <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" tools:node="remove" -->
     <!-- Remove a permissão genérica de uso especial se você não usa -->

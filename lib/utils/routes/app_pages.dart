@@ -5,13 +5,14 @@ import 'package:gina/presenter/auth/update_user/update_user_page.dart';
 import 'package:gina/presenter/guardian/add_guardian/add_guardian_page.dart';
 import 'package:gina/presenter/guardian/emergency_history/emergency_history_page.dart';
 import 'package:gina/presenter/guardian/my_guardians/my_guardian_page.dart';
-import 'package:gina/presenter/home/call/call_page.dart';
 import 'package:gina/presenter/home/home/home_page.dart';
 import 'package:gina/presenter/police_station/police_station/police_station_page.dart';
 
 import '../../presenter/auth/create_account/create_account_address_page.dart';
 import '../../presenter/auth/create_account/create_account_attacker_page.dart';
 import '../../presenter/guardian/emergency_details/emergency_details_page.dart';
+import '../../presenter/home/call/call_page.dart';
+import '../../presenter/home/call/test_widget_page.dart';
 import '../../presenter/splash/splash_page.dart';
 import 'app_routes.dart';
 
@@ -81,6 +82,11 @@ class AppPages {
       case == BasRoutes.call:
         return MaterialPageRoute(
           builder: (_) => CallPage(),
+          settings: settings,
+        );
+      case == BasRoutes.callTest:
+        return MaterialPageRoute(
+          builder: (_) => CallTestPage(),
           settings: settings,
         );
       default:

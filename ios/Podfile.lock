@@ -1188,6 +1188,8 @@ PODS:
     - abseil/meta/type_traits
     - abseil/xcprivacy
   - abseil/xcprivacy (1.20240722.0)
+  - app_links (7.0.0):
+    - Flutter
   - audioplayers_darwin (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -1479,6 +1481,7 @@ PODS:
   - WebRTC-SDK (137.7151.04)
 
 DEPENDENCIES:
+  - app_links (from `.symlinks/plugins/app_links/ios`)
   - audioplayers_darwin (from `.symlinks/plugins/audioplayers_darwin/darwin`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
@@ -1535,6 +1538,8 @@ SPEC REPOS:
     - WebRTC-SDK
 
 EXTERNAL SOURCES:
+  app_links:
+    :path: ".symlinks/plugins/app_links/ios"
   audioplayers_darwin:
     :path: ".symlinks/plugins/audioplayers_darwin/darwin"
   cloud_firestore:
@@ -1584,6 +1589,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   abseil: a05cc83bf02079535e17169a73c5be5ba47f714b
+  app_links: a754cbec3c255bd4bbb4d236ecc06f28cd9a7ce8
   audioplayers_darwin: 835ced6edd4c9fc8ebb0a7cc9e294a91d99917d5
   BoringSSL-GRPC: dded2a44897e45f28f08ae87a55ee4bcd19bc508
   cloud_firestore: 9233f35ca10ef27d5e5131f930507d00d5bc794d
@@ -1635,6 +1641,6 @@ SPEC CHECKSUMS:
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
   WebRTC-SDK: 40d4f5ba05cadff14e4db5614aec402a633f007e
 
-PODFILE CHECKSUM: 7d5584c535e25427bf0c40abba7f6781961d2b0b
+PODFILE CHECKSUM: b3c84008da008704ca54266b889b6c6d5de61b26
 
 COCOAPODS: 1.16.2

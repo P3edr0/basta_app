@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart' as webrtc;
+import 'package:gina/utils/routes/app_navigator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +16,7 @@ import 'firebase_options.dart';
 import 'services/notifications/notification_service.dart';
 import 'theme/custom_themes/theme.dart';
 import 'utils/routes/app_pages.dart';
+import 'utils/routes/app_routes.dart';
 import 'utils/routes/route_observer.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -44,7 +47,6 @@ Future<void> main() async {
       log("Erro ao inicializar o Firebase: $e");
     }
   }
-
   // Executa as permissões e serviços
   await _checkPermissions();
 
@@ -152,4 +154,26 @@ Future<void> initializeAndroidAudioSettings() async {
   webrtc.Helper.setAndroidAudioConfiguration(
     webrtc.AndroidAudioConfiguration.media,
   );
+}
+
+class WidgetLinkService {
+  static final _appLinks = AppLinks();
+
+  static void init(BuildContext context, bool hasUser) {
+    // Trata quando o app é aberto através do toque no Widget
+    _appLinks.uriLinkStream.listen((Uri? uri) {
+      if (uri != null && uri.scheme == 'basta' && uri.host == 'home') {
+        final navigator = AppNavigator();
+        if (hasUser) {
+          // Redireciona para a tela de emergência do seu app
+          navigator.goto(BasRoutes.home, clearStack: true);
+          return;
+        } else {
+          // Redireciona para a tela de criação de conta do seu app
+          navigator.goto(BasRoutes.createAccountPersonal, clearStack: true);
+          return;
+        }
+      }
+    });
+  }
 }

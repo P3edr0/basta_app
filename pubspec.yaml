@@ -2,10 +2,9 @@ name: gina
 description: "A new Flutter project."
 publish_to: "none"
 # IOS Version
-version: 1.4.0+7
+# version: 1.4.0+7
 #Android Version
-#version: 1.0.7+13
-
+version: 1.0.9+15
 
 environment:
   sdk: ^3.7.2
@@ -46,7 +45,7 @@ dependencies:
   internet_connection_checker_plus: ^3.1.1
   device_info_plus: ^12.4.0
   firebase_messaging: ^16.4.3
-  app_links: ^7.0.0
+  app_links: ^6.4.1
   package_info_plus: ^9.0.1
 
   path_provider: ^2.1.5

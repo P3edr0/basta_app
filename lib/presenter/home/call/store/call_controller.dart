@@ -67,7 +67,7 @@ class CallController extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      exception = "Erro ao conectar no LiveKit Android!\n Erro:$e";
+      exception = "Erro ao conectar";
       debugPrint("Erro ao conectar no LiveKit Android: $e");
       return false;
     }

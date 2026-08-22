@@ -88,8 +88,17 @@ class _HomePageState extends State<HomePage> {
         },
       );
       final controller = context.read<HomeController>();
-      final haveLocationPermission = await controller.getCurrentAddress();
+      final haveLocationPermission = await controller.checkLocationPermission();
       if (!haveLocationPermission) {
+        await InfoDialog.show(
+          "Localização em segundo plano",
+
+          "O Basta coleta dados de localização para compartilhar sua localização com seus anjos guardiões durante uma emergência, mesmo quando o aplicativo estiver fechado ou não estiver em uso.\n Esses dados são utilizados exclusivamente durante a emergência e não serão compartilhados com terceiros.",
+          navigatorContext!,
+        );
+      }
+      final getLocationPermission = await controller.getCurrentAddress();
+      if (!getLocationPermission) {
         ErrorDialog.show(
           context: navigatorContext!,
           title: "Atenção",
@@ -332,7 +341,7 @@ class _HomePageState extends State<HomePage> {
                                 //   return;
                                 // }
                                 final haveLocationPermission =
-                                    await controller.checkLocationPermission();
+                                    await controller.getLocationPermission();
                                 if (!haveLocationPermission) {
                                   ErrorDialog.show(
                                     context: context,

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -36,7 +38,7 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<bool> getCurrentAddress() async {
-    final hasPermission = await checkLocationPermission();
+    final hasPermission = await getLocationPermission();
     if (!hasPermission) return false;
     try {
       currentPosition = await Geolocator.getCurrentPosition(
@@ -61,17 +63,33 @@ class HomeController extends ChangeNotifier {
       }
       notifyListeners();
       return true;
-    } catch (e) {
+    } catch (e, stack) {
+      log("Erro: $e Stack: $stack");
       return false;
     }
+  }
+
+  Future<bool> getLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return false;
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Aqui o iOS não abre mais o pop-up. Você deve avisar a usuária
+      // para abrir as configurações.
+      return false;
+    }
+    return true;
   }
 
   Future<bool> checkLocationPermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return false;
+      return false;
     }
 
     if (permission == LocationPermission.deniedForever) {

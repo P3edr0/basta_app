@@ -55,7 +55,7 @@ class HomeController extends ChangeNotifier {
           const String message = '''
 Seja meu Guardião no Basta!
 
-Eu confio em você e quero que você seja meuxe o aplicativo para me acompanhar em uma emergência em tempo real:
+Eu confio em você e quero que você seja meu anjo guardião.\nBaixe o aplicativo para me acompanhar em uma emergência em tempo real.
 
 Android: https://play.google.com/store/apps/details?id=com.seguranca.basta&pcampaignid=web_share
 \n\niOS: https://apps.apple.com/br/app/basta-prote%C3%A7%C3%A3o-%C3%A0-mulher/id6788924212

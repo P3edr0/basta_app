@@ -2,9 +2,9 @@ name: gina
 description: "A new Flutter project."
 publish_to: "none"
 # IOS Version
-# version: 1.4.0+7
+version: 1.5.0+8
 #Android Version
-version: 1.0.9+15
+#version: 1.0.9+15
 
 environment:
   sdk: ^3.7.2
@@ -52,6 +52,7 @@ dependencies:
 
   avatar_glow: ^3.0.1
   audioplayers: ^6.6.0
+  share_plus: ^12.0.2
 
 # flutter_background_service_android:
 #   path: packages/flutter_background_service_android

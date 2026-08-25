@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:gina/components/buttons/rounded_button.dart';
 import 'package:gina/components/dialogs/error_dialog.dart';
 import 'package:gina/components/dialogs/info_dialog.dart';
+import 'package:gina/components/shines/empty_list_animation.dart';
 import 'package:gina/presenter/auth/store/auth_controller.dart';
 import 'package:gina/presenter/auth/update_user/store/update_user_controller.dart';
 import 'package:gina/presenter/guardian/emergency_details/store/emergency_details_controller.dart';
@@ -99,19 +100,55 @@ class _HomePageState extends State<HomePage> {
       }
       final getLocationPermission = await controller.getCurrentAddress();
       if (!getLocationPermission) {
-        ErrorDialog.show(
+        await ErrorDialog.show(
           context: navigatorContext!,
           title: "Atenção",
           content:
               "Você precisa conceder permissão à localização do seu dispositivo para ter acesso as funcionalidades do Basta.",
         );
       }
+      /*final onOldEmergency = await controller.checkIsOnOldEmergency();
+      if (onOldEmergency) {
+        ErrorDialog.show(
+          context: navigatorContext!,
+          title: "Atenção",
+          content:
+              "Você precisa conceder permissão à localização do seu dispositivo para ter acesso as funcionalidades do Basta.",
+        );
+      }*/
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero, // Remove o padding padrão do topo
+          children: [
+            // Cabeçalho do menu
+            DrawerHeader(
+              decoration: BoxDecoration(color: lightGrey),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Image.asset(
+                    BasAppAssets.logo,
+                    height: Responsive.getSize(80),
+                  ),
+                  SizedBox(height: Responsive.getSize(8)),
+                  Text(
+                    'Apoiadores',
+                    style: BasFontStyle.titleBold.copyWith(color: primaryColor),
+                  ),
+                ],
+              ),
+            ),
+
+            BasEmptyAnimation(content: "Lista de apoiadores vazia!"),
+          ],
+        ),
+      ),
       bottomNavigationBar: BasBottomNavigationBar(),
       backgroundColor: primaryColor,
       body: PopScope(
@@ -186,52 +223,56 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
 
-                    // Padding(
-                    //   padding: EdgeInsets.symmetric(
-                    //     horizontal: Responsive.getSize(24),
-                    //     vertical: Responsive.getSize(16),
-                    //   ),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //     children:
-                    //         controller.tabs.map((item) {
-                    //           return InkWell(
-                    //             onTap:
-                    //                 () => InfoDialog.closeAuto(
-                    //                   "Em breve...",
-                    //                   "Estamos desenvolvendo esta funcionalidade.",
-                    //                   context,
-                    //                 ),
-                    //             child: Column(
-                    //               children: [
-                    //                 Container(
-                    //                   padding: EdgeInsets.all(
-                    //                     Responsive.getSize(10),
-                    //                   ),
-                    //                   decoration: BoxDecoration(
-                    //                     color: secondaryColor,
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Responsive.getSize(24),
+                        vertical: Responsive.getSize(16),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:
+                            controller.tabs.map((item) {
+                              final isShare = item.name == "Compartilhar";
+                              Function()? onTap;
+                              if (isShare) {
+                                onTap = item.onTap;
+                              } else {
+                                onTap = () {
+                                  Scaffold.of(context).openDrawer();
+                                };
+                              }
+                              return InkWell(
+                                onTap: onTap,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(
+                                        Responsive.getSize(10),
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: secondaryColor,
 
-                    //                     shape: BoxShape.circle,
-                    //                   ),
-                    //                   child: Icon(
-                    //                     item.icon,
-                    //                     size: Responsive.getSize(24),
-                    //                     color: primaryColor,
-                    //                   ),
-                    //                 ),
-                    //                 SizedBox(height: Responsive.getSize(4)),
-                    //                 Text(
-                    //                   item.name,
-                    //                   style: BasFontStyle.smallBold.copyWith(
-                    //                     color: secondaryColor,
-                    //                   ),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           );
-                    //         }).toList(),
-                    //   ),
-                    // ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        item.icon,
+                                        size: Responsive.getSize(24),
+                                        color: primaryColor,
+                                      ),
+                                    ),
+                                    SizedBox(height: Responsive.getSize(4)),
+                                    Text(
+                                      item.name,
+                                      style: BasFontStyle.smallBold.copyWith(
+                                        color: secondaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                      ),
+                    ),
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: Responsive.getSize(24),
@@ -389,7 +430,7 @@ class _HomePageState extends State<HomePage> {
 */
                                 // TODO:REMOVIDO PARA CUSTOMIZAÇÃO DO SERVIDOR"
 
-                                final serverConfig = controller.videoConfig;
+                                // final serverConfig = controller.videoConfig;
 
                                 // final callData = CallDataEntity(
                                 //   serverUrl: serverConfig!.serverUrl!,
